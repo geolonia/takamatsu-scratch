@@ -5,6 +5,7 @@ import bindAll from 'lodash.bindall';
 import {connect} from 'react-redux';
 
 import {setProjectUnchanged} from '../reducers/project-changed';
+import {setSession} from '../reducers/session';
 import {
     LoadingStates,
     getIsCreatingNew,
@@ -33,7 +34,8 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         constructor (props) {
             super(props);
             bindAll(this, [
-                'fetchProject'
+                'fetchProject',
+                'fetchFromApi'
             ]);
             storage.setProjectHost(props.projectHost);
             storage.setAssetHost(props.assetHost);
@@ -51,6 +53,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             }
         }
         componentDidUpdate (prevProps) {
+            this.fetchFromApi();
             if (prevProps.projectHost !== this.props.projectHost) {
                 storage.setProjectHost(this.props.projectHost);
             }
@@ -82,6 +85,23 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 .catch(err => {
                     this.props.onError(err);
                     log.error(err);
+                });
+        }
+        fetchFromApi () {
+            return fetch('https://run.mocky.io/v3/91e206ab-7bae-4233-a990-e80cc7093848')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Data fetched from API:', data);
+                    // Handle the data as needed
+                    this.props.onSetSession(data.username);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
                 });
         }
         render () {
@@ -124,6 +144,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         onError: PropTypes.func,
         onFetchedProjectData: PropTypes.func,
         onProjectUnchanged: PropTypes.func,
+        onSetSession: PropTypes.func,
         projectHost: PropTypes.string,
         projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -148,7 +169,8 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         onFetchedProjectData: (projectData, loadingState) =>
             dispatch(onFetchedProjectData(projectData, loadingState)),
         setProjectId: projectId => dispatch(setProjectId(projectId)),
-        onProjectUnchanged: () => dispatch(setProjectUnchanged())
+        onProjectUnchanged: () => dispatch(setProjectUnchanged()),
+        onSetSession: username => dispatch(setSession(username))
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(
