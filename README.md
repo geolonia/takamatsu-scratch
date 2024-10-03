@@ -2,7 +2,7 @@
 
 ![nekozilla](images/nekozilla.gif)
 
-## ワークフロー (workflow)
+## ワークフロー (workflow v3)
 
 ### ローカルでの起動
 
