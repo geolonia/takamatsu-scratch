@@ -11,9 +11,9 @@ import LocalesReducer, {
     localesInitialState,
     initLocale,
 } from "./reducers/locales";
-import SessionReducer, { sessionInitialState } from "./reducers/session";
 import { ScratchPaintReducer } from "scratch-paint";
 import { setFullScreen, setPlayer } from "./reducers/mode";
+import SessionReducer, { sessionInitialState } from "./reducers/session";
 import { remixProject } from "./reducers/project-state";
 import { setAppElement } from "react-modal";
 
@@ -30,6 +30,7 @@ export {
     setAppElement,
     guiReducers,
     guiInitialState,
+    sessionInitialState,
     guiMiddleware,
     initEmbedded,
     initPlayer,

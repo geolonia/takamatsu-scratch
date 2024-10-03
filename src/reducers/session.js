@@ -9,7 +9,6 @@ const initialState = {
     },
 };
 
-// TODO: refactor to avoid repetition in the return
 const reducer = function (state, action) {
     if (typeof state === "undefined") state = initialState;
     switch (action.type) {
@@ -34,12 +33,7 @@ const getSession = function () {
     };
 };
 
-// FIXME: remove comment
-// sessionData = {
-//     username: 'luane'
-// }
 const setSession = function (username) {
-    console.log("[username]", username);
     return {
         type: SET_SESSION,
         username: username,
