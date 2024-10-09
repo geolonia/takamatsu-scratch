@@ -19,6 +19,7 @@ import {
     activateTab,
     BLOCKS_TAB_INDEX
 } from '../reducers/editor-tab';
+import { setSession } from "../reducers/session";
 
 import log from './log';
 import storage from './storage';
@@ -33,7 +34,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         constructor (props) {
             super(props);
             bindAll(this, [
-                'fetchProject'
+                'fetchProject', 'fetchUserSessionFromApi'
             ]);
             storage.setProjectHost(props.projectHost);
             storage.setAssetHost(props.assetHost);
@@ -51,6 +52,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             }
         }
         componentDidUpdate (prevProps) {
+            this.fetchUserSessionFromApi();
             if (prevProps.projectHost !== this.props.projectHost) {
                 storage.setProjectHost(this.props.projectHost);
             }
@@ -84,6 +86,26 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                     log.error(err);
                 });
         }
+        fetchUserSessionFromApi() {
+            return fetch(
+                'http://localhost:3000/user-session'
+            )
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    this.props.onSetSession(data.username);
+                })
+                .catch((error) => {
+                    console.error(
+                        'There was a problem with the fetch operation:',
+                        error
+                    );
+                });
+        }
         render () {
             const {
                 /* eslint-disable no-unused-vars */
@@ -95,6 +117,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 onError: onErrorProp,
                 onFetchedProjectData: onFetchedProjectDataProp,
                 onProjectUnchanged,
+                onSetSession,
                 projectHost,
                 projectId,
                 reduxProjectId,
@@ -124,6 +147,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         onError: PropTypes.func,
         onFetchedProjectData: PropTypes.func,
         onProjectUnchanged: PropTypes.func,
+        onSetSession: PropTypes.func,
         projectHost: PropTypes.string,
         projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -148,7 +172,8 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         onFetchedProjectData: (projectData, loadingState) =>
             dispatch(onFetchedProjectData(projectData, loadingState)),
         setProjectId: projectId => dispatch(setProjectId(projectId)),
-        onProjectUnchanged: () => dispatch(setProjectUnchanged())
+        onProjectUnchanged: () => dispatch(setProjectUnchanged()),
+        onSetSession: (username) => dispatch(setSession(username)),
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(
