@@ -72,29 +72,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 .load(storage.AssetType.Project, projectId, storage.DataFormat.JSON)
                 .then(projectAsset => {
                     if (projectAsset) {
-                        // Fetch the .sb3 file from the API
-                        fetch("http://localhost:3000/download")
-                            .then((response) => {
-                                if (!response.ok) {
-                                    throw new Error(
-                                        "Network response was not ok"
-                                    );
-                                }
-                                return response.arrayBuffer(); // Get the binary data
-                            })
-                            .then((projectData) => {
-                                // Load the .sb3 file into store
-                                this.props.onFetchedProjectData(
-                                    projectData,
-                                    loadingState
-                                );
-                            })
-                            .catch((error) => {
-                                console.error(
-                                    "There was a problem with the fetch operation:",
-                                    error
-                                );
-                            });
+                        this.props.onFetchedProjectData(projectAsset.data, loadingState);
                     } else {
                         // Treat failure to load as an error
                         // Throw to be caught by catch later on
@@ -153,7 +131,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
     };
     ProjectFetcherComponent.defaultProps = {
         assetHost: 'https://assets.scratch.mit.edu',
-        projectHost: 'https://projects.scratch.mit.edu'
+        projectHost: 'http://localhost:3000/download'
     };
 
     const mapStateToProps = state => ({
