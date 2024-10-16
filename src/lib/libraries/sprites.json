@@ -2028,52 +2028,6 @@
         "blocks": {}
     },
     {
-        "name": "Cat",
-        "tags": [
-            "animals",
-            "cat",
-            "kitten",
-            "kitty",
-            "mammal",
-            "orange",
-            "scratch cat"
-        ],
-        "isStage": false,
-        "variables": {},
-        "costumes": [
-            {
-                "assetId": "bcf454acf82e4504149f7ffe07081dbc",
-                "name": "cat-a",
-                "bitmapResolution": 1,
-                "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
-                "dataFormat": "svg",
-                "rotationCenterX": 48,
-                "rotationCenterY": 50
-            },
-            {
-                "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
-                "name": "cat-b",
-                "bitmapResolution": 1,
-                "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
-                "dataFormat": "svg",
-                "rotationCenterX": 46,
-                "rotationCenterY": 53
-            }
-        ],
-        "sounds": [
-            {
-                "assetId": "83c36d806dc92327b9e7049a565c6bff",
-                "name": "Meow",
-                "dataFormat": "wav",
-                "format": "",
-                "rate": 44100,
-                "sampleCount": 37376,
-                "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
-            }
-        ],
-        "blocks": {}
-    },
-    {
         "name": "Cat 2",
         "tags": [
             "cat",
