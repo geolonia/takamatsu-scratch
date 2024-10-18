@@ -36,7 +36,11 @@ class Storage extends ScratchStorage {
         this.projectHost = projectHost;
     }
     getProjectGetConfig (projectAsset) {
-        return this.projectHost
+        // FIXME: remove projectAsset mock when real data is returned
+        const projectAssetMock = {
+            assetId: 1
+        }
+        return `${this.projectHost}/${projectAssetMock.assetId}`;
     }
     getProjectCreateConfig () {
         return {
