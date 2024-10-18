@@ -5,13 +5,12 @@ const GET_SESSION = 'GET_SESSION';
 
 const initialState = {
     session: {
-        session: {
-            user: {
-                username: 'Hello Kitty',
-                token: '1234567890',
-            },
-        }
-    },
+        user: {
+            username: 'Hello Kitty',
+            token: '1234567890',
+        },
+    }
+
 };
 
 const reducer = function (state, action) {
