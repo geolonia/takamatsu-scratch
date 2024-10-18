@@ -88,7 +88,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         }
         fetchUserSessionFromApi() {
             return fetch(
-                'http://localhost:3000/user-session'
+                'http://localhost:3000/ccm/scratch-api/token'
             )
                 .then((response) => {
                     if (!response.ok) {
@@ -97,7 +97,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                     return response.json();
                 })
                 .then((data) => {
-                    this.props.onSetSession(data.username);
+                    this.props.onSetSession(data.token);
                 })
                 .catch((error) => {
                     console.error(
@@ -173,7 +173,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             dispatch(onFetchedProjectData(projectData, loadingState)),
         setProjectId: projectId => dispatch(setProjectId(projectId)),
         onProjectUnchanged: () => dispatch(setProjectUnchanged()),
-        onSetSession: (username) => dispatch(setSession(username)),
+        onSetSession: (token) => dispatch(setSession(token)),
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

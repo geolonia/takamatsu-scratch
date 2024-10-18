@@ -1,11 +1,16 @@
+import { getUsernameFromToken } from "../lib/session-utils";
+
 const SET_SESSION = 'SET_SESSION';
 const GET_SESSION = 'GET_SESSION';
 
 const initialState = {
     session: {
-        user: {
-            username: 'Hello Kitty',
-        },
+        session: {
+            user: {
+                username: 'Hello Kitty',
+                token: '1234567890',
+            },
+        }
     },
 };
 
@@ -17,6 +22,7 @@ const reducer = function (state, action) {
                 session: {
                     user: {
                         username: action.username,
+                        token: action.token,
                     },
                 },
             });
@@ -33,10 +39,12 @@ const getSession = function () {
     };
 };
 
-const setSession = function (username) {
+const setSession = function (token) {
+    const username = getUsernameFromToken(token);
     return {
         type: SET_SESSION,
         username: username,
+        token: token,
     };
 };
 
