@@ -23,6 +23,10 @@ const HashParserHOC = function (WrappedComponent) {
         }
         componentDidMount () {
             window.addEventListener('hashchange', this.handleHashChange);
+            // FIXME: replace mock projectId with real one
+            window.addEventListener('load', () => {
+                window.location.hash = '/project/1'
+            });
             this.handleHashChange();
         }
         componentDidUpdate (prevProps) {
