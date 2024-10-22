@@ -9,7 +9,8 @@ import {injectIntl, intlShape} from 'react-intl';
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import {
     getIsError,
-    getIsShowingProject
+    getIsShowingProject,
+    projectError
 } from '../reducers/project-state';
 import {
     activateTab,
@@ -73,9 +74,10 @@ class GUI extends React.Component {
             })
             .catch((error) => {
                 console.error(
-                    'There was a problem with the fetch operation:',
+                    'There was a problem with the fetch operation when fetching a token:',
                     error
                 );
+                this.props.onProjectError(error);
             });
     }
     render () {
@@ -96,6 +98,7 @@ class GUI extends React.Component {
             onUpdateProjectId,
             onVmInit,
             onSetSession,
+            onProjectError,
             projectHost,
             projectId,
             /* eslint-enable no-unused-vars */
@@ -134,6 +137,7 @@ GUI.propTypes = {
     onUpdateProjectId: PropTypes.func,
     onVmInit: PropTypes.func,
     onSetSession: PropTypes.func,
+    onProjectError: PropTypes.func,
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     telemetryModalVisible: PropTypes.bool,
@@ -187,6 +191,7 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
     onSetSession: (token) => dispatch(setSession(token)),
+    onProjectError: error => dispatch(projectError(error)),
 });
 
 const ConnectedGUI = injectIntl(connect(
