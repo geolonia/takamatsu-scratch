@@ -24,6 +24,7 @@ import {
     closeTelemetryModal,
     openExtensionLibrary
 } from '../reducers/modals';
+import { setSession } from "../reducers/session.js";
 
 import FontLoaderHOC from '../lib/font-loader-hoc.jsx';
 import LocalizationHOC from '../lib/localization-hoc.jsx';
@@ -42,6 +43,7 @@ import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 
 class GUI extends React.Component {
     componentDidMount () {
+        this.fetchUserSessionFromApi();
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
@@ -55,6 +57,26 @@ class GUI extends React.Component {
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded();
         }
+    }
+    fetchUserSessionFromApi() {
+        return fetch(
+            'http://localhost:3000/ccm/scratch-api/token'
+        )
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                this.props.onSetSession(data.token);
+            })
+            .catch((error) => {
+                console.error(
+                    'There was a problem with the fetch operation:',
+                    error
+                );
+            });
     }
     render () {
         if (this.props.isError) {
@@ -73,6 +95,7 @@ class GUI extends React.Component {
             onStorageInit,
             onUpdateProjectId,
             onVmInit,
+            onSetSession,
             projectHost,
             projectId,
             /* eslint-enable no-unused-vars */
@@ -110,6 +133,7 @@ GUI.propTypes = {
     onStorageInit: PropTypes.func,
     onUpdateProjectId: PropTypes.func,
     onVmInit: PropTypes.func,
+    onSetSession: PropTypes.func,
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     telemetryModalVisible: PropTypes.bool,
@@ -161,7 +185,8 @@ const mapDispatchToProps = dispatch => ({
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
-    onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal())
+    onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
+    onSetSession: (token) => dispatch(setSession(token)),
 });
 
 const ConnectedGUI = injectIntl(connect(
