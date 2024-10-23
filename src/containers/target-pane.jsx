@@ -15,7 +15,6 @@ import {setRestore} from '../reducers/restore-deletion';
 import DragConstants from '../lib/drag-constants';
 import TargetPaneComponent from '../components/target-pane/target-pane.jsx';
 import {BLOCKS_DEFAULT_SCALE} from '../lib/layout-constants';
-import spriteLibraryContent from '../lib/libraries/sprites.json';
 import {handleFileUpload, spriteUpload} from '../lib/file-uploader.js';
 import sharedMessages from '../lib/shared-messages';
 import {emptySprite} from '../lib/empty-assets';
@@ -106,13 +105,15 @@ class TargetPane extends React.Component {
         }
     }
     handleSurpriseSpriteClick () {
-        const surpriseSprites = spriteLibraryContent.filter(sprite =>
-            (sprite.tags.indexOf('letters') === -1) && (sprite.tags.indexOf('numbers') === -1)
-        );
-        const item = surpriseSprites[Math.floor(Math.random() * surpriseSprites.length)];
-        randomizeSpritePosition(item);
-        this.props.vm.addSprite(JSON.stringify(item))
-            .then(this.handleActivateBlocksTab);
+        if(this.props.spritesAsset){
+            const surpriseSprites = this.props.spritesAsset.filter(sprite =>
+                (sprite.tags.indexOf('letters') === -1) && (sprite.tags.indexOf('numbers') === -1)
+            );
+            const item = surpriseSprites[Math.floor(Math.random() * surpriseSprites.length)];
+            randomizeSpritePosition(item);
+            this.props.vm.addSprite(JSON.stringify(item))
+                .then(this.handleActivateBlocksTab);
+        }
     }
     handlePaintSpriteClick () {
         const formatMessage = this.props.intl.formatMessage;
@@ -244,6 +245,7 @@ class TargetPane extends React.Component {
             onReceivedBlocks,
             onShowImporting,
             workspaceMetrics,
+            spritesAsset,
             ...componentProps
         } = this.props;
         /* eslint-enable no-unused-vars */
@@ -286,16 +288,19 @@ TargetPane.propTypes = {
     ...targetPaneProps
 };
 
-const mapStateToProps = state => ({
-    editingTarget: state.scratchGui.targets.editingTarget,
-    hoveredTarget: state.scratchGui.hoveredTarget,
-    isRtl: state.locales.isRtl,
-    spriteLibraryVisible: state.scratchGui.modals.spriteLibrary,
-    sprites: state.scratchGui.targets.sprites,
-    stage: state.scratchGui.targets.stage,
-    raiseSprites: state.scratchGui.blockDrag,
-    workspaceMetrics: state.scratchGui.workspaceMetrics
-});
+const mapStateToProps = state => {
+    return {
+        editingTarget: state.scratchGui.targets.editingTarget,
+        hoveredTarget: state.scratchGui.hoveredTarget,
+        isRtl: state.locales.isRtl,
+        spriteLibraryVisible: state.scratchGui.modals.spriteLibrary,
+        sprites: state.scratchGui.targets.sprites,
+        stage: state.scratchGui.targets.stage,
+        raiseSprites: state.scratchGui.blockDrag,
+        workspaceMetrics: state.scratchGui.workspaceMetrics,
+        spritesAsset: state.assets.sprites,
+    }
+}
 
 const mapDispatchToProps = dispatch => ({
     onNewSpriteClick: e => {

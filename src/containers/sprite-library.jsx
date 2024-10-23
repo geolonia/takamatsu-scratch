@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {injectIntl, intlShape, defineMessages} from 'react-intl';
 import VM from 'scratch-vm';
+import {connect} from 'react-redux';
 
-import spriteLibraryContent from '../lib/libraries/sprites.json';
 import randomizeSpritePosition from '../lib/randomize-sprite-position';
 import spriteTags from '../lib/libraries/sprite-tags';
 
@@ -34,14 +34,16 @@ class SpriteLibrary extends React.PureComponent {
     }
     render () {
         return (
-            <LibraryComponent
-                data={spriteLibraryContent}
+            this.props.sprites
+            ? <LibraryComponent
+                data={this.props.sprites}
                 id="spriteLibrary"
                 tags={spriteTags}
                 title={this.props.intl.formatMessage(messages.libraryTitle)}
                 onItemSelected={this.handleItemSelect}
                 onRequestClose={this.props.onRequestClose}
             />
+            : null
         );
     }
 }
@@ -50,7 +52,14 @@ SpriteLibrary.propTypes = {
     intl: intlShape.isRequired,
     onActivateBlocksTab: PropTypes.func.isRequired,
     onRequestClose: PropTypes.func,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    sprites: PropTypes.arrayOf(PropTypes.object)
 };
 
-export default injectIntl(SpriteLibrary);
+const mapStateToProps = state => {
+    return {
+        sprites: state.assets.sprites,
+    };
+};
+
+export default injectIntl(connect(mapStateToProps,null)(SpriteLibrary));
