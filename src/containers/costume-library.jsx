@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import VM from 'scratch-vm';
+import {connect} from 'react-redux';
 
-import costumeLibraryContent from '../lib/libraries/costumes.json';
 import spriteTags from '../lib/libraries/sprite-tags';
 import LibraryComponent from '../components/library/library.jsx';
 
@@ -36,14 +36,16 @@ class CostumeLibrary extends React.PureComponent {
     }
     render () {
         return (
-            <LibraryComponent
-                data={costumeLibraryContent}
+            this.props.costumes
+            ? <LibraryComponent
+                data={this.props.costumes}
                 id="costumeLibrary"
                 tags={spriteTags}
                 title={this.props.intl.formatMessage(messages.libraryTitle)}
                 onItemSelected={this.handleItemSelected}
                 onRequestClose={this.props.onRequestClose}
             />
+            : null
         );
     }
 }
@@ -54,4 +56,10 @@ CostumeLibrary.propTypes = {
     vm: PropTypes.instanceOf(VM).isRequired
 };
 
-export default injectIntl(CostumeLibrary);
+const mapStateToProps = state => {
+    return {
+        costumes: state.assets.costumes,
+    };
+};
+
+export default injectIntl(connect(mapStateToProps,null)(CostumeLibrary));

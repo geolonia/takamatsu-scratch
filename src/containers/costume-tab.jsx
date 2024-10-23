@@ -34,7 +34,6 @@ import paintIcon from '../components/action-menu/icon--paint.svg';
 import surpriseIcon from '../components/action-menu/icon--surprise.svg';
 import searchIcon from '../components/action-menu/icon--search.svg';
 
-import costumeLibraryContent from '../lib/libraries/costumes.json';
 import backdropLibraryContent from '../lib/libraries/backdrops.json';
 
 let messages = defineMessages({
@@ -168,16 +167,18 @@ class CostumeTab extends React.Component {
         this.handleNewCostume(emptyCostume(name));
     }
     handleSurpriseCostume () {
-        const item = costumeLibraryContent[Math.floor(Math.random() * costumeLibraryContent.length)];
-        const vmCostume = {
-            name: item.name,
-            md5: item.md5ext,
-            rotationCenterX: item.rotationCenterX,
-            rotationCenterY: item.rotationCenterY,
-            bitmapResolution: item.bitmapResolution,
-            skinId: null
-        };
-        this.handleNewCostume(vmCostume, true /* fromCostumeLibrary */);
+        if(this.props.costumes){
+            const item = this.props.costumes[Math.floor(Math.random() * this.props.costumes.length)];
+            const vmCostume = {
+                name: item.name,
+                md5: item.md5ext,
+                rotationCenterX: item.rotationCenterX,
+                rotationCenterY: item.rotationCenterY,
+                bitmapResolution: item.bitmapResolution,
+                skinId: null
+            };
+            this.handleNewCostume(vmCostume, true /* fromCostumeLibrary */);
+        }
     }
     handleSurpriseBackdrop () {
         const item = backdropLibraryContent[Math.floor(Math.random() * backdropLibraryContent.length)];
@@ -349,7 +350,8 @@ CostumeTab.propTypes = {
             name: PropTypes.string.isRequired
         }))
     }),
-    vm: PropTypes.instanceOf(VM)
+    vm: PropTypes.instanceOf(VM),
+    costumes: PropTypes.arrayOf(PropTypes.object)
 };
 
 const mapStateToProps = state => ({
@@ -357,7 +359,8 @@ const mapStateToProps = state => ({
     isRtl: state.locales.isRtl,
     sprites: state.scratchGui.targets.sprites,
     stage: state.scratchGui.targets.stage,
-    dragging: state.scratchGui.assetDrag.dragging
+    dragging: state.scratchGui.assetDrag.dragging,
+    costumes: state.assets.costumes
 });
 
 const mapDispatchToProps = dispatch => ({
