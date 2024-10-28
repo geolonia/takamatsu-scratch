@@ -23,7 +23,7 @@ const START_REMIXING = 'scratch-gui/project-state/START_REMIXING';
 const START_UPDATING_BEFORE_CREATING_COPY = 'scratch-gui/project-state/START_UPDATING_BEFORE_CREATING_COPY';
 const START_UPDATING_BEFORE_CREATING_NEW = 'scratch-gui/project-state/START_UPDATING_BEFORE_CREATING_NEW';
 
-const defaultProjectId = '123'; // hardcoded id of default project
+const defaultProjectId = '1'; // hardcoded id of default project
 
 const LoadingState = keyMirror({
     NOT_LOADED: null,
