@@ -100,7 +100,7 @@ const GUIComponent = props => {
         onActivateSoundsTab,
         onActivateTab,
         onClickLogo,
-        onExtensionButtonClick,
+        showExtension,
         onProjectTelemetryEvent,
         onRequestCloseBackdropLibrary,
         onRequestCloseCostumeLibrary,
@@ -112,6 +112,7 @@ const GUIComponent = props => {
         onTelemetryModalCancel,
         onTelemetryModalOptIn,
         onTelemetryModalOptOut,
+        projectId,
         showComingSoon,
         soundsTabVisible,
         stageSizeMode,
@@ -124,6 +125,10 @@ const GUIComponent = props => {
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
+
+    if(projectId === '0'){
+        showExtension();
+     }
 
     const tabClassNames = {
         tabs: styles.tabs,
@@ -314,7 +319,7 @@ const GUIComponent = props => {
                                         <button
                                             className={styles.extensionButton}
                                             title={intl.formatMessage(messages.addExtension)}
-                                            onClick={onExtensionButtonClick}
+                                            onClick={showExtension}
                                         >
                                             <img
                                                 className={styles.extensionButtonIcon}
@@ -401,7 +406,7 @@ GUIComponent.propTypes = {
     onClickAccountNav: PropTypes.func,
     onClickLogo: PropTypes.func,
     onCloseAccountNav: PropTypes.func,
-    onExtensionButtonClick: PropTypes.func,
+    showExtension: PropTypes.func,
     onLogOut: PropTypes.func,
     onOpenRegistration: PropTypes.func,
     onRequestCloseBackdropLibrary: PropTypes.func,
@@ -416,6 +421,7 @@ GUIComponent.propTypes = {
     onTelemetryModalOptIn: PropTypes.func,
     onTelemetryModalOptOut: PropTypes.func,
     onToggleLoginOpen: PropTypes.func,
+    projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     renderLogin: PropTypes.func,
     showComingSoon: PropTypes.bool,
     soundsTabVisible: PropTypes.bool,
@@ -446,10 +452,13 @@ GUIComponent.defaultProps = {
     stageSizeMode: STAGE_SIZE_MODES.large
 };
 
-const mapStateToProps = state => ({
-    // This is the button's mode, as opposed to the actual current state
-    stageSizeMode: state.scratchGui.stageSize.stageSize
-});
+const mapStateToProps = state => {
+    return {
+        // This is the button's mode, as opposed to the actual current state
+        stageSizeMode: state.scratchGui.stageSize.stageSize,
+        projectId: state.scratchGui.projectState.projectId,
+    }
+};
 
 export default injectIntl(connect(
     mapStateToProps
