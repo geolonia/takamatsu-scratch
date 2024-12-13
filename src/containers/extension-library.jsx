@@ -3,31 +3,40 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import VM from 'scratch-vm';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
+import {connect} from 'react-redux';
 
 import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
 
 import LibraryComponent from '../components/library/library.jsx';
 import extensionIcon from '../components/action-menu/icon--sprite.svg';
+import en from '../languages/en.json';
+import ja from '../languages/ja.json';
 
 const messages = defineMessages({
-    extensionTitle: {
-        defaultMessage: 'Choose an Extension',
-        description: 'Heading for the extension library',
-        id: 'gui.extensionLibrary.chooseAnExtension'
-    },
     extensionUrl: {
         defaultMessage: 'Enter the URL of the extension',
         description: 'Prompt for unoffical extension url',
         id: 'gui.extensionLibrary.extensionUrl'
     }
 });
-
 class ExtensionLibrary extends React.PureComponent {
     constructor (props) {
         super(props);
         bindAll(this, [
             'handleItemSelect'
         ]);
+        this.state = {
+            modalTitle: ''
+        };
+    }
+    componentDidMount() {
+        if(this.props.currentLocale === 'ja') {
+            this.setState({modalTitle: ja.chooseExtensionModalTitle});
+        }
+        else {
+            this.setState({modalTitle: en.chooseExtensionModalTitle});
+        }
+
     }
     handleItemSelect (item) {
         const id = item.extensionId;
@@ -56,7 +65,7 @@ class ExtensionLibrary extends React.PureComponent {
                 data={extensionLibraryThumbnailData}
                 filterable={false}
                 id="extensionLibrary"
-                title={this.props.intl.formatMessage(messages.extensionTitle)}
+                title={this.state.modalTitle}
                 visible={this.props.visible}
                 onItemSelected={this.handleItemSelect}
                 onRequestClose={this.props.onRequestClose}
@@ -67,10 +76,20 @@ class ExtensionLibrary extends React.PureComponent {
 
 ExtensionLibrary.propTypes = {
     intl: intlShape.isRequired,
+    currentLocale: PropTypes.string.isRequired,
     onCategorySelected: PropTypes.func,
     onRequestClose: PropTypes.func,
     visible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired // eslint-disable-line react/no-unused-prop-types
 };
 
-export default injectIntl(ExtensionLibrary);
+
+const mapStateToProps = state => {
+    return {
+        currentLocale: state.locales.locale,
+    }
+}
+
+export default injectIntl(connect(
+    mapStateToProps,
+)(ExtensionLibrary));
