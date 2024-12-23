@@ -73,7 +73,7 @@ import dropdownCaret from './dropdown-caret.svg';
 import languageIcon from '../language-selector/language-icon.svg';
 import aboutIcon from './icon--about.svg';
 
-import scratchLogo from './scratch-logo.svg';
+import SiteLogo from './logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
 
@@ -390,7 +390,7 @@ class MenuBar extends React.Component {
                     <div className={styles.fileGroup}>
                         <div className={classNames(styles.menuBarItem)}>
                             <img
-                                alt="Scratch"
+                                alt="Scratchhh"
                                 className={classNames(styles.scratchLogo, {
                                     [styles.clickable]: typeof this.props.onClickLogo !== 'undefined'
                                 })}
@@ -827,7 +827,7 @@ MenuBar.propTypes = {
 };
 
 MenuBar.defaultProps = {
-    logo: scratchLogo,
+    logo: SiteLogo,
     onShare: () => {}
 };
 
