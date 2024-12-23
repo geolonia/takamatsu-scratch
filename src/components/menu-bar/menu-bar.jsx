@@ -73,7 +73,7 @@ import dropdownCaret from './dropdown-caret.svg';
 import languageIcon from '../language-selector/language-icon.svg';
 import aboutIcon from './icon--about.svg';
 
-import SiteLogo from './logo.svg';
+import siteLogo from './logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
 
@@ -827,7 +827,7 @@ MenuBar.propTypes = {
 };
 
 MenuBar.defaultProps = {
-    logo: SiteLogo,
+    logo: siteLogo,
     onShare: () => {}
 };
 
