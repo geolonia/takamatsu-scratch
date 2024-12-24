@@ -39,6 +39,7 @@ import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
+import { setModalExtension } from '../../reducers/modal-choose-extension.js';
 
 const messages = defineMessages({
     addExtension: {
@@ -51,321 +52,327 @@ const messages = defineMessages({
 // Cache this value to only retrieve it once the first time.
 // Assume that it doesn't change for a session.
 let isRendererSupported = null;
-
-const GUIComponent = props => {
-    const {
-        accountNavOpen,
-        activeTabIndex,
-        alertsVisible,
-        authorId,
-        authorThumbnailUrl,
-        authorUsername,
-        basePath,
-        backdropLibraryVisible,
-        backpackHost,
-        backpackVisible,
-        blocksTabVisible,
-        cardsVisible,
-        canChangeLanguage,
-        canCreateNew,
-        canEditTitle,
-        canManageFiles,
-        canRemix,
-        canSave,
-        canCreateCopy,
-        canShare,
-        canUseCloud,
-        children,
-        connectionModalVisible,
-        costumeLibraryVisible,
-        costumesTabVisible,
-        enableCommunity,
-        intl,
-        isCreating,
-        isFullScreen,
-        isPlayerOnly,
-        isRtl,
-        isShared,
-        isTelemetryEnabled,
-        loading,
-        logo,
-        renderLogin,
-        onClickAbout,
-        onClickAccountNav,
-        onCloseAccountNav,
-        onLogOut,
-        onOpenRegistration,
-        onToggleLoginOpen,
-        onActivateCostumesTab,
-        onActivateSoundsTab,
-        onActivateTab,
-        onClickLogo,
-        showExtension,
-        onProjectTelemetryEvent,
-        onRequestCloseBackdropLibrary,
-        onRequestCloseCostumeLibrary,
-        onRequestCloseTelemetryModal,
-        onSeeCommunity,
-        onShare,
-        onShowPrivacyPolicy,
-        onStartSelectingFileUpload,
-        onTelemetryModalCancel,
-        onTelemetryModalOptIn,
-        onTelemetryModalOptOut,
-        projectId,
-        showComingSoon,
-        soundsTabVisible,
-        stageSizeMode,
-        targetIsStage,
-        telemetryModalVisible,
-        tipsLibraryVisible,
-        vm,
-        ...componentProps
-    } = omit(props, 'dispatch');
-    if (children) {
-        return <Box {...componentProps}>{children}</Box>;
+class GUIComponent extends React.Component {
+    componentDidUpdate() {
+        const { projectId, onShowExtension } = this.props;
+        if (projectId === '0') {
+            onShowExtension(false);
+        }
     }
+    render(){
+        const {
+            children,
+            projectId,
+            showExtension,
+            accountNavOpen,
+            activeTabIndex,
+            alertsVisible,
+            authorId,
+            authorThumbnailUrl,
+            authorUsername,
+            basePath,
+            backdropLibraryVisible,
+            backpackHost,
+            backpackVisible,
+            blocksTabVisible,
+            cardsVisible,
+            canChangeLanguage,
+            canCreateNew,
+            canEditTitle,
+            canManageFiles,
+            canRemix,
+            canSave,
+            canCreateCopy,
+            canShare,
+            canUseCloud,
+            connectionModalVisible,
+            costumeLibraryVisible,
+            costumesTabVisible,
+            enableCommunity,
+            intl,
+            isCreating,
+            isFullScreen,
+            isPlayerOnly,
+            isRtl,
+            isShared,
+            isTelemetryEnabled,
+            loading,
+            logo,
+            renderLogin,
+            modalChooseExtensionAlreadyBeenOpened,
+            onClickAbout,
+            onClickAccountNav,
+            onCloseAccountNav,
+            onLogOut,
+            onOpenRegistration,
+            onToggleLoginOpen,
+            onActivateCostumesTab,
+            onActivateSoundsTab,
+            onActivateTab,
+            onClickLogo,
+            onProjectTelemetryEvent,
+            onRequestCloseBackdropLibrary,
+            onRequestCloseCostumeLibrary,
+            onRequestCloseTelemetryModal,
+            onSeeCommunity,
+            onShare,
+            onShowPrivacyPolicy,
+            onStartSelectingFileUpload,
+            onTelemetryModalCancel,
+            onTelemetryModalOptIn,
+            onTelemetryModalOptOut,
+            onShowExtension,
+            showComingSoon,
+            soundsTabVisible,
+            stageSizeMode,
+            setModalExtensionVisibility,
+            targetIsStage,
+            telemetryModalVisible,
+            tipsLibraryVisible,
+            vm,
+            ...componentProps
+        } = omit(this.props, 'dispatch');
 
-    if(projectId === '0'){
-        showExtension();
-     }
+        if (children) {
+            return <Box {...componentProps}>{children}</Box>;
+        }
 
-    const tabClassNames = {
-        tabs: styles.tabs,
-        tab: classNames(tabStyles.reactTabsTab, styles.tab),
-        tabList: classNames(tabStyles.reactTabsTabList, styles.tabList),
-        tabPanel: classNames(tabStyles.reactTabsTabPanel, styles.tabPanel),
-        tabPanelSelected: classNames(tabStyles.reactTabsTabPanelSelected, styles.isSelected),
-        tabSelected: classNames(tabStyles.reactTabsTabSelected, styles.isSelected)
-    };
+        const tabClassNames = {
+            tabs: styles.tabs,
+            tab: classNames(tabStyles.reactTabsTab, styles.tab),
+            tabList: classNames(tabStyles.reactTabsTabList, styles.tabList),
+            tabPanel: classNames(tabStyles.reactTabsTabPanel, styles.tabPanel),
+            tabPanelSelected: classNames(tabStyles.reactTabsTabPanelSelected, styles.isSelected),
+            tabSelected: classNames(tabStyles.reactTabsTabSelected, styles.isSelected)
+        };
 
-    if (isRendererSupported === null) {
-        isRendererSupported = Renderer.isSupported();
-    }
+        if (isRendererSupported === null) {
+            isRendererSupported = Renderer.isSupported();
+        }
+        return (<MediaQuery minWidth={layout.fullSizeMinWidth}>{isFullSize => {
+            const stageSize = resolveStageSize(stageSizeMode, isFullSize);
 
-    return (<MediaQuery minWidth={layout.fullSizeMinWidth}>{isFullSize => {
-        const stageSize = resolveStageSize(stageSizeMode, isFullSize);
-
-        return isPlayerOnly ? (
-            <StageWrapper
-                isFullScreen={isFullScreen}
-                isRendererSupported={isRendererSupported}
-                isRtl={isRtl}
-                loading={loading}
-                stageSize={STAGE_SIZE_MODES.large}
-                vm={vm}
-            >
-                {alertsVisible ? (
-                    <Alerts className={styles.alertsContainer} />
-                ) : null}
-            </StageWrapper>
-        ) : (
-            <Box
-                className={styles.pageWrapper}
-                dir={isRtl ? 'rtl' : 'ltr'}
-                {...componentProps}
-            >
-                {telemetryModalVisible ? (
-                    <TelemetryModal
-                        isRtl={isRtl}
-                        isTelemetryEnabled={isTelemetryEnabled}
-                        onCancel={onTelemetryModalCancel}
-                        onOptIn={onTelemetryModalOptIn}
-                        onOptOut={onTelemetryModalOptOut}
-                        onRequestClose={onRequestCloseTelemetryModal}
-                        onShowPrivacyPolicy={onShowPrivacyPolicy}
+            return isPlayerOnly ? (
+                <StageWrapper
+                    isFullScreen={isFullScreen}
+                    isRendererSupported={isRendererSupported}
+                    isRtl={isRtl}
+                    loading={loading}
+                    stageSize={STAGE_SIZE_MODES.large}
+                    vm={vm}
+                >
+                    {alertsVisible ? (
+                        <Alerts className={styles.alertsContainer} />
+                    ) : null}
+                </StageWrapper>
+            ) : (
+                <Box
+                    className={styles.pageWrapper}
+                    dir={isRtl ? 'rtl' : 'ltr'}
+                    {...componentProps}
+                >
+                    {telemetryModalVisible ? (
+                        <TelemetryModal
+                            isRtl={isRtl}
+                            isTelemetryEnabled={isTelemetryEnabled}
+                            onCancel={onTelemetryModalCancel}
+                            onOptIn={onTelemetryModalOptIn}
+                            onOptOut={onTelemetryModalOptOut}
+                            onRequestClose={onRequestCloseTelemetryModal}
+                            onShowPrivacyPolicy={onShowPrivacyPolicy}
+                        />
+                    ) : null}
+                    {loading ? (
+                        <Loader />
+                    ) : null}
+                    {isCreating ? (
+                        <Loader messageId="gui.loader.creating" />
+                    ) : null}
+                    {isRendererSupported ? null : (
+                        <WebGlModal isRtl={isRtl} />
+                    )}
+                    {tipsLibraryVisible ? (
+                        <TipsLibrary />
+                    ) : null}
+                    {cardsVisible ? (
+                        <Cards />
+                    ) : null}
+                    {alertsVisible ? (
+                        <Alerts className={styles.alertsContainer} />
+                    ) : null}
+                    {connectionModalVisible ? (
+                        <ConnectionModal
+                            vm={vm}
+                        />
+                    ) : null}
+                    {costumeLibraryVisible ? (
+                        <CostumeLibrary
+                            vm={vm}
+                            onRequestClose={onRequestCloseCostumeLibrary}
+                        />
+                    ) : null}
+                    {backdropLibraryVisible ? (
+                        <BackdropLibrary
+                            vm={vm}
+                            onRequestClose={onRequestCloseBackdropLibrary}
+                        />
+                    ) : null}
+                    <MenuBar
+                        accountNavOpen={accountNavOpen}
+                        authorId={authorId}
+                        authorThumbnailUrl={authorThumbnailUrl}
+                        authorUsername={authorUsername}
+                        canChangeLanguage={canChangeLanguage}
+                        canCreateCopy={canCreateCopy}
+                        canCreateNew={canCreateNew}
+                        canEditTitle={canEditTitle}
+                        canManageFiles={canManageFiles}
+                        canRemix={canRemix}
+                        canSave={canSave}
+                        canShare={canShare}
+                        className={styles.menuBarPosition}
+                        enableCommunity={enableCommunity}
+                        isShared={isShared}
+                        logo={logo}
+                        renderLogin={renderLogin}
+                        showComingSoon={showComingSoon}
+                        onClickAbout={onClickAbout}
+                        onClickAccountNav={onClickAccountNav}
+                        onClickLogo={onClickLogo}
+                        onCloseAccountNav={onCloseAccountNav}
+                        onLogOut={onLogOut}
+                        onOpenRegistration={onOpenRegistration}
+                        onProjectTelemetryEvent={onProjectTelemetryEvent}
+                        onSeeCommunity={onSeeCommunity}
+                        onShare={onShare}
+                        onStartSelectingFileUpload={onStartSelectingFileUpload}
+                        onToggleLoginOpen={onToggleLoginOpen}
                     />
-                ) : null}
-                {loading ? (
-                    <Loader />
-                ) : null}
-                {isCreating ? (
-                    <Loader messageId="gui.loader.creating" />
-                ) : null}
-                {isRendererSupported ? null : (
-                    <WebGlModal isRtl={isRtl} />
-                )}
-                {tipsLibraryVisible ? (
-                    <TipsLibrary />
-                ) : null}
-                {cardsVisible ? (
-                    <Cards />
-                ) : null}
-                {alertsVisible ? (
-                    <Alerts className={styles.alertsContainer} />
-                ) : null}
-                {connectionModalVisible ? (
-                    <ConnectionModal
-                        vm={vm}
-                    />
-                ) : null}
-                {costumeLibraryVisible ? (
-                    <CostumeLibrary
-                        vm={vm}
-                        onRequestClose={onRequestCloseCostumeLibrary}
-                    />
-                ) : null}
-                {backdropLibraryVisible ? (
-                    <BackdropLibrary
-                        vm={vm}
-                        onRequestClose={onRequestCloseBackdropLibrary}
-                    />
-                ) : null}
-                <MenuBar
-                    accountNavOpen={accountNavOpen}
-                    authorId={authorId}
-                    authorThumbnailUrl={authorThumbnailUrl}
-                    authorUsername={authorUsername}
-                    canChangeLanguage={canChangeLanguage}
-                    canCreateCopy={canCreateCopy}
-                    canCreateNew={canCreateNew}
-                    canEditTitle={canEditTitle}
-                    canManageFiles={canManageFiles}
-                    canRemix={canRemix}
-                    canSave={canSave}
-                    canShare={canShare}
-                    className={styles.menuBarPosition}
-                    enableCommunity={enableCommunity}
-                    isShared={isShared}
-                    logo={logo}
-                    renderLogin={renderLogin}
-                    showComingSoon={showComingSoon}
-                    onClickAbout={onClickAbout}
-                    onClickAccountNav={onClickAccountNav}
-                    onClickLogo={onClickLogo}
-                    onCloseAccountNav={onCloseAccountNav}
-                    onLogOut={onLogOut}
-                    onOpenRegistration={onOpenRegistration}
-                    onProjectTelemetryEvent={onProjectTelemetryEvent}
-                    onSeeCommunity={onSeeCommunity}
-                    onShare={onShare}
-                    onStartSelectingFileUpload={onStartSelectingFileUpload}
-                    onToggleLoginOpen={onToggleLoginOpen}
-                />
-                <Box className={styles.bodyWrapper}>
-                    <Box className={styles.flexWrapper}>
-                        <Box className={styles.editorWrapper}>
-                            <Tabs
-                                forceRenderTabPanel
-                                className={tabClassNames.tabs}
-                                selectedIndex={activeTabIndex}
-                                selectedTabClassName={tabClassNames.tabSelected}
-                                selectedTabPanelClassName={tabClassNames.tabPanelSelected}
-                                onSelect={onActivateTab}
-                            >
-                                <TabList className={tabClassNames.tabList}>
-                                    <Tab className={tabClassNames.tab}>
-                                        <img
-                                            draggable={false}
-                                            src={codeIcon}
-                                        />
-                                        <FormattedMessage
-                                            defaultMessage="Code"
-                                            description="Button to get to the code panel"
-                                            id="gui.gui.codeTab"
-                                        />
-                                    </Tab>
-                                    <Tab
-                                        className={tabClassNames.tab}
-                                        onClick={onActivateCostumesTab}
-                                    >
-                                        <img
-                                            draggable={false}
-                                            src={costumesIcon}
-                                        />
-                                        {targetIsStage ? (
-                                            <FormattedMessage
-                                                defaultMessage="Backdrops"
-                                                description="Button to get to the backdrops panel"
-                                                id="gui.gui.backdropsTab"
+                    <Box className={styles.bodyWrapper}>
+                        <Box className={styles.flexWrapper}>
+                            <Box className={styles.editorWrapper}>
+                                <Tabs
+                                    forceRenderTabPanel
+                                    className={tabClassNames.tabs}
+                                    selectedIndex={activeTabIndex}
+                                    selectedTabClassName={tabClassNames.tabSelected}
+                                    selectedTabPanelClassName={tabClassNames.tabPanelSelected}
+                                    onSelect={onActivateTab}
+                                >
+                                    <TabList className={tabClassNames.tabList}>
+                                        <Tab className={tabClassNames.tab}>
+                                            <img
+                                                draggable={false}
+                                                src={codeIcon}
                                             />
-                                        ) : (
                                             <FormattedMessage
-                                                defaultMessage="Costumes"
-                                                description="Button to get to the costumes panel"
-                                                id="gui.gui.costumesTab"
+                                                defaultMessage="Code"
+                                                description="Button to get to the code panel"
+                                                id="gui.gui.codeTab"
                                             />
-                                        )}
-                                    </Tab>
-                                    <Tab
-                                        className={tabClassNames.tab}
-                                        onClick={onActivateSoundsTab}
-                                    >
-                                        <img
-                                            draggable={false}
-                                            src={soundsIcon}
-                                        />
-                                        <FormattedMessage
-                                            defaultMessage="Sounds"
-                                            description="Button to get to the sounds panel"
-                                            id="gui.gui.soundsTab"
-                                        />
-                                    </Tab>
-                                </TabList>
-                                <TabPanel className={tabClassNames.tabPanel}>
-                                    <Box className={styles.blocksWrapper}>
-                                        <Blocks
-                                            canUseCloud={canUseCloud}
-                                            grow={1}
-                                            isVisible={blocksTabVisible}
-                                            options={{
-                                                media: `${basePath}static/blocks-media/`
-                                            }}
-                                            stageSize={stageSize}
-                                            vm={vm}
-                                        />
-                                    </Box>
-                                    <Box className={styles.extensionButtonContainer}>
-                                        <button
-                                            className={styles.extensionButton}
-                                            title={intl.formatMessage(messages.addExtension)}
-                                            onClick={showExtension}
+                                        </Tab>
+                                        <Tab
+                                            className={tabClassNames.tab}
+                                            onClick={onActivateCostumesTab}
                                         >
                                             <img
-                                                className={styles.extensionButtonIcon}
                                                 draggable={false}
-                                                src={addExtensionIcon}
+                                                src={costumesIcon}
                                             />
-                                        </button>
-                                    </Box>
-                                    <Box className={styles.watermark}>
-                                        <Watermark />
-                                    </Box>
-                                </TabPanel>
-                                <TabPanel className={tabClassNames.tabPanel}>
-                                    {costumesTabVisible ? <CostumeTab vm={vm} /> : null}
-                                </TabPanel>
-                                <TabPanel className={tabClassNames.tabPanel}>
-                                    {soundsTabVisible ? <SoundTab vm={vm} /> : null}
-                                </TabPanel>
-                            </Tabs>
-                            {backpackVisible ? (
-                                <Backpack host={backpackHost} />
-                            ) : null}
-                        </Box>
+                                            {targetIsStage ? (
+                                                <FormattedMessage
+                                                    defaultMessage="Backdrops"
+                                                    description="Button to get to the backdrops panel"
+                                                    id="gui.gui.backdropsTab"
+                                                />
+                                            ) : (
+                                                <FormattedMessage
+                                                    defaultMessage="Costumes"
+                                                    description="Button to get to the costumes panel"
+                                                    id="gui.gui.costumesTab"
+                                                />
+                                            )}
+                                        </Tab>
+                                        <Tab
+                                            className={tabClassNames.tab}
+                                            onClick={onActivateSoundsTab}
+                                        >
+                                            <img
+                                                draggable={false}
+                                                src={soundsIcon}
+                                            />
+                                            <FormattedMessage
+                                                defaultMessage="Sounds"
+                                                description="Button to get to the sounds panel"
+                                                id="gui.gui.soundsTab"
+                                            />
+                                        </Tab>
+                                    </TabList>
+                                    <TabPanel className={tabClassNames.tabPanel}>
+                                        <Box className={styles.blocksWrapper}>
+                                            <Blocks
+                                                canUseCloud={canUseCloud}
+                                                grow={1}
+                                                isVisible={blocksTabVisible}
+                                                options={{
+                                                    media: `${basePath}static/blocks-media/`
+                                                }}
+                                                stageSize={stageSize}
+                                                vm={vm}
+                                            />
+                                        </Box>
+                                        <Box className={styles.extensionButtonContainer}>
+                                            <button
+                                                className={styles.extensionButton}
+                                                title={intl.formatMessage(messages.addExtension)}
+                                                onClick={() => onShowExtension(true)}
+                                            >
+                                                <img
+                                                    className={styles.extensionButtonIcon}
+                                                    draggable={false}
+                                                    src={addExtensionIcon}
+                                                />
+                                            </button>
+                                        </Box>
+                                        <Box className={styles.watermark}>
+                                            <Watermark />
+                                        </Box>
+                                    </TabPanel>
+                                    <TabPanel className={tabClassNames.tabPanel}>
+                                        {costumesTabVisible ? <CostumeTab vm={vm} /> : null}
+                                    </TabPanel>
+                                    <TabPanel className={tabClassNames.tabPanel}>
+                                        {soundsTabVisible ? <SoundTab vm={vm} /> : null}
+                                    </TabPanel>
+                                </Tabs>
+                                {backpackVisible ? (
+                                    <Backpack host={backpackHost} />
+                                ) : null}
+                            </Box>
 
-                        <Box className={classNames(styles.stageAndTargetWrapper, styles[stageSize])}>
-                            <StageWrapper
-                                isFullScreen={isFullScreen}
-                                isRendererSupported={isRendererSupported}
-                                isRtl={isRtl}
-                                stageSize={stageSize}
-                                vm={vm}
-                            />
-                            <Box className={styles.targetWrapper}>
-                                <TargetPane
+                            <Box className={classNames(styles.stageAndTargetWrapper, styles[stageSize])}>
+                                <StageWrapper
+                                    isFullScreen={isFullScreen}
+                                    isRendererSupported={isRendererSupported}
+                                    isRtl={isRtl}
                                     stageSize={stageSize}
                                     vm={vm}
                                 />
+                                <Box className={styles.targetWrapper}>
+                                    <TargetPane
+                                        stageSize={stageSize}
+                                        vm={vm}
+                                    />
+                                </Box>
                             </Box>
                         </Box>
                     </Box>
+                    <DragLayer />
                 </Box>
-                <DragLayer />
-            </Box>
-        );
-    }}</MediaQuery>);
-};
+            );
+        }}</MediaQuery>)
+    }
+}
 
 GUIComponent.propTypes = {
     accountNavOpen: PropTypes.bool,
@@ -400,13 +407,14 @@ GUIComponent.propTypes = {
     isShared: PropTypes.bool,
     loading: PropTypes.bool,
     logo: PropTypes.string,
+    modalChooseExtensionAlreadyBeenOpened: PropTypes.bool,
+    onShowExtension: PropTypes.func,
     onActivateCostumesTab: PropTypes.func,
     onActivateSoundsTab: PropTypes.func,
     onActivateTab: PropTypes.func,
     onClickAccountNav: PropTypes.func,
     onClickLogo: PropTypes.func,
     onCloseAccountNav: PropTypes.func,
-    showExtension: PropTypes.func,
     onLogOut: PropTypes.func,
     onOpenRegistration: PropTypes.func,
     onRequestCloseBackdropLibrary: PropTypes.func,
@@ -426,6 +434,7 @@ GUIComponent.propTypes = {
     showComingSoon: PropTypes.bool,
     soundsTabVisible: PropTypes.bool,
     stageSizeMode: PropTypes.oneOf(Object.keys(STAGE_SIZE_MODES)),
+    setModalExtensionVisibility: PropTypes.func,
     targetIsStage: PropTypes.bool,
     telemetryModalVisible: PropTypes.bool,
     tipsLibraryVisible: PropTypes.bool,
@@ -457,9 +466,14 @@ const mapStateToProps = state => {
         // This is the button's mode, as opposed to the actual current state
         stageSizeMode: state.scratchGui.stageSize.stageSize,
         projectId: state.scratchGui.projectState.projectId,
+        modalChooseExtensionAlreadyBeenOpened: state.scratchGui.modalChooseExtensionAlreadyBeenOpened
     }
 };
 
+const mapDispatchToProps = dispatch => ({
+    setModalExtensionVisibility: (isOpened) => dispatch(setModalExtension(isOpened)),
+});
+
 export default injectIntl(connect(
-    mapStateToProps
+    mapStateToProps, mapDispatchToProps
 )(GUIComponent));

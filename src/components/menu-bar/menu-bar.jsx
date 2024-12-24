@@ -75,6 +75,7 @@ import aboutIcon from './icon--about.svg';
 import siteLogo from './logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
+import { setModalExtension } from '../../reducers/modal-choose-extension.js';
 
 const ariaMessages = defineMessages({
     language: {
@@ -193,6 +194,9 @@ class MenuBar extends React.Component {
             this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
         }
         this.props.onRequestCloseFile();
+        // set modalAlreadyOpened to false so that the modal will show when the new default project renders
+        this.props.setModalExtensionVisibility(false);
+
     }
     handleClickRemix () {
         this.props.onClickRemix();
@@ -825,6 +829,7 @@ MenuBar.propTypes = {
     sessionExists: PropTypes.bool,
     shouldSaveBeforeTransition: PropTypes.func,
     showComingSoon: PropTypes.bool,
+    setModalExtensionVisibility: PropTypes.func,
     userOwnsProject: PropTypes.bool,
     username: PropTypes.string,
     vm: PropTypes.instanceOf(VM).isRequired
@@ -877,7 +882,8 @@ const mapDispatchToProps = dispatch => ({
     onClickRemix: () => dispatch(remixProject()),
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
-    onSeeCommunity: () => dispatch(setPlayer(true))
+    onSeeCommunity: () => dispatch(setPlayer(true)),
+    setModalExtensionVisibility: (isOpened) => dispatch(setModalExtension(isOpened)),
 });
 
 export default compose(

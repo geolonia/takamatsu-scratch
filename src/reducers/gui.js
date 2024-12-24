@@ -18,6 +18,7 @@ import projectChangedReducer, {projectChangedInitialState} from './project-chang
 import projectStateReducer, {projectStateInitialState} from './project-state';
 import projectTitleReducer, {projectTitleInitialState} from './project-title';
 import fontsLoadedReducer, {fontsLoadedInitialState} from './fonts-loaded';
+import modalChooseExtensionReducer, {modalChooseExtensionInitialState} from './modal-choose-extension';
 import restoreDeletionReducer, {restoreDeletionInitialState} from './restore-deletion';
 import stageSizeReducer, {stageSizeInitialState} from './stage-size';
 import targetReducer, {targetsInitialState} from './targets';
@@ -53,6 +54,7 @@ const guiInitialState = {
     projectState: projectStateInitialState,
     projectTitle: projectTitleInitialState,
     fontsLoaded: fontsLoadedInitialState,
+    modalChooseExtensionAlreadyBeenOpened: modalChooseExtensionInitialState,
     restoreDeletion: restoreDeletionInitialState,
     targets: targetsInitialState,
     timeout: timeoutInitialState,
@@ -152,6 +154,7 @@ const guiReducer = combineReducers({
     projectState: projectStateReducer,
     projectTitle: projectTitleReducer,
     fontsLoaded: fontsLoadedReducer,
+    modalChooseExtensionAlreadyBeenOpened: modalChooseExtensionReducer,
     restoreDeletion: restoreDeletionReducer,
     targets: targetReducer,
     timeout: timeoutReducer,
