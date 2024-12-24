@@ -1693,42 +1693,6 @@
         "rotationCenterY": 46
     },
     {
-        "name": "Cat-a",
-        "tags": [
-            "animals",
-            "cat",
-            "kitten",
-            "kitty",
-            "mammal",
-            "orange",
-            "scratch cat"
-        ],
-        "assetId": "bcf454acf82e4504149f7ffe07081dbc",
-        "bitmapResolution": 1,
-        "dataFormat": "svg",
-        "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
-        "rotationCenterX": 48,
-        "rotationCenterY": 50
-    },
-    {
-        "name": "Cat-b",
-        "tags": [
-            "animals",
-            "cat",
-            "kitten",
-            "kitty",
-            "mammal",
-            "orange",
-            "scratch cat"
-        ],
-        "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
-        "bitmapResolution": 1,
-        "dataFormat": "svg",
-        "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
-        "rotationCenterX": 46,
-        "rotationCenterY": 53
-    },
-    {
         "name": "Catcher-a",
         "tags": [
             "baseball",
