@@ -39,6 +39,7 @@ import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
+import { setModalExtension } from '../../reducers/modal-choose-extension.js';
 
 const messages = defineMessages({
     addExtension: {
@@ -90,6 +91,7 @@ const GUIComponent = props => {
         loading,
         logo,
         renderLogin,
+        modalChooseExtensionAlreadyBeenOpened,
         onClickAbout,
         onClickAccountNav,
         onCloseAccountNav,
@@ -100,7 +102,6 @@ const GUIComponent = props => {
         onActivateSoundsTab,
         onActivateTab,
         onClickLogo,
-        showExtension,
         onProjectTelemetryEvent,
         onRequestCloseBackdropLibrary,
         onRequestCloseCostumeLibrary,
@@ -112,10 +113,12 @@ const GUIComponent = props => {
         onTelemetryModalCancel,
         onTelemetryModalOptIn,
         onTelemetryModalOptOut,
+        onShowExtension,
         projectId,
         showComingSoon,
         soundsTabVisible,
         stageSizeMode,
+        setModalExtensionVisibility,
         targetIsStage,
         telemetryModalVisible,
         tipsLibraryVisible,
@@ -125,10 +128,6 @@ const GUIComponent = props => {
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
-
-    if(projectId === '0'){
-        showExtension();
-     }
 
     const tabClassNames = {
         tabs: styles.tabs,
@@ -142,6 +141,10 @@ const GUIComponent = props => {
     if (isRendererSupported === null) {
         isRendererSupported = Renderer.isSupported();
     }
+
+    if(projectId === '0'){
+        onShowExtension(false);
+     }
 
     return (<MediaQuery minWidth={layout.fullSizeMinWidth}>{isFullSize => {
         const stageSize = resolveStageSize(stageSizeMode, isFullSize);
@@ -319,7 +322,7 @@ const GUIComponent = props => {
                                         <button
                                             className={styles.extensionButton}
                                             title={intl.formatMessage(messages.addExtension)}
-                                            onClick={showExtension}
+                                            onClick={() => onShowExtension(true)}
                                         >
                                             <img
                                                 className={styles.extensionButtonIcon}
@@ -400,13 +403,14 @@ GUIComponent.propTypes = {
     isShared: PropTypes.bool,
     loading: PropTypes.bool,
     logo: PropTypes.string,
+    modalChooseExtensionAlreadyBeenOpened: PropTypes.bool,
+    onShowExtension: PropTypes.func,
     onActivateCostumesTab: PropTypes.func,
     onActivateSoundsTab: PropTypes.func,
     onActivateTab: PropTypes.func,
     onClickAccountNav: PropTypes.func,
     onClickLogo: PropTypes.func,
     onCloseAccountNav: PropTypes.func,
-    showExtension: PropTypes.func,
     onLogOut: PropTypes.func,
     onOpenRegistration: PropTypes.func,
     onRequestCloseBackdropLibrary: PropTypes.func,
@@ -426,6 +430,7 @@ GUIComponent.propTypes = {
     showComingSoon: PropTypes.bool,
     soundsTabVisible: PropTypes.bool,
     stageSizeMode: PropTypes.oneOf(Object.keys(STAGE_SIZE_MODES)),
+    setModalExtensionVisibility: PropTypes.func,
     targetIsStage: PropTypes.bool,
     telemetryModalVisible: PropTypes.bool,
     tipsLibraryVisible: PropTypes.bool,
@@ -457,9 +462,14 @@ const mapStateToProps = state => {
         // This is the button's mode, as opposed to the actual current state
         stageSizeMode: state.scratchGui.stageSize.stageSize,
         projectId: state.scratchGui.projectState.projectId,
+        modalChooseExtensionAlreadyBeenOpened: state.scratchGui.modalChooseExtensionAlreadyBeenOpened
     }
 };
 
+const mapDispatchToProps = dispatch => ({
+    setModalExtensionVisibility: (isOpened) => dispatch(setModalExtension(isOpened)),
+});
+
 export default injectIntl(connect(
-    mapStateToProps
+    mapStateToProps, mapDispatchToProps
 )(GUIComponent));
