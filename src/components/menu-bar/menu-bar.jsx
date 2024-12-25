@@ -67,15 +67,15 @@ import styles from './menu-bar.css';
 
 import helpIcon from '../../lib/assets/icon--tutorials.svg';
 import mystuffIcon from './icon--mystuff.png';
-import profileIcon from './icon--profile.png';
 import remixIcon from './icon--remix.svg';
 import dropdownCaret from './dropdown-caret.svg';
 import languageIcon from '../language-selector/language-icon.svg';
 import aboutIcon from './icon--about.svg';
 
-import scratchLogo from './scratch-logo.svg';
+import siteLogo from './logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
+import { setModalExtension } from '../../reducers/modal-choose-extension.js';
 
 const ariaMessages = defineMessages({
     language: {
@@ -194,6 +194,9 @@ class MenuBar extends React.Component {
             this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
         }
         this.props.onRequestCloseFile();
+        // set modalAlreadyOpened to false so that the modal will show when the new default project renders
+        this.props.setModalExtensionVisibility(false);
+
     }
     handleClickRemix () {
         this.props.onClickRemix();
@@ -390,7 +393,7 @@ class MenuBar extends React.Component {
                     <div className={styles.fileGroup}>
                         <div className={classNames(styles.menuBarItem)}>
                             <img
-                                alt="Scratch"
+                                alt="Map Adventure Lab"
                                 className={classNames(styles.scratchLogo, {
                                     [styles.clickable]: typeof this.props.onClickLogo !== 'undefined'
                                 })}
@@ -530,8 +533,9 @@ class MenuBar extends React.Component {
                             </MenuBarMenu>
                         </div>
                     </div>
-                    <Divider className={classNames(styles.divider)} />
-                    <div
+                    {/* hide the tutorials button for first release */}
+                    {/* <Divider className={classNames(styles.divider)} /> */}
+                    {/* <div
                         aria-label={this.props.intl.formatMessage(ariaMessages.tutorials)}
                         className={classNames(styles.menuBarItem, styles.hoverable)}
                         onClick={this.props.onOpenTipLibrary}
@@ -542,8 +546,9 @@ class MenuBar extends React.Component {
                         />
                         <FormattedMessage {...ariaMessages.tutorials} />
                     </div>
-                    <Divider className={classNames(styles.divider)} />
-                    {this.props.canEditTitle ? (
+                    <Divider className={classNames(styles.divider)} /> */}
+                    {/* hide this code for first release */}
+                    {/* {this.props.canEditTitle ? (
                         <div className={classNames(styles.menuBarItem, styles.growable)}>
                             <MenuBarItemTooltip
                                 enable
@@ -562,8 +567,9 @@ class MenuBar extends React.Component {
                             userId={this.props.authorId}
                             username={this.props.authorUsername}
                         />
-                    ) : null)}
-                    <div className={classNames(styles.menuBarItem)}>
+                    ) : null)} */}
+                    {/* hide share button for first release */}
+                    {/* <div className={classNames(styles.menuBarItem)}>
                         {this.props.canShare ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
                                 <ProjectWatcher onDoneUpdating={this.props.onSeeCommunity}>
@@ -572,11 +578,11 @@ class MenuBar extends React.Component {
                                             <ShareButton
                                                 className={styles.menuBarButton}
                                                 isShared={this.props.isShared}
-                                                /* eslint-disable react/jsx-no-bind */
+                                                // eslint-disable react/jsx-no-bind
                                                 onClick={() => {
                                                     this.handleClickShare(waitForUpdate);
                                                 }}
-                                                /* eslint-enable react/jsx-no-bind */
+                                                // eslint-enable react/jsx-no-bind
                                             />
                                         )
                                     }
@@ -590,8 +596,9 @@ class MenuBar extends React.Component {
                             ) : []
                         )}
                         {this.props.canRemix ? remixButton : []}
-                    </div>
-                    <div className={classNames(styles.menuBarItem, styles.communityButtonWrapper)}>
+                    </div> */}
+                    {/* hide community button for first release */}
+                    {/* <div className={classNames(styles.menuBarItem, styles.communityButtonWrapper)}>
                         {this.props.enableCommunity ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
                                 <ProjectWatcher onDoneUpdating={this.props.onSeeCommunity}>
@@ -599,11 +606,11 @@ class MenuBar extends React.Component {
                                         waitForUpdate => (
                                             <CommunityButton
                                                 className={styles.menuBarButton}
-                                                /* eslint-disable react/jsx-no-bind */
+                                                // eslint-disable react/jsx-no-bind
                                                 onClick={() => {
                                                     this.handleClickSeeCommunity(waitForUpdate);
                                                 }}
-                                                /* eslint-enable react/jsx-no-bind */
+                                                // eslint-enable react/jsx-no-bind
                                             />
                                         )
                                     }
@@ -614,7 +621,7 @@ class MenuBar extends React.Component {
                                 <CommunityButton className={styles.menuBarButton} />
                             </MenuBarItemTooltip>
                         ) : [])}
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* show the proper UI in the account menu, given whether the user is
@@ -728,12 +735,13 @@ class MenuBar extends React.Component {
                                                 styles.accountNavMenu
                                             )}
                                         >
-                                            <img
+                                            {/* hide user icon for first release */}
+                                            {/* <img
                                                 className={styles.profileIcon}
                                                 src={profileIcon}
-                                            />
+                                            /> */}
                                             <span>
-                                                {'scratch-cat'}
+                                                {'username'}
                                             </span>
                                             <img
                                                 className={styles.dropdownCaretIcon}
@@ -821,13 +829,14 @@ MenuBar.propTypes = {
     sessionExists: PropTypes.bool,
     shouldSaveBeforeTransition: PropTypes.func,
     showComingSoon: PropTypes.bool,
+    setModalExtensionVisibility: PropTypes.func,
     userOwnsProject: PropTypes.bool,
     username: PropTypes.string,
     vm: PropTypes.instanceOf(VM).isRequired
 };
 
 MenuBar.defaultProps = {
-    logo: scratchLogo,
+    logo: siteLogo,
     onShare: () => {}
 };
 
@@ -873,7 +882,8 @@ const mapDispatchToProps = dispatch => ({
     onClickRemix: () => dispatch(remixProject()),
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
-    onSeeCommunity: () => dispatch(setPlayer(true))
+    onSeeCommunity: () => dispatch(setPlayer(true)),
+    setModalExtensionVisibility: (isOpened) => dispatch(setModalExtension(isOpened)),
 });
 
 export default compose(
