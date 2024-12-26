@@ -6,8 +6,8 @@ const GET_SESSION = 'GET_SESSION';
 const initialState = {
     session: {
         user: {
-            username: 'Hello Kitty',
-            token: '1234567890',
+            username: '',
+            token: '',
         },
     }
 
