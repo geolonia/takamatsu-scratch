@@ -66,7 +66,7 @@ class GUI extends React.Component {
     }
     fetchUserSessionFromApi() {
         return fetch(
-            'http://localhost:3000/ccm/scratch-api/token'
+            'http://adventure-lab-cms.docker.amazee.io/md/api/auth/refresh', {method: 'POST'}
         )
             .then((response) => {
                 if (!response.ok) {
