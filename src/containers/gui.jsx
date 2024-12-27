@@ -42,6 +42,7 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 import { setModalExtension } from '../reducers/modal-choose-extension.js';
+import { BASE_API_URL } from '../config/constants.js';
 
 class GUI extends React.Component {
     constructor (props) {
@@ -66,7 +67,7 @@ class GUI extends React.Component {
     }
     fetchUserSessionFromApi() {
         return fetch(
-            'http://adventure-lab-cms.docker.amazee.io/md/api/auth/refresh', {method: 'POST'}
+            `${BASE_API_URL}/md/api/auth/refresh`, {method: 'POST'}
         )
             .then((response) => {
                 if (!response.ok) {
