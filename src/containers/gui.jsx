@@ -90,7 +90,7 @@ class GUI extends React.Component {
         if(isFromButtonClick) {
             this.props.showExtension();
         }
-        else if(this.props.projectId === '0' && !this.props.modalChooseExtensionAlreadyBeenOpened) {
+        else if(this.props.projectId === '0' && !this.props.isExtensionModalAlreadyOpened) {
             this.props.setModalExtensionVisibility(true);
             this.props.showExtension();
         }
@@ -148,7 +148,7 @@ GUI.propTypes = {
     isScratchDesktop: PropTypes.bool,
     isShowingProject: PropTypes.bool,
     loadingStateVisible: PropTypes.bool,
-    modalChooseExtensionAlreadyBeenOpened: PropTypes.bool,
+    isExtensionModalAlreadyOpened: PropTypes.bool,
     onProjectLoaded: PropTypes.func,
     onSeeCommunity: PropTypes.func,
     onStorageInit: PropTypes.func,
@@ -190,7 +190,7 @@ const mapStateToProps = state => {
         isRtl: state.locales.isRtl,
         isShowingProject: getIsShowingProject(loadingState),
         loadingStateVisible: state.scratchGui.modals.loadingProject,
-        modalChooseExtensionAlreadyBeenOpened: state.scratchGui.modalChooseExtensionAlreadyBeenOpened,
+        isExtensionModalAlreadyOpened: state.scratchGui.isExtensionModalAlreadyOpened,
         projectId: state.scratchGui.projectState.projectId,
         soundsTabVisible: state.scratchGui.editorTab.activeTabIndex === SOUNDS_TAB_INDEX,
         targetIsStage: (

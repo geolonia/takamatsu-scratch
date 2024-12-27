@@ -99,7 +99,7 @@ class GUIComponent extends React.Component {
             loading,
             logo,
             renderLogin,
-            modalChooseExtensionAlreadyBeenOpened,
+            isExtensionModalAlreadyOpened,
             onClickAbout,
             onClickAccountNav,
             onCloseAccountNav,
@@ -407,7 +407,7 @@ GUIComponent.propTypes = {
     isShared: PropTypes.bool,
     loading: PropTypes.bool,
     logo: PropTypes.string,
-    modalChooseExtensionAlreadyBeenOpened: PropTypes.bool,
+    isExtensionModalAlreadyOpened: PropTypes.bool,
     onShowExtension: PropTypes.func,
     onActivateCostumesTab: PropTypes.func,
     onActivateSoundsTab: PropTypes.func,
@@ -466,7 +466,7 @@ const mapStateToProps = state => {
         // This is the button's mode, as opposed to the actual current state
         stageSizeMode: state.scratchGui.stageSize.stageSize,
         projectId: state.scratchGui.projectState.projectId,
-        modalChooseExtensionAlreadyBeenOpened: state.scratchGui.modalChooseExtensionAlreadyBeenOpened
+        isExtensionModalAlreadyOpened: state.scratchGui.isExtensionModalAlreadyOpened
     }
 };
 
