@@ -49,6 +49,7 @@ class GUI extends React.Component {
         this.handleShowExtension = this.handleShowExtension.bind(this);
     }
     componentDidMount () {
+        this.fetchTokenFromApi();
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
@@ -62,6 +63,28 @@ class GUI extends React.Component {
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded();
         }
+    }
+    fetchTokenFromApi() {
+        // FIXME: replace with api url to get new token
+        return fetch(
+            `${BASE_API_URL}/md/api/auth`, {method: 'GET'}
+        )
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                this.props.onSetSession(data.token);
+            })
+            .catch((error) => {
+                console.error(
+                    'There was a problem with the fetch operation when fetching a token:',
+                    error
+                );
+                this.props.onProjectError(error);
+            });
     }
     handleShowExtension(isFromButtonClick = false) {
         if(isFromButtonClick) {
