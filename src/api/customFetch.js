@@ -36,6 +36,8 @@ const customFetch = async (url) => {
         } else {
             // Redirect to login page
             console.error('Failed to refresh token');
+            // FIXME: check if login page url is correct
+            window.location.href = `${BASE_API_URL}/md/api/login`;
         }
     }
 
