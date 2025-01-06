@@ -42,7 +42,6 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 import { setModalExtension } from '../reducers/modal-choose-extension.js';
-import { BASE_API_URL } from '../config/constants.js';
 
 class GUI extends React.Component {
     constructor (props) {
@@ -50,7 +49,6 @@ class GUI extends React.Component {
         this.handleShowExtension = this.handleShowExtension.bind(this);
     }
     componentDidMount () {
-        this.fetchUserSessionFromApi();
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
@@ -64,27 +62,6 @@ class GUI extends React.Component {
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded();
         }
-    }
-    fetchUserSessionFromApi() {
-        return fetch(
-            `${BASE_API_URL}/md/api/auth/refresh`, {method: 'POST'}
-        )
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                this.props.onSetSession(data.token);
-            })
-            .catch((error) => {
-                console.error(
-                    'There was a problem with the fetch operation when fetching a token:',
-                    error
-                );
-                this.props.onProjectError(error);
-            });
     }
     handleShowExtension(isFromButtonClick = false) {
         if(isFromButtonClick) {
