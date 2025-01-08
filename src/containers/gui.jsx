@@ -39,8 +39,13 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
+import { setModalExtension } from '../reducers/modal-choose-extension.js';
 
 class GUI extends React.Component {
+    constructor (props) {
+        super(props);
+        this.handleShowExtension = this.handleShowExtension.bind(this);
+    }
     componentDidMount () {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
@@ -54,6 +59,15 @@ class GUI extends React.Component {
             // this only notifies container when a project changes from not yet loaded to loaded
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded();
+        }
+    }
+    handleShowExtension(isFromButtonClick = false) {
+        if(isFromButtonClick) {
+            this.props.showExtension();
+        }
+        else if(this.props.projectId === '0' && !this.props.modalChooseExtensionAlreadyBeenOpened) {
+            this.props.setModalExtensionVisibility(true);
+            this.props.showExtension();
         }
     }
     render () {
@@ -75,6 +89,7 @@ class GUI extends React.Component {
             onVmInit,
             projectHost,
             projectId,
+            showExtension,
             /* eslint-enable no-unused-vars */
             children,
             fetchingProject,
@@ -85,6 +100,7 @@ class GUI extends React.Component {
         return (
             <GUIComponent
                 loading={fetchingProject || isLoading || loadingStateVisible}
+                onShowExtension={(open) => this.handleShowExtension(open)}
                 {...componentProps}
             >
                 {children}
@@ -105,6 +121,7 @@ GUI.propTypes = {
     isScratchDesktop: PropTypes.bool,
     isShowingProject: PropTypes.bool,
     loadingStateVisible: PropTypes.bool,
+    modalChooseExtensionAlreadyBeenOpened: PropTypes.bool,
     onProjectLoaded: PropTypes.func,
     onSeeCommunity: PropTypes.func,
     onStorageInit: PropTypes.func,
@@ -112,6 +129,8 @@ GUI.propTypes = {
     onVmInit: PropTypes.func,
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    setModalExtensionVisibility: PropTypes.func,
+    // showExtension: PropTypes.func,
     telemetryModalVisible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired
 };
@@ -142,6 +161,7 @@ const mapStateToProps = state => {
         isRtl: state.locales.isRtl,
         isShowingProject: getIsShowingProject(loadingState),
         loadingStateVisible: state.scratchGui.modals.loadingProject,
+        modalChooseExtensionAlreadyBeenOpened: state.scratchGui.modalChooseExtensionAlreadyBeenOpened,
         projectId: state.scratchGui.projectState.projectId,
         soundsTabVisible: state.scratchGui.editorTab.activeTabIndex === SOUNDS_TAB_INDEX,
         targetIsStage: (
@@ -155,13 +175,14 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    onExtensionButtonClick: () => dispatch(openExtensionLibrary()),
     onActivateTab: tab => dispatch(activateTab(tab)),
     onActivateCostumesTab: () => dispatch(activateTab(COSTUMES_TAB_INDEX)),
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
-    onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal())
+    onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
+    showExtension: () => dispatch(openExtensionLibrary()),
+    setModalExtensionVisibility: (isOpened) => dispatch(setModalExtension(isOpened)),
 });
 
 const ConnectedGUI = injectIntl(connect(

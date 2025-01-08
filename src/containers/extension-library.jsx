@@ -2,26 +2,21 @@ import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
 import VM from 'scratch-vm';
+import {compose} from 'redux';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 
 import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
-
 import LibraryComponent from '../components/library/library.jsx';
 import extensionIcon from '../components/action-menu/icon--sprite.svg';
+import TranslationHOC from '../lib/translation-hoc.jsx';
 
 const messages = defineMessages({
-    extensionTitle: {
-        defaultMessage: 'Choose an Extension',
-        description: 'Heading for the extension library',
-        id: 'gui.extensionLibrary.chooseAnExtension'
-    },
     extensionUrl: {
         defaultMessage: 'Enter the URL of the extension',
         description: 'Prompt for unoffical extension url',
         id: 'gui.extensionLibrary.extensionUrl'
     }
 });
-
 class ExtensionLibrary extends React.PureComponent {
     constructor (props) {
         super(props);
@@ -56,7 +51,7 @@ class ExtensionLibrary extends React.PureComponent {
                 data={extensionLibraryThumbnailData}
                 filterable={false}
                 id="extensionLibrary"
-                title={this.props.intl.formatMessage(messages.extensionTitle)}
+                title={this.props.messagesTranslation.chooseExtensionModalTitle || ""}
                 visible={this.props.visible}
                 onItemSelected={this.handleItemSelect}
                 onRequestClose={this.props.onRequestClose}
@@ -67,10 +62,11 @@ class ExtensionLibrary extends React.PureComponent {
 
 ExtensionLibrary.propTypes = {
     intl: intlShape.isRequired,
+    messagesTranslation: PropTypes.object,
     onCategorySelected: PropTypes.func,
     onRequestClose: PropTypes.func,
     visible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired // eslint-disable-line react/no-unused-prop-types
 };
 
-export default injectIntl(ExtensionLibrary);
+export default compose(injectIntl, TranslationHOC)(ExtensionLibrary);
