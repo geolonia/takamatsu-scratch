@@ -1,6 +1,7 @@
 import queryString from 'query-string';
 import xhr from 'xhr';
 import storage from '../lib/storage';
+import { BASE_API_URL } from '../utils/constants';
 
 /**
  * Save a project JSON to the project server.
@@ -14,14 +15,18 @@ import storage from '../lib/storage';
  * @property {?string} params.title the title of the project.
  * @return {Promise} A promise that resolves when the network request resolves.
  */
-export default function (projectId, vmState, params) {
+export default function (projectId, vmState, params, projectTitle) {
     const opts = {
-        body: vmState,
+        body: JSON.stringify({
+            file: vmState,
+            name: projectTitle,
+        }),
         // If we set json:true then the body is double-stringified, so don't
+        // FIXME: pass token to authorization header
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer 123`
         },
-        withCredentials: false // FIXME: check if this should be true
     };
     const creatingProject = projectId === null || typeof projectId === 'undefined';
     const queryParams = {};
@@ -39,7 +44,7 @@ export default function (projectId, vmState, params) {
     } else {
         Object.assign(opts, {
             method: 'put',
-            url: `${storage.projectHost}/${projectId}${qs}`
+            url: `${BASE_API_URL}/projects/${projectId}`
         });
     }
     return new Promise((resolve, reject) => {

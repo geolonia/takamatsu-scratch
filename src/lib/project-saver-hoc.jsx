@@ -226,7 +226,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
             // serialized project refers to a newer asset than what
             // we just finished saving).
             const savedVMState = this.props.vm.toJSON();
-            return this.props.onUpdateProjectData(projectId, savedVMState, requestParams)
+            return this.props.onUpdateProjectData(projectId, savedVMState, requestParams, this.props.reduxProjectTitle)
                 .then(response => {
                     this.props.onSetProjectUnchanged();
                     const id = response.id.toString();
