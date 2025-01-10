@@ -5,6 +5,7 @@ import {FormattedMessage} from 'react-intl';
 
 import styles from './crash-message.css';
 import reloadIcon from './reload.svg';
+import { BASE_API_URL } from '../../utils/constants.js';
 
 const CrashMessage = props => (
     <div className={styles.crashWrapper}>
@@ -20,15 +21,6 @@ const CrashMessage = props => (
                     id="gui.crashMessage.label"
                 />
             </h2>
-            <p>
-                <FormattedMessage
-                    defaultMessage={'We are so sorry, but it looks like Scratch has crashed. This bug has been' +
-                        ' automatically reported to the Scratch Team. Please refresh your page to try' +
-                        ' again.'}
-                    description="Message to inform the user that page has crashed."
-                    id="gui.crashMessage.description"
-                />
-            </p>
             {props.eventId && (
                 <p>
                     <FormattedMessage
@@ -41,16 +33,7 @@ const CrashMessage = props => (
                     />
                 </p>
             )}
-            <button
-                className={styles.reloadButton}
-                onClick={props.onReload}
-            >
-                <FormattedMessage
-                    defaultMessage="Reload"
-                    description="Button to reload the page when page crashes"
-                    id="gui.crashMessage.reload"
-                />
-            </button>
+            <a href={`${BASE_API_URL}/`} className={styles.textLink}>Go back to project list</a>
         </Box>
     </div>
 );
