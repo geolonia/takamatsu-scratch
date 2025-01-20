@@ -244,7 +244,13 @@ const reducer = function (state, action) {
                     projectId: action.projectId
                 });
             }
-        } else { // allow any other states to transition to fetching project
+        } else if(state.loadingState === LoadingState.MANUAL_UPDATING){
+            // console.log('[cai no manual]', );
+            return Object.assign({}, state, {
+                // loadingState: LoadingState.FETCHING_NEW_DEFAULT,
+                projectId: action.projectId
+            });
+        }  else { // allow any other states to transition to fetching project
             // if setting the default project id, specifically fetch that project
             if (action.projectId === defaultProjectId || action.projectId === null) {
                 return Object.assign({}, state, {
@@ -295,12 +301,9 @@ const reducer = function (state, action) {
         }
         return state;
     case START_MANUAL_UPDATING:
-        if (state.loadingState === LoadingState.SHOWING_WITH_ID) {
-            return Object.assign({}, state, {
-                loadingState: LoadingState.MANUAL_UPDATING
-            });
-        }
-        return state;
+        return Object.assign({}, state, {
+            loadingState: LoadingState.MANUAL_UPDATING
+        });
     case START_REMIXING:
         if (state.loadingState === LoadingState.SHOWING_WITH_ID) {
             return Object.assign({}, state, {

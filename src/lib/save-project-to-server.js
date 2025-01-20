@@ -17,18 +17,19 @@ import { BASE_API_URL } from '../utils/constants';
  */
 export default function (projectId, vmState, params, projectTitle) {
     const opts = {
-        body: JSON.stringify({
-            file: vmState,
-            name: projectTitle,
-        }),
-        // If we set json:true then the body is double-stringified, so don't
-        // FIXME: pass token to authorization header
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer 123`
-        },
+        // FIXME: uncomment when we have a real endpoint
+        // body: JSON.stringify({
+        //     file: vmState,
+        //     name: projectTitle,
+        // }),
+        // // If we set json:true then the body is double-stringified, so don't
+        // // FIXME: pass token to authorization header
+        // headers: {
+        //     'Content-Type': 'application/json',
+        //     'Authorization': `Bearer 123`
+        // },
     };
-    const creatingProject = projectId === null || typeof projectId === 'undefined';
+    const creatingProject = projectId === null || typeof projectId === 'undefined' || projectId === '0';
     const queryParams = {};
     if (params.hasOwnProperty('originalId')) queryParams.original_id = params.originalId;
     if (params.hasOwnProperty('isCopy')) queryParams.is_copy = params.isCopy;
@@ -39,18 +40,20 @@ export default function (projectId, vmState, params, projectTitle) {
     if (creatingProject) {
         Object.assign(opts, {
             method: 'post',
-            url: `${storage.projectHost}/${qs}`
+            url: `http://localhost:3000/md/api/projects`
+            // url: `${storage.projectHost}/${qs}`
         });
     } else {
         Object.assign(opts, {
             method: 'put',
-            url: `${BASE_API_URL}/projects/${projectId}`
+            url: `http://localhost:3000/md/api/projects/${projectId}${qs}`
+            // url: `${BASE_API_URL}/projects/${projectId}`
         });
     }
     return new Promise((resolve, reject) => {
         xhr(opts, (err, response) => {
             if (err) return reject(err);
-            if (response.statusCode !== 200) return reject(response.statusCode);
+            if (response.statusCode !== 200 && response.statusCode !== 201) return reject(response.statusCode);
             let body;
             try {
                 // Since we didn't set json: true, we have to parse manually
@@ -58,10 +61,10 @@ export default function (projectId, vmState, params, projectTitle) {
             } catch (e) {
                 return reject(e);
             }
-            body.id = projectId;
-            if (creatingProject) {
-                body.id = body['content-name'];
-            }
+            // body.id = projectId;
+            // if (creatingProject) {
+            //     body.id = body['content-name'];
+            // }
             resolve(body);
         });
     });
