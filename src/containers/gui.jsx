@@ -42,6 +42,7 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 import { setModalExtension } from '../reducers/modal-choose-extension.js';
+import { BASE_API_URL } from '../utils/constants.js';
 
 class GUI extends React.Component {
     constructor (props) {
@@ -65,7 +66,6 @@ class GUI extends React.Component {
         }
     }
     fetchTokenFromApi() {
-        // FIXME: replace with api url to get new token
         return fetch(
             `${BASE_API_URL}/md/api/auth`, {method: 'GET'}
         )

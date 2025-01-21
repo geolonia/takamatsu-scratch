@@ -1,1 +1,1 @@
-export const BASE_API_URL = "http://adventure-lab-cms.docker.amazee.io";
+export const BASE_API_URL = "http://chizubouken-lab.jp/";

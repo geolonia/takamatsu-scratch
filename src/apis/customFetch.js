@@ -4,7 +4,6 @@ import BASE_API_URL from '../utils/constants';
 
 const customFetch = async (url) => {
     const token = store.getState().session.token;
-    console.log('[token]', token);
     const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
@@ -28,7 +27,7 @@ const customFetch = async (url) => {
             const data = await refreshResponse.json();
             store.dispatch(setSession(data.token));
 
-            // Repetir a requisição original com o novo token
+            // repeat the original request with the new token
             headers['Authorization'] = `Bearer ${data.token}`;
             return fetch(url, {
                 headers
@@ -36,7 +35,6 @@ const customFetch = async (url) => {
         } else {
             // Redirect to login page
             console.error('Failed to refresh token');
-            // FIXME: check if login page url is correct
             window.location.href = `${BASE_API_URL}/md/api/login`;
         }
     }
