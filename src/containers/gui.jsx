@@ -40,6 +40,7 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
+import { BASE_API_URL } from '../utils/constants.js';
 
 class GUI extends React.Component {
     componentDidMount () {
@@ -61,7 +62,7 @@ class GUI extends React.Component {
     }
     getSpritesFromApi () {
         return fetch(
-            'http://localhost:3000/ccm/scratch-api/sprites'
+            `${BASE_API_URL}/md/api/sprites`
         )
             .then((response) => {
                 if (!response.ok) {
@@ -81,7 +82,7 @@ class GUI extends React.Component {
     }
     getCostumesFromApi () {
         return fetch(
-            'http://localhost:3000/ccm/scratch-api/costumes'
+            `${BASE_API_URL}/md/api/costumes`
         )
             .then((response) => {
                 if (!response.ok) {
