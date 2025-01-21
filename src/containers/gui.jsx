@@ -41,8 +41,13 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 import { BASE_API_URL } from '../utils/constants.js';
+import { setModalExtension } from '../reducers/modal-choose-extension.js';
 
 class GUI extends React.Component {
+    constructor (props) {
+        super(props);
+        this.handleShowExtension = this.handleShowExtension.bind(this);
+    }
     componentDidMount () {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
@@ -99,6 +104,15 @@ class GUI extends React.Component {
                     error
                 );
             });
+        }
+    handleShowExtension(isFromButtonClick = false) {
+        if(isFromButtonClick) {
+            this.props.showExtension();
+        }
+        else if(this.props.projectId === '0' && !this.props.modalChooseExtensionAlreadyBeenOpened) {
+            this.props.setModalExtensionVisibility(true);
+            this.props.showExtension();
+        }
     }
     render () {
         if (this.props.isError) {
@@ -121,6 +135,7 @@ class GUI extends React.Component {
             onSetCostumes,
             projectHost,
             projectId,
+            showExtension,
             /* eslint-enable no-unused-vars */
             children,
             fetchingProject,
@@ -131,6 +146,7 @@ class GUI extends React.Component {
         return (
             <GUIComponent
                 loading={fetchingProject || isLoading || loadingStateVisible}
+                onShowExtension={(open) => this.handleShowExtension(open)}
                 {...componentProps}
             >
                 {children}
@@ -151,6 +167,7 @@ GUI.propTypes = {
     isScratchDesktop: PropTypes.bool,
     isShowingProject: PropTypes.bool,
     loadingStateVisible: PropTypes.bool,
+    modalChooseExtensionAlreadyBeenOpened: PropTypes.bool,
     onProjectLoaded: PropTypes.func,
     onSeeCommunity: PropTypes.func,
     onStorageInit: PropTypes.func,
@@ -160,6 +177,8 @@ GUI.propTypes = {
     onSetCostumes: PropTypes.func,
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    setModalExtensionVisibility: PropTypes.func,
+    // showExtension: PropTypes.func,
     telemetryModalVisible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired
 };
@@ -190,6 +209,7 @@ const mapStateToProps = state => {
         isRtl: state.locales.isRtl,
         isShowingProject: getIsShowingProject(loadingState),
         loadingStateVisible: state.scratchGui.modals.loadingProject,
+        modalChooseExtensionAlreadyBeenOpened: state.scratchGui.modalChooseExtensionAlreadyBeenOpened,
         projectId: state.scratchGui.projectState.projectId,
         soundsTabVisible: state.scratchGui.editorTab.activeTabIndex === SOUNDS_TAB_INDEX,
         targetIsStage: (
@@ -203,7 +223,6 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    onExtensionButtonClick: () => dispatch(openExtensionLibrary()),
     onActivateTab: tab => dispatch(activateTab(tab)),
     onActivateCostumesTab: () => dispatch(activateTab(COSTUMES_TAB_INDEX)),
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
@@ -212,6 +231,8 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
     onSetSprites: (sprites) => dispatch(setSprites(sprites)),
     onSetCostumes: (costumes) => dispatch(setCostumes(costumes)),
+    showExtension: () => dispatch(openExtensionLibrary()),
+    setModalExtensionVisibility: (isOpened) => dispatch(setModalExtension(isOpened)),
 });
 
 const ConnectedGUI = injectIntl(connect(
