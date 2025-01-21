@@ -1,6 +1,7 @@
 import ScratchStorage from 'scratch-storage';
 
 import defaultProject from './default-project';
+import { BASE_API_URL } from '../utils/constants';
 
 /**
  * Wrapper for ScratchStorage which adds default web sources.
@@ -54,7 +55,7 @@ class Storage extends ScratchStorage {
         this.assetHost = assetHost;
     }
     getAssetGetConfig (asset) {
-        return `http://localhost:3000/image/${asset.assetId}.${asset.dataFormat}`;
+        return `${BASE_API_URL}/md/api/assets/${asset.assetId}.${asset.dataFormat}`;
     }
     getAssetCreateConfig (asset) {
         return {
