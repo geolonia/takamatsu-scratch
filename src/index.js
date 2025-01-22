@@ -5,6 +5,7 @@ import LocalesReducer, {localesInitialState, initLocale} from './reducers/locale
 import AssetsReducer, { assetsInitialState } from "./reducers/assets.js";
 import {ScratchPaintReducer} from 'scratch-paint';
 import {setFullScreen, setPlayer} from './reducers/mode';
+import SessionReducer, { sessionInitialState } from "./reducers/session.js";
 import {remixProject} from './reducers/project-state';
 import {setAppElement} from 'react-modal';
 
@@ -12,7 +13,8 @@ const guiReducers = {
     locales: LocalesReducer,
     scratchGui: GuiReducer,
     scratchPaint: ScratchPaintReducer,
-    assets: AssetsReducer
+    assets: AssetsReducer,
+    session: SessionReducer,
 };
 
 export {
@@ -28,6 +30,7 @@ export {
     initLocale,
     localesInitialState,
     assetsInitialState,
+    sessionInitialState,
     remixProject,
     setFullScreen,
     setPlayer
