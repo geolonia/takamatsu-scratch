@@ -38,7 +38,7 @@ const setCostumes = function (costumes) {
 
 export {
     reducer as default,
-    initialState as sessionInitialState,
+    initialState as assetsInitialState,
     setSprites,
     setCostumes
 };

@@ -1,45 +1,46 @@
-import store from '';
-import { setSession } from './reducers/session'
-import BASE_API_URL from '../utils/constants';
+import refreshToken from './refreshToken';
+import xhr from 'xhr';
 
-const customFetch = async (url) => {
-    const token = store.getState().session.token;
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-    };
-
-    const response = await fetch(url, {
-        headers
-    });
-
-    if (response.status === 401) {
-        // Token is expired, try to refresh it
-        const refreshResponse = await fetch(`${BASE_API_URL}/md/api/auth/refresh`, {
-            method: 'POST',
+export default function customFetch (url, method, token, onSetSession) {
+    const options = {
+            method: method,
+            url: url,
             headers: {
-                'Content-Type': 'application/json',
-                header: `Bearer ${token}`
-            },
-        });
-
-        if (refreshResponse.ok) {
-            const data = await refreshResponse.json();
-            store.dispatch(setSession(data.token));
-
-            // repeat the original request with the new token
-            headers['Authorization'] = `Bearer ${data.token}`;
-            return fetch(url, {
-                headers
-            });
-        } else {
-            // Redirect to login page
-            console.error('Failed to refresh token');
-            window.location.href = `${BASE_API_URL}/md/api/login`;
-        }
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
     }
+    return new Promise((resolve, reject) => {
+        xhr(options, (err, response) => {
+            if (err) {
+                return reject(err);
+            }
+            if (response.statusCode === 401) {
+                // token expired, try to refresh it
+                try {
+                    refreshToken(token).then((newToken) => {
+                        onSetSession(newToken);
+                        // repeat request with new token
+                        options.headers['Authorization'] = `Bearer ${newToken}`;
+                        return xhr(options, (err, response) => {
+                            if (err) {
+                                return reject(err);
+                            }
+                            if (response.statusCode !== 200 && response.statusCode !== 201) {
+                                return reject(new Error(`Request to refresh token failed: ${response.statusCode}`));
+                            }
+                            resolve(JSON.parse(response.body));
+                        });
+                    });
 
-    return response;
+                } catch (tokenError) {
+                    return reject(tokenError);
+                }
+            } else if (response.statusCode !== 200 && response.statusCode !== 201) {
+                return reject(new Error(`Request failed: ${response.statusCode}`));
+            } else {
+                resolve(JSON.parse(response.body));
+            }
+        });
+    });
 };
-
-export default customFetch;

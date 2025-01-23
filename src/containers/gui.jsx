@@ -44,6 +44,7 @@ import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 import { BASE_API_URL } from '../utils/constants.js';
 import { setModalExtension } from '../reducers/modal-choose-extension.js';
+import customFetch from '../apis/customFetch.js';
 
 class GUI extends React.Component {
     constructor (props) {
@@ -55,8 +56,6 @@ class GUI extends React.Component {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
-        this.getSpritesFromApi();
-        this.getCostumesFromApi();
     }
     componentDidUpdate (prevProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
@@ -66,6 +65,10 @@ class GUI extends React.Component {
             // this only notifies container when a project changes from not yet loaded to loaded
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded();
+        }
+        if(this.props.token !== prevProps.token){
+            this.getSpritesFromApi();
+            this.getCostumesFromApi();
         }
     }
     fetchTokenFromApi() {
@@ -90,19 +93,11 @@ class GUI extends React.Component {
             });
     }
     getSpritesFromApi () {
-        return fetch(
-            `${BASE_API_URL}/md/api/sprites`
-        )
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
+        this.props.onCustomFetch(`${BASE_API_URL}/md/api/sprites`, 'GET', this.props.token, this.props.onSetSession)
+            .then(response => {
+                this.props.onSetSprites(response);
             })
-            .then((data) => {
-                this.props.onSetSprites(data);
-            })
-            .catch((error) => {
+            .catch(error => {
                 console.error(
                     'There was a problem fetching the sprites:',
                     error
@@ -110,19 +105,11 @@ class GUI extends React.Component {
             });
     }
     getCostumesFromApi () {
-        return fetch(
-            `${BASE_API_URL}/md/api/costumes`
-        )
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
+        this.props.onCustomFetch(`${BASE_API_URL}/md/api/costumes`, 'GET', this.props.token, this.props.onSetSession)
+            .then(response => {
+                this.props.onSetCostumes(response);
             })
-            .then((data) => {
-                this.props.onSetCostumes(data);
-            })
-            .catch((error) => {
+            .catch(error => {
                 console.error(
                     'There was a problem fetching the costumes:',
                     error
@@ -159,6 +146,7 @@ class GUI extends React.Component {
             onSetCostumes,
             onSetSession,
             onProjectError,
+            onCustomFetch,
             projectHost,
             projectId,
             showExtension,
@@ -203,12 +191,14 @@ GUI.propTypes = {
     onSetCostumes: PropTypes.func,
     onSetSession: PropTypes.func,
     onProjectError: PropTypes.func,
+    onCustomFetch: PropTypes.func.isRequired,
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     setModalExtensionVisibility: PropTypes.func,
     // showExtension: PropTypes.func,
     telemetryModalVisible: PropTypes.bool,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    token: PropTypes.string
 };
 
 GUI.defaultProps = {
@@ -216,7 +206,8 @@ GUI.defaultProps = {
     onStorageInit: storageInstance => storageInstance.addOfficialScratchWebStores(),
     onProjectLoaded: () => {},
     onUpdateProjectId: () => {},
-    onVmInit: (/* vm */) => {}
+    onVmInit: (/* vm */) => {},
+    onCustomFetch: customFetch,
 };
 
 const mapStateToProps = state => {
@@ -246,7 +237,8 @@ const mapStateToProps = state => {
         ),
         telemetryModalVisible: state.scratchGui.modals.telemetryModal,
         tipsLibraryVisible: state.scratchGui.modals.tipsLibrary,
-        vm: state.scratchGui.vm
+        vm: state.scratchGui.vm,
+        token: state.session.session.token
     };
 };
 
