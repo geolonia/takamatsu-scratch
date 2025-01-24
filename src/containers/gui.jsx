@@ -73,7 +73,7 @@ class GUI extends React.Component {
     }
     fetchTokenFromApi() {
         return fetch(
-            `${BASE_API_URL}/md/api/auth`, {method: 'GET'}
+            `${BASE_API_URL}/md/api/auth/token`, {method: 'GET'}
         )
             .then((response) => {
                 if (!response.ok) {

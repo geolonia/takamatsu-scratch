@@ -1,1 +1,1 @@
-export const BASE_API_URL = "http://chizubouken-lab.jp";
+export const BASE_API_URL = "https://chizubouken-lab.jp";
