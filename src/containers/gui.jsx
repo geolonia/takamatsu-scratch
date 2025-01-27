@@ -9,7 +9,8 @@ import {injectIntl, intlShape} from 'react-intl';
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import {
     getIsError,
-    getIsShowingProject
+    getIsShowingProject,
+    projectError
 } from '../reducers/project-state';
 import {
     activateTab,
@@ -24,6 +25,7 @@ import {
     closeTelemetryModal,
     openExtensionLibrary
 } from '../reducers/modals';
+import { setSession } from "../reducers/session.js";
 
 import FontLoaderHOC from '../lib/font-loader-hoc.jsx';
 import LocalizationHOC from '../lib/localization-hoc.jsx';
@@ -40,6 +42,7 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 import { setModalExtension } from '../reducers/modal-choose-extension.js';
+import { BASE_API_URL } from '../utils/constants.js';
 
 class GUI extends React.Component {
     constructor (props) {
@@ -47,6 +50,7 @@ class GUI extends React.Component {
         this.handleShowExtension = this.handleShowExtension.bind(this);
     }
     componentDidMount () {
+        this.fetchTokenFromApi();
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
@@ -61,11 +65,32 @@ class GUI extends React.Component {
             this.props.onProjectLoaded();
         }
     }
+    fetchTokenFromApi() {
+        return fetch(
+            `${BASE_API_URL}/md/api/auth`, {method: 'GET'}
+        )
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                this.props.onSetSession(data.token);
+            })
+            .catch((error) => {
+                console.error(
+                    'There was a problem with the fetch operation when fetching a token:',
+                    error
+                );
+                this.props.onProjectError(error);
+            });
+    }
     handleShowExtension(isFromButtonClick = false) {
         if(isFromButtonClick) {
             this.props.showExtension();
         }
-        else if(this.props.projectId === '0' && !this.props.modalChooseExtensionAlreadyBeenOpened) {
+        else if(this.props.projectId === '0' && !this.props.isExtensionModalAlreadyOpened) {
             this.props.setModalExtensionVisibility(true);
             this.props.showExtension();
         }
@@ -87,6 +112,8 @@ class GUI extends React.Component {
             onStorageInit,
             onUpdateProjectId,
             onVmInit,
+            onSetSession,
+            onProjectError,
             projectHost,
             projectId,
             showExtension,
@@ -121,12 +148,14 @@ GUI.propTypes = {
     isScratchDesktop: PropTypes.bool,
     isShowingProject: PropTypes.bool,
     loadingStateVisible: PropTypes.bool,
-    modalChooseExtensionAlreadyBeenOpened: PropTypes.bool,
+    isExtensionModalAlreadyOpened: PropTypes.bool,
     onProjectLoaded: PropTypes.func,
     onSeeCommunity: PropTypes.func,
     onStorageInit: PropTypes.func,
     onUpdateProjectId: PropTypes.func,
     onVmInit: PropTypes.func,
+    onSetSession: PropTypes.func,
+    onProjectError: PropTypes.func,
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     setModalExtensionVisibility: PropTypes.func,
@@ -161,7 +190,7 @@ const mapStateToProps = state => {
         isRtl: state.locales.isRtl,
         isShowingProject: getIsShowingProject(loadingState),
         loadingStateVisible: state.scratchGui.modals.loadingProject,
-        modalChooseExtensionAlreadyBeenOpened: state.scratchGui.modalChooseExtensionAlreadyBeenOpened,
+        isExtensionModalAlreadyOpened: state.scratchGui.isExtensionModalAlreadyOpened,
         projectId: state.scratchGui.projectState.projectId,
         soundsTabVisible: state.scratchGui.editorTab.activeTabIndex === SOUNDS_TAB_INDEX,
         targetIsStage: (
@@ -181,6 +210,8 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
+    onSetSession: (token) => dispatch(setSession(token)),
+    onProjectError: error => dispatch(projectError(error)),
     showExtension: () => dispatch(openExtensionLibrary()),
     setModalExtensionVisibility: (isOpened) => dispatch(setModalExtension(isOpened)),
 });

@@ -4,13 +4,15 @@ import GuiReducer, {guiInitialState, guiMiddleware, initEmbedded, initFullScreen
 import LocalesReducer, {localesInitialState, initLocale} from './reducers/locales';
 import {ScratchPaintReducer} from 'scratch-paint';
 import {setFullScreen, setPlayer} from './reducers/mode';
+import SessionReducer, { sessionInitialState } from "./reducers/session.js";
 import {remixProject} from './reducers/project-state';
 import {setAppElement} from 'react-modal';
 
 const guiReducers = {
     locales: LocalesReducer,
     scratchGui: GuiReducer,
-    scratchPaint: ScratchPaintReducer
+    scratchPaint: ScratchPaintReducer,
+    session: SessionReducer,
 };
 
 export {
@@ -25,6 +27,7 @@ export {
     initFullScreen,
     initLocale,
     localesInitialState,
+    sessionInitialState,
     remixProject,
     setFullScreen,
     setPlayer
