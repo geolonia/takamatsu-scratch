@@ -1,3 +1,4 @@
+import { BASE_API_URL } from '../utils/constants';
 import refreshToken from './refreshToken';
 import xhr from 'xhr';
 
@@ -27,7 +28,8 @@ export default function customFetch (url, method, token, onSetSession) {
                                 return reject(err);
                             }
                             if (response.statusCode !== 200 && response.statusCode !== 201) {
-                                return reject(new Error(`Request to refresh token failed: ${response.statusCode}`));
+                                // redirect to login page because retry failed
+                                window.location.href = `${BASE_API_URL}/login`;
                             }
                             resolve(JSON.parse(response.body));
                         });

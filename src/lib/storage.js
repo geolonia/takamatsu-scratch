@@ -55,7 +55,15 @@ class Storage extends ScratchStorage {
         this.assetHost = assetHost;
     }
     getAssetGetConfig (asset) {
-        return `${BASE_API_URL}/md/api/assets/${asset.assetId}.${asset.dataFormat}`;
+        const mockToken = 'mock-token-luane'; // FIXME
+        return {
+            method: 'GET',
+            url: `${BASE_API_URL}/md/api/assets/${asset.assetId}.${asset.dataFormat}`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${mockToken}`,
+            }
+        };
     }
     getAssetCreateConfig (asset) {
         return {
