@@ -52,7 +52,6 @@ class GUI extends React.Component {
         this.handleShowExtension = this.handleShowExtension.bind(this);
     }
     componentDidMount () {
-        this.fetchTokenFromApi();
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
@@ -70,27 +69,6 @@ class GUI extends React.Component {
             this.getSpritesFromApi();
             this.getCostumesFromApi();
         }
-    }
-    fetchTokenFromApi() {
-        return fetch(
-            `${BASE_API_URL}/md/api/auth/token`, {method: 'GET'}
-        )
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                this.props.onSetSession(data.token);
-            })
-            .catch((error) => {
-                console.error(
-                    'There was a problem with the fetch operation when fetching a token:',
-                    error
-                );
-                this.props.onProjectError(error);
-            });
     }
     getSpritesFromApi () {
         this.props.onCustomFetch(`${BASE_API_URL}/md/api/sprites`, 'GET', this.props.token, this.props.onSetSession)
