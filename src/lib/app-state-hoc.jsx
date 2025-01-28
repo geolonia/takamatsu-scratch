@@ -14,6 +14,11 @@ import {detectLocale} from './detect-locale';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+let initialState = {};
+let reducers = {};
+let enhancer;
+let store;
+
 /*
  * Higher Order Component to provide redux state. If an `intl` prop is provided
  * it will override the internal `intl` redux state
@@ -27,9 +32,6 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
     class AppStateWrapper extends React.Component {
         constructor (props) {
             super(props);
-            let initialState = {};
-            let reducers = {};
-            let enhancer;
 
             let initializedLocales = localesInitialState;
             const locale = detectLocale(Object.keys(locales));
@@ -83,7 +85,7 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                 enhancer = composeEnhancers(guiMiddleware);
             }
             const reducer = combineReducers(reducers);
-            this.store = createStore(
+            store = createStore(
                 reducer,
                 initialState,
                 enhancer
@@ -92,10 +94,10 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
         componentDidUpdate (prevProps) {
             if (localesOnly) return;
             if (prevProps.isPlayerOnly !== this.props.isPlayerOnly) {
-                this.store.dispatch(setPlayer(this.props.isPlayerOnly));
+                store.dispatch(setPlayer(this.props.isPlayerOnly));
             }
             if (prevProps.isFullScreen !== this.props.isFullScreen) {
-                this.store.dispatch(setFullScreen(this.props.isFullScreen));
+                store.dispatch(setFullScreen(this.props.isFullScreen));
             }
         }
         render () {
@@ -107,7 +109,7 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                 ...componentProps
             } = this.props;
             return (
-                <Provider store={this.store}>
+                <Provider store={store}>
                     <ConnectedIntlProvider>
                         <WrappedComponent
                             {...componentProps}
@@ -127,3 +129,4 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
 };
 
 export default AppStateHOC;
+export {store};

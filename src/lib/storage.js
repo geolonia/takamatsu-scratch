@@ -2,6 +2,7 @@ import ScratchStorage from 'scratch-storage';
 
 import defaultProject from './default-project';
 import { BASE_API_URL } from '../utils/constants';
+import getToken from '../utils/getToken';
 
 /**
  * Wrapper for ScratchStorage which adds default web sources.
@@ -55,14 +56,14 @@ class Storage extends ScratchStorage {
         this.assetHost = assetHost;
     }
     getAssetGetConfig (asset) {
-        const mockToken = 'mock-token-luane'; // FIXME
+        const token = getToken();
         return {
             method: 'GET',
             url: `${BASE_API_URL}/md/api/assets/${asset.assetId}.${asset.dataFormat}`,
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${mockToken}`,
-            }
+                'Authorization': `Bearer ${token}`,
+            },
         };
     }
     getAssetCreateConfig (asset) {
