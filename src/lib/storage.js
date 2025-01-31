@@ -1,11 +1,14 @@
 import ScratchStorage from 'scratch-storage';
 
 import defaultProject from './default-project';
+import { BASE_API_URL } from '../utils/constants';
+import getToken from '../utils/getToken.js';
 
 /**
  * Wrapper for ScratchStorage which adds default web sources.
  * @todo make this more configurable
  */
+
 class Storage extends ScratchStorage {
     constructor () {
         super();
@@ -36,27 +39,53 @@ class Storage extends ScratchStorage {
         this.projectHost = projectHost;
     }
     getProjectGetConfig (projectAsset) {
-        return `${this.projectHost}/${projectAsset.assetId}`;
+        const token = getToken(); // TODO: refactor this code to avoid repetition
+        return {
+            url: `${this.projectHost}/${projectAsset.assetId}`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
+        }
     }
     getProjectCreateConfig () {
+        const token = getToken();
         return {
             url: `${this.projectHost}/`,
-            withCredentials: true
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
+            // withCredentials: true
         };
     }
     getProjectUpdateConfig (projectAsset) {
+        const token = getToken();
         return {
             url: `${this.projectHost}/${projectAsset.assetId}`,
-            withCredentials: true
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
+            // withCredentials: true
         };
     }
     setAssetHost (assetHost) {
         this.assetHost = assetHost;
     }
     getAssetGetConfig (asset) {
-        return `${this.assetHost}/internalapi/asset/${asset.assetId}.${asset.dataFormat}/get/`;
+        const token = getToken();
+        return {
+            method: 'GET',
+            url: `${BASE_API_URL}/md/api/assets/${asset.assetId}.${asset.dataFormat}`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        };
     }
     getAssetCreateConfig (asset) {
+        const token = getToken();
         return {
             // There is no such thing as updating assets, but storage assumes it
             // should update if there is an assetId, and the asset store uses the
@@ -64,7 +93,11 @@ class Storage extends ScratchStorage {
             // Then when storage finds this config to use for the "update", still POSTs
             method: 'post',
             url: `${this.assetHost}/${asset.assetId}.${asset.dataFormat}`,
-            withCredentials: true
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
+            // withCredentials: true
         };
     }
     setTranslatorFunction (translator) {

@@ -40,13 +40,13 @@ export default function (projectId, vmState, params, projectTitle) {
     if (creatingProject) {
         Object.assign(opts, {
             method: 'post',
-            url: `http://localhost:3000/md/api/projects`
+            // url: `${BASE_API_URL}/md/api/projects`
             // url: `${storage.projectHost}/${qs}`
         });
     } else {
         Object.assign(opts, {
             method: 'put',
-            url: `http://localhost:3000/md/api/projects/${projectId}${qs}`
+            // url: `${BASE_API_URL}/md/api/projects/${projectId}${qs}`
             // url: `${BASE_API_URL}/projects/${projectId}`
         });
     }

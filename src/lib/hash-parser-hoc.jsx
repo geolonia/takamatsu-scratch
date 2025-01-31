@@ -9,7 +9,7 @@ import {
     projectError,
     setProjectId
 } from '../reducers/project-state';
-import { BASE_API_URL } from '../utils/constants';
+import { BASE_API_URL, BASE_API_URL_LOCAL } from '../utils/constants';
 import { setSession } from '../reducers/session';
 
 /* Higher Order Component to get the project id from location.hash
@@ -26,9 +26,9 @@ const HashParserHOC = function (WrappedComponent) {
         }
         componentDidMount () {
             window.addEventListener('hashchange', this.handleHashChange);
-            // FIXME: remove it before opening PR
+            // FIXME: remove this mock
             window.addEventListener('load', () => {
-                window.location.hash = '/projects/123'
+                window.location.hash = '/projects/1'
             });
             this.handleHashChange();
             this.fetchTokenFromApi();
@@ -50,7 +50,8 @@ const HashParserHOC = function (WrappedComponent) {
             this.props.setProjectId(hashProjectId.toString());
         }
         fetchTokenFromApi() {
-            const mockUserId = 1; // FIXME: this code is temporary
+            // FIXME: this code is temporary
+            const mockUserId = 1;
             return fetch(
                 `${BASE_API_URL}/md/api/auth/token?userId=${mockUserId}`, {method: 'GET'}
             )

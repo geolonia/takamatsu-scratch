@@ -22,6 +22,7 @@ import {
 
 import log from './log';
 import storage from './storage';
+import { BASE_API_URL } from '../utils/constants';
 
 /* Higher Order Component to provide behavior for loading projects by id. If
  * there's no id, the default project is loaded.
@@ -132,7 +133,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
     };
     ProjectFetcherComponent.defaultProps = {
         assetHost: 'https://assets.scratch.mit.edu',
-        projectHost: 'http://localhost:3000/ccm/scratch-api/projects'
+        projectHost: `${BASE_API_URL}/md/api/projects`
     };
 
     const mapStateToProps = state => ({
