@@ -20,7 +20,7 @@ export default function (projectId, vmState, params, projectTitle) {
     const token = getToken();
     const opts = {
         body: JSON.stringify({
-            data: JSON.stringify(vmState),
+            data: vmState,
             name: projectTitle,
             description: 'test', // FIXME: remove mock description
         }),

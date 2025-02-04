@@ -98,12 +98,22 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 .load(storage.AssetType.Project, projectId, storage.DataFormat.JSON)
                 .then(projectAsset => {
                     if (projectAsset) {
-                        const textDecoder = new TextDecoder('utf-8');
-                        const readableData = textDecoder.decode(projectAsset.data);
-                        const dataObj = JSON.parse(readableData)
-                        const {name, description, data} = dataObj; // TODO: do something with name and description
-                        const projectData = new TextEncoder().encode(JSON.stringify(data));
-                        this.props.onFetchedProjectData(projectData, loadingState);
+                        // check if is default project
+                        if(projectId === '0') {
+                            this.props.onFetchedProjectData(projectAsset.data, loadingState);
+                        } else {
+                            // existing project
+                            const textDecoder = new TextDecoder();
+                            const readableData = textDecoder.decode(projectAsset.data);
+                            const dataObj = JSON.parse(readableData)
+                            const {name, description, data} = dataObj; // TODO: do something with name and description
+                            let dataString = data
+                            if(typeof data == 'object') { // FIXME: remove it as backend is expected to return string
+                                dataString = JSON.stringify(data);
+                            }
+                            const projectData = new TextEncoder().encode(dataString);
+                            this.props.onFetchedProjectData(projectData, loadingState);
+                        }
                     } else {
                         // Treat failure to load as an error
                         // Throw to be caught by catch later on
