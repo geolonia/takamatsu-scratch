@@ -24,6 +24,7 @@ import log from './log';
 import storage from './storage';
 import { BASE_API_URL } from '../utils/constants';
 import { setSession } from '../reducers/session';
+import { setProjectTitle } from '../reducers/project-title';
 
 /* Higher Order Component to provide behavior for loading projects by id. If
  * there's no id, the default project is loaded.
@@ -106,12 +107,13 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                             const textDecoder = new TextDecoder();
                             const readableData = textDecoder.decode(projectAsset.data);
                             const dataObj = JSON.parse(readableData)
-                            const {name, description, data} = dataObj; // TODO: do something with name and description
+                            const {name, description, data} = dataObj; // TODO: remove description
                             let dataString = data
                             if(typeof data == 'object') { // FIXME: remove it as backend is expected to return string
                                 dataString = JSON.stringify(data);
                             }
                             const projectData = new TextEncoder().encode(dataString);
+                            this.props.onSetProjectTitle(name);
                             this.props.onFetchedProjectData(projectData, loadingState);
                         }
                     } else {
@@ -197,7 +199,8 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         setProjectId: projectId => dispatch(setProjectId(projectId)),
         onProjectUnchanged: () => dispatch(setProjectUnchanged()),
         onProjectError: error => dispatch(projectError(error)),
-        onSetSession: (token) => dispatch(setSession(token))
+        onSetSession: (token) => dispatch(setSession(token)),
+        onSetProjectTitle: title => dispatch(setProjectTitle(title))
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

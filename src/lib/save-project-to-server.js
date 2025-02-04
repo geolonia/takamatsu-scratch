@@ -21,8 +21,7 @@ export default function (projectId, vmState, params, projectTitle) {
     const opts = {
         body: JSON.stringify({
             data: vmState,
-            name: projectTitle,
-            description: 'test', // FIXME: remove mock description
+            name: projectTitle
         }),
         // If we set json:true then the body is double-stringified, so don't
         headers: {
