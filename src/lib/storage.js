@@ -77,7 +77,7 @@ class Storage extends ScratchStorage {
         const token = getToken();
         return {
             method: 'GET',
-            url: `${BASE_API_URL}/md/api/assets/${asset.assetId}.${asset.dataFormat}`,
+            url: `${BASE_API_URL}/md/api/assets?assetID=${asset.assetId}`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
