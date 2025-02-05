@@ -9,7 +9,8 @@ import {injectIntl, intlShape} from 'react-intl';
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import {
     getIsError,
-    getIsShowingProject
+    getIsShowingProject,
+    projectError
 } from '../reducers/project-state';
 import {
     activateTab,
@@ -24,6 +25,7 @@ import {
     closeTelemetryModal,
     openExtensionLibrary
 } from '../reducers/modals';
+import { setSession } from "../reducers/session.js";
 
 import FontLoaderHOC from '../lib/font-loader-hoc.jsx';
 import LocalizationHOC from '../lib/localization-hoc.jsx';
@@ -65,7 +67,7 @@ class GUI extends React.Component {
         if(isFromButtonClick) {
             this.props.showExtension();
         }
-        else if(this.props.projectId === '0' && !this.props.modalChooseExtensionAlreadyBeenOpened) {
+        else if(this.props.projectId === '0' && !this.props.isExtensionModalAlreadyOpened) {
             this.props.setModalExtensionVisibility(true);
             this.props.showExtension();
         }
@@ -87,6 +89,8 @@ class GUI extends React.Component {
             onStorageInit,
             onUpdateProjectId,
             onVmInit,
+            onSetSession,
+            onProjectError,
             projectHost,
             projectId,
             showExtension,
@@ -121,12 +125,14 @@ GUI.propTypes = {
     isScratchDesktop: PropTypes.bool,
     isShowingProject: PropTypes.bool,
     loadingStateVisible: PropTypes.bool,
-    modalChooseExtensionAlreadyBeenOpened: PropTypes.bool,
+    isExtensionModalAlreadyOpened: PropTypes.bool,
     onProjectLoaded: PropTypes.func,
     onSeeCommunity: PropTypes.func,
     onStorageInit: PropTypes.func,
     onUpdateProjectId: PropTypes.func,
     onVmInit: PropTypes.func,
+    onSetSession: PropTypes.func,
+    onProjectError: PropTypes.func,
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     setModalExtensionVisibility: PropTypes.func,
@@ -161,7 +167,7 @@ const mapStateToProps = state => {
         isRtl: state.locales.isRtl,
         isShowingProject: getIsShowingProject(loadingState),
         loadingStateVisible: state.scratchGui.modals.loadingProject,
-        modalChooseExtensionAlreadyBeenOpened: state.scratchGui.modalChooseExtensionAlreadyBeenOpened,
+        isExtensionModalAlreadyOpened: state.scratchGui.isExtensionModalAlreadyOpened,
         projectId: state.scratchGui.projectState.projectId,
         soundsTabVisible: state.scratchGui.editorTab.activeTabIndex === SOUNDS_TAB_INDEX,
         targetIsStage: (
@@ -181,6 +187,8 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
+    onSetSession: (token) => dispatch(setSession(token)),
+    onProjectError: error => dispatch(projectError(error)),
     showExtension: () => dispatch(openExtensionLibrary()),
     setModalExtensionVisibility: (isOpened) => dispatch(setModalExtension(isOpened)),
 });

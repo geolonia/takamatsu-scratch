@@ -37,7 +37,7 @@ const HashParserHOC = function (WrappedComponent) {
             window.removeEventListener('hashchange', this.handleHashChange);
         }
         handleHashChange () {
-            const hashMatch = window.location.hash.match(/#(\d+)/);
+            const hashMatch = window.location.hash.match(/\/(\d+)$/);
             const hashProjectId = hashMatch === null ? defaultProjectId : hashMatch[1];
             this.props.setProjectId(hashProjectId.toString());
         }
@@ -60,7 +60,7 @@ const HashParserHOC = function (WrappedComponent) {
     HashParserComponent.propTypes = {
         isFetchingWithoutId: PropTypes.bool,
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        setProjectId: PropTypes.func
+        setProjectId: PropTypes.func,
     };
     const mapStateToProps = state => {
         const loadingState = state.scratchGui.projectState.loadingState;
@@ -72,7 +72,7 @@ const HashParserHOC = function (WrappedComponent) {
     const mapDispatchToProps = dispatch => ({
         setProjectId: projectId => {
             dispatch(setProjectId(projectId));
-        }
+        },
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(
