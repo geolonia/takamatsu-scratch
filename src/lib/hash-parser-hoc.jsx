@@ -23,8 +23,11 @@ const HashParserHOC = function (WrappedComponent) {
         }
         componentDidMount () {
             window.addEventListener('hashchange', this.handleHashChange);
+            // FIXME: remove this mock
+            window.addEventListener('load', () => {
+                window.location.hash = '/projects/new'
+            });
             this.handleHashChange();
-            this.fetchTokenFromApi();
         }
         componentDidUpdate (prevProps) {
             // if we are newly fetching a non-hash project...
