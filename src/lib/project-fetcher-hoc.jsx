@@ -71,7 +71,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             }
         }
         fetchTokenFromApi() {
-            // FIXME: this code is temporary
+            // TODO: remove it once can get token from session
             const mockUserId = 1;
             return fetch(
                 `${BASE_API_URL}/md/api/auth/token?userId=${mockUserId}`, {method: 'GET'}
