@@ -1,6 +1,5 @@
 import queryString from 'query-string';
 import xhr from 'xhr';
-import storage from '../lib/storage';
 import { BASE_API_URL } from '../utils/constants';
 import getToken from '../utils/getToken';
 
@@ -38,13 +37,11 @@ export default function (projectId, vmState, params, projectTitle) {
     let qs = queryString.stringify(queryParams);
     if (qs) qs = `?${qs}`;
     if (creatingProject) {
-        console.log('[creating project]', );
         Object.assign(opts, {
             method: 'post',
             url: `${BASE_API_URL}/md/api/projects`
         });
     } else {
-        console.log('[updating project]', );
         Object.assign(opts, {
             method: 'post',
             url: `${BASE_API_URL}/md/api/projects/${projectId}`
@@ -61,10 +58,6 @@ export default function (projectId, vmState, params, projectTitle) {
             } catch (e) {
                 return reject(e);
             }
-            // body.id = projectId;
-            // if (creatingProject) {
-            //     body.id = body['content-name'];
-            // }
             resolve(body);
         });
     });
