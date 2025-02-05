@@ -22,6 +22,9 @@ import {
 
 import log from './log';
 import storage from './storage';
+import { BASE_API_URL } from '../utils/constants';
+import { setSession } from '../reducers/session';
+import { setProjectTitle } from '../reducers/project-title';
 
 /* Higher Order Component to provide behavior for loading projects by id. If
  * there's no id, the default project is loaded.
@@ -58,7 +61,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 storage.setAssetHost(this.props.assetHost);
             }
             if (this.props.isFetchingWithId && !prevProps.isFetchingWithId) {
-                this.fetchProject(this.props.reduxProjectId, this.props.loadingState);
+                this.fetchTokenFromApi()
             }
             if (this.props.isShowingProject && !prevProps.isShowingProject) {
                 this.props.onProjectUnchanged();
@@ -67,12 +70,52 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 this.props.onActivateTab(BLOCKS_TAB_INDEX);
             }
         }
+        fetchTokenFromApi() {
+            // TODO: remove it once can get token from session
+            const mockUserId = 1;
+            return fetch(
+                `${BASE_API_URL}/md/api/auth/token?userId=${mockUserId}`, {method: 'GET'}
+            )
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    this.props.onSetSession(data.token);
+                    this.fetchProject(this.props.reduxProjectId, this.props.loadingState);
+                })
+                .catch((error) => {
+                    console.error(
+                        'There was a problem with the fetch operation when fetching a token:',
+                        error
+                    );
+                    this.props.onProjectError(error);
+                });
+        }
         fetchProject (projectId, loadingState) {
             return storage
                 .load(storage.AssetType.Project, projectId, storage.DataFormat.JSON)
                 .then(projectAsset => {
                     if (projectAsset) {
-                        this.props.onFetchedProjectData(projectAsset.data, loadingState);
+                        // check if is default project
+                        if(projectId === '0') {
+                            this.props.onFetchedProjectData(projectAsset.data, loadingState);
+                        } else {
+                            // existing project
+                            const textDecoder = new TextDecoder();
+                            const readableData = textDecoder.decode(projectAsset.data);
+                            const dataObj = JSON.parse(readableData)
+                            const {name, description, data} = dataObj; // TODO: remove description
+                            let dataString = data
+                            if(typeof data == 'object') { // FIXME: remove it as backend is expected to return string
+                                dataString = JSON.stringify(data);
+                            }
+                            const projectData = new TextEncoder().encode(dataString);
+                            this.props.onSetProjectTitle(name);
+                            this.props.onFetchedProjectData(projectData, loadingState);
+                        }
                     } else {
                         // Treat failure to load as an error
                         // Throw to be caught by catch later on
@@ -102,6 +145,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 setProjectId: setProjectIdProp,
                 /* eslint-enable no-unused-vars */
                 isFetchingWithId: isFetchingWithIdProp,
+                token,
                 ...componentProps
             } = this.props;
             return (
@@ -125,14 +169,17 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         onError: PropTypes.func,
         onFetchedProjectData: PropTypes.func,
         onProjectUnchanged: PropTypes.func,
+        onProjectError: PropTypes.func,
+        onSetSession: PropTypes.func,
         projectHost: PropTypes.string,
         projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        setProjectId: PropTypes.func
+        setProjectId: PropTypes.func,
+        token: PropTypes.string
     };
     ProjectFetcherComponent.defaultProps = {
         assetHost: 'https://assets.scratch.mit.edu',
-        projectHost: 'https://projects.scratch.mit.edu'
+        projectHost: `${BASE_API_URL}/md/api/projects`
     };
 
     const mapStateToProps = state => ({
@@ -141,7 +188,8 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         isLoadingProject: getIsLoading(state.scratchGui.projectState.loadingState),
         isShowingProject: getIsShowingProject(state.scratchGui.projectState.loadingState),
         loadingState: state.scratchGui.projectState.loadingState,
-        reduxProjectId: state.scratchGui.projectState.projectId
+        reduxProjectId: state.scratchGui.projectState.projectId,
+        token: state.session.session.token
     });
     const mapDispatchToProps = dispatch => ({
         onActivateTab: tab => dispatch(activateTab(tab)),
@@ -150,6 +198,9 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             dispatch(onFetchedProjectData(projectData, loadingState)),
         setProjectId: projectId => dispatch(setProjectId(projectId)),
         onProjectUnchanged: () => dispatch(setProjectUnchanged()),
+        onProjectError: error => dispatch(projectError(error)),
+        onSetSession: (token) => dispatch(setSession(token)),
+        onSetProjectTitle: title => dispatch(setProjectTitle(title))
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(

@@ -546,8 +546,7 @@ class MenuBar extends React.Component {
                         <FormattedMessage {...ariaMessages.tutorials} />
                     </div>
                     <Divider className={classNames(styles.divider)} /> */}
-                    {/* hide this code for first release */}
-                    {/* {this.props.canEditTitle ? (
+                    {this.props.canEditTitle ? (
                         <div className={classNames(styles.menuBarItem, styles.growable)}>
                             <MenuBarItemTooltip
                                 enable
@@ -566,7 +565,7 @@ class MenuBar extends React.Component {
                             userId={this.props.authorId}
                             username={this.props.authorUsername}
                         />
-                    ) : null)} */}
+                    ) : null)}
                     {/* hide share button for first release */}
                     {/* <div className={classNames(styles.menuBarItem)}>
                         {this.props.canShare ? (

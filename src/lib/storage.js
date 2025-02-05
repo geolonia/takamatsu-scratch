@@ -2,12 +2,13 @@ import ScratchStorage from 'scratch-storage';
 
 import defaultProject from './default-project';
 import { BASE_API_URL } from '../utils/constants';
-import getToken from '../utils/getToken';
+import getToken from '../utils/getToken.js';
 
 /**
  * Wrapper for ScratchStorage which adds default web sources.
  * @todo make this more configurable
  */
+
 class Storage extends ScratchStorage {
     constructor () {
         super();
@@ -38,18 +39,33 @@ class Storage extends ScratchStorage {
         this.projectHost = projectHost;
     }
     getProjectGetConfig (projectAsset) {
-        return `${this.projectHost}/${projectAsset.assetId}`;
+        const token = getToken(); // TODO: refactor this code to avoid repetition
+        return {
+            url: `${this.projectHost}/${projectAsset.assetId}`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
+        }
     }
     getProjectCreateConfig () {
+        const token = getToken();
         return {
             url: `${this.projectHost}/`,
-            withCredentials: true
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
         };
     }
     getProjectUpdateConfig (projectAsset) {
+        const token = getToken();
         return {
             url: `${this.projectHost}/${projectAsset.assetId}`,
-            withCredentials: true
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
         };
     }
     setAssetHost (assetHost) {
@@ -67,6 +83,7 @@ class Storage extends ScratchStorage {
         };
     }
     getAssetCreateConfig (asset) {
+        const token = getToken();
         return {
             // There is no such thing as updating assets, but storage assumes it
             // should update if there is an assetId, and the asset store uses the
@@ -74,7 +91,10 @@ class Storage extends ScratchStorage {
             // Then when storage finds this config to use for the "update", still POSTs
             method: 'post',
             url: `${this.assetHost}/${asset.assetId}.${asset.dataFormat}`,
-            withCredentials: true
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            }
         };
     }
     setTranslatorFunction (translator) {
