@@ -56,7 +56,6 @@ class Storage extends ScratchStorage {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             }
-            // withCredentials: true
         };
     }
     getProjectUpdateConfig (projectAsset) {
@@ -67,7 +66,6 @@ class Storage extends ScratchStorage {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             }
-            // withCredentials: true
         };
     }
     setAssetHost (assetHost) {
@@ -97,7 +95,6 @@ class Storage extends ScratchStorage {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             }
-            // withCredentials: true
         };
     }
     setTranslatorFunction (translator) {
