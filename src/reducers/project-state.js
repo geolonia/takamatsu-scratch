@@ -245,9 +245,7 @@ const reducer = function (state, action) {
                 });
             }
         } else if(state.loadingState === LoadingState.MANUAL_UPDATING){
-            // console.log('[cai no manual]', );
             return Object.assign({}, state, {
-                // loadingState: LoadingState.FETCHING_NEW_DEFAULT,
                 projectId: action.projectId
             });
         }  else { // allow any other states to transition to fetching project
