@@ -83,7 +83,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                     return response.json();
                 })
                 .then((data) => {
-                    this.props.onSetSession(data.token);
+                    this.props.onSetSession(data.access_token);
                     this.fetchProject(this.props.reduxProjectId, this.props.loadingState);
                 })
                 .catch((error) => {
