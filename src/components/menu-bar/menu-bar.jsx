@@ -745,7 +745,7 @@ const mapStateToProps = (state, ownProps) => {
         loginMenuOpen: loginMenuOpen(state),
         projectTitle: state.scratchGui.projectTitle,
         sessionExists: state.session && typeof state.session.session !== 'undefined',
-        username: user ? user.username : null,
+        username: user ? user : null,
         userOwnsProject: ownProps.authorUsername && user &&
             (ownProps.authorUsername === user.username),
         vm: state.scratchGui.vm
