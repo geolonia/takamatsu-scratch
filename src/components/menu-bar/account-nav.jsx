@@ -19,16 +19,12 @@ import styles from './account-nav.css';
 
 const AccountNavComponent = ({
     className,
-    classroomId,
-    isEducator,
     isOpen,
     isRtl,
-    isStudent,
     menuBarMenuClassName,
     onClick,
     onClose,
     onLogOut,
-    profileUrl,
     thumbnailUrl,
     username
 }) => (
@@ -64,45 +60,6 @@ const AccountNavComponent = ({
             place={isRtl ? 'right' : 'left'}
             onRequestClose={onClose}
         >
-            <MenuItemContainer href={profileUrl}>
-                <FormattedMessage
-                    defaultMessage="Profile"
-                    description="Text to link to my user profile, in the account navigation menu"
-                    id="gui.accountMenu.profile"
-                />
-            </MenuItemContainer>
-            <MenuItemContainer href="/mystuff/">
-                <FormattedMessage
-                    defaultMessage="My Stuff"
-                    description="Text to link to list of my projects, in the account navigation menu"
-                    id="gui.accountMenu.myStuff"
-                />
-            </MenuItemContainer>
-            {isEducator ? (
-                <MenuItemContainer href="/educators/classes/">
-                    <FormattedMessage
-                        defaultMessage="My Classes"
-                        description="Text to link to my classes (if I am a teacher), in the account navigation menu"
-                        id="gui.accountMenu.myClasses"
-                    />
-                </MenuItemContainer>
-            ) : null}
-            {isStudent ? (
-                <MenuItemContainer href={`/classes/${classroomId}/`}>
-                    <FormattedMessage
-                        defaultMessage="My Class"
-                        description="Text to link to my class (if I am a student), in the account navigation menu"
-                        id="gui.accountMenu.myClass"
-                    />
-                </MenuItemContainer>
-            ) : null}
-            <MenuItemContainer href="/accounts/settings/">
-                <FormattedMessage
-                    defaultMessage="Account settings"
-                    description="Text to link to my account settings, in the account navigation menu"
-                    id="gui.accountMenu.accountSettings"
-                />
-            </MenuItemContainer>
             <MenuSection>
                 <MenuItemContainer onClick={onLogOut}>
                     <FormattedMessage
