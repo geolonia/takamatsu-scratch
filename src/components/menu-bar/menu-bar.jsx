@@ -11,13 +11,9 @@ import VM from 'scratch-vm';
 
 import Box from '../box/box.jsx';
 import Button from '../button/button.jsx';
-import CommunityButton from './community-button.jsx';
-import ShareButton from './share-button.jsx';
 import {ComingSoonTooltip} from '../coming-soon/coming-soon.jsx';
-import Divider from '../divider/divider.jsx';
 import LanguageSelector from '../../containers/language-selector.jsx';
 import SaveStatus from './save-status.jsx';
-import ProjectWatcher from '../../containers/project-watcher.jsx';
 import MenuBarMenu from './menu-bar-menu.jsx';
 import {MenuItem, MenuSection} from '../menu/menu.jsx';
 import ProjectTitleInput from './project-title-input.jsx';
@@ -64,8 +60,6 @@ import collectMetadata from '../../lib/collect-metadata';
 
 import styles from './menu-bar.css';
 
-import helpIcon from '../../lib/assets/icon--tutorials.svg';
-import mystuffIcon from './icon--mystuff.png';
 import remixIcon from './icon--remix.svg';
 import dropdownCaret from './dropdown-caret.svg';
 import languageIcon from '../language-selector/language-icon.svg';
@@ -75,6 +69,7 @@ import siteLogo from './logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
 import { setModalExtension } from '../../reducers/modal-choose-extension.js';
+import { BASE_API_URL } from '../../utils/constants.js';
 
 const ariaMessages = defineMessages({
     language: {
@@ -242,6 +237,9 @@ class MenuBar extends React.Component {
             this.props.onClickSave();
             event.preventDefault();
         }
+    }
+    handleLogout() {
+        window.location.href = `${BASE_API_URL}/login`;
     }
     getSaveToComputerHandler (downloadProjectCallback) {
         return () => {
@@ -631,35 +629,19 @@ class MenuBar extends React.Component {
                         )}
                     </div>
                     {this.props.sessionExists &&
-                        <React.Fragment>
-                            <a href="/mystuffa/">
-                                <div
-                                    className={classNames(
-                                        styles.menuBarItem,
-                                        styles.hoverable,
-                                        styles.mystuffButton
-                                    )}
-                                >
-                                    <img
-                                        className={styles.mystuffIcon}
-                                        src={mystuffIcon}
-                                    />
-                                </div>
-                            </a>
-                            <AccountNav
-                                className={classNames(
-                                    styles.menuBarItem,
-                                    styles.hoverable,
-                                    {[styles.active]: this.props.accountMenuOpen}
-                                )}
-                                isOpen={this.props.accountMenuOpen}
-                                isRtl={this.props.isRtl}
-                                menuBarMenuClassName={classNames(styles.menuBarMenu)}
-                                onClick={this.props.onClickAccount}
-                                onClose={this.props.onRequestCloseAccount}
-                                onLogOut={this.props.onLogOut}
-                            />
-                        </React.Fragment>}
+                        <AccountNav
+                            className={classNames(
+                                styles.menuBarItem,
+                                styles.hoverable,
+                                {[styles.active]: this.props.accountMenuOpen}
+                            )}
+                            isOpen={this.props.accountMenuOpen}
+                            isRtl={this.props.isRtl}
+                            menuBarMenuClassName={classNames(styles.menuBarMenu)}
+                            onClick={this.props.onClickAccount}
+                            onClose={this.props.onRequestCloseAccount}
+                            onLogOut={this.handleLogout}
+                        />}
                 </div>
 
                 {aboutButton}
@@ -763,7 +745,7 @@ const mapStateToProps = (state, ownProps) => {
         loginMenuOpen: loginMenuOpen(state),
         projectTitle: state.scratchGui.projectTitle,
         sessionExists: state.session && typeof state.session.session !== 'undefined',
-        username: user ? user.username : null,
+        username: user ? user : null,
         userOwnsProject: ownProps.authorUsername && user &&
             (ownProps.authorUsername === user.username),
         vm: state.scratchGui.vm

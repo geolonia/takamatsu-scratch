@@ -5,7 +5,7 @@ const GET_SESSION = 'GET_SESSION';
 
 const initialState = {
     session: {
-        username: '',
+        user: '',
         token: '',
     }
 };
@@ -16,7 +16,7 @@ const reducer = function (state, action) {
         case SET_SESSION:
             return Object.assign({}, state, {
                 session: {
-                    username: action.username,
+                    user: action.user,
                     token: action.token,
                 },
             });
@@ -34,10 +34,10 @@ const getSession = function () {
 };
 
 const setSession = function (token) {
-    const username = getUsernameFromToken(token);
+    const user = getUsernameFromToken(token);
     return {
         type: SET_SESSION,
-        username: username,
+        user: user,
         token: token,
     };
 };
