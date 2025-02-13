@@ -22,9 +22,10 @@ import {
 
 import log from './log';
 import storage from './storage';
-import { BASE_API_URL } from '../utils/constants';
+import { BASE_API_URL, TOKEN_KEY } from '../utils/constants';
 import { setSession } from '../reducers/session';
 import { setProjectTitle } from '../reducers/project-title';
+import { getTokenFromCookie } from '../utils/token';
 
 /* Higher Order Component to provide behavior for loading projects by id. If
  * there's no id, the default project is loaded.
@@ -61,7 +62,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 storage.setAssetHost(this.props.assetHost);
             }
             if (this.props.isFetchingWithId && !prevProps.isFetchingWithId) {
-                this.fetchTokenFromApi()
+                this.getToken();
             }
             if (this.props.isShowingProject && !prevProps.isShowingProject) {
                 this.props.onProjectUnchanged();
@@ -70,29 +71,18 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 this.props.onActivateTab(BLOCKS_TAB_INDEX);
             }
         }
-        fetchTokenFromApi() {
-            // TODO: remove it once can get token from session
-            const mockUserId = 1;
-            return fetch(
-                `${BASE_API_URL}/md/api/auth/token?userId=${mockUserId}`, {method: 'GET'}
-            )
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    this.props.onSetSession(data.access_token);
-                    this.fetchProject(this.props.reduxProjectId, this.props.loadingState);
-                })
-                .catch((error) => {
-                    console.error(
-                        'There was a problem with the fetch operation when fetching a token:',
-                        error
-                    );
-                    this.props.onProjectError(error);
-                });
+        getToken() {
+            try {
+                const token = getTokenFromCookie(TOKEN_KEY);
+                this.props.onSetSession(token);
+                this.fetchProject(this.props.reduxProjectId, this.props.loadingState);
+            } catch (error) {
+                console.error(
+                    '[project-fetcher-hoc] There was a problem when getting token:',
+                    error
+                );
+                this.props.onProjectError(error);
+            }
         }
         fetchProject (projectId, loadingState) {
             return storage
@@ -107,9 +97,10 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                             const textDecoder = new TextDecoder();
                             const readableData = textDecoder.decode(projectAsset.data);
                             const dataObj = JSON.parse(readableData)
-                            const {name, description, data} = dataObj; // TODO: remove description
-                            let dataString = data
-                            if(typeof data == 'object') { // FIXME: remove it as backend is expected to return string
+                            const {name, data} = dataObj;
+                            let dataString = data;
+                            // backend should send data as string, but if it's an object we need to convert to string
+                            if(typeof data == 'object') {
                                 dataString = JSON.stringify(data);
                             }
                             const projectData = new TextEncoder().encode(dataString);

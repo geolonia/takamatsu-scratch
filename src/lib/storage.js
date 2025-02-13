@@ -2,7 +2,7 @@ import ScratchStorage from 'scratch-storage';
 
 import defaultProject from './default-project';
 import { BASE_API_URL } from '../utils/constants';
-import getToken from '../utils/getToken.js';
+import { getToken } from '../utils/token';
 
 /**
  * Wrapper for ScratchStorage which adds default web sources.
@@ -39,7 +39,7 @@ class Storage extends ScratchStorage {
         this.projectHost = projectHost;
     }
     getProjectGetConfig (projectAsset) {
-        const token = getToken(); // TODO: refactor this code to avoid repetition
+        const token = getToken();
         return {
             url: `${this.projectHost}/${projectAsset.assetId}`,
             headers: {

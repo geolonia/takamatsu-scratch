@@ -1,7 +1,7 @@
 import queryString from 'query-string';
 import xhr from 'xhr';
 import { BASE_API_URL } from '../utils/constants';
-import getToken from '../utils/getToken';
+import { getToken } from '../utils/token';
 
 /**
  * Save a project JSON to the project server.
