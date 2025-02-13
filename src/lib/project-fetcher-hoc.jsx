@@ -22,7 +22,7 @@ import {
 
 import log from './log';
 import storage from './storage';
-import { BASE_API_URL } from '../utils/constants';
+import { BASE_API_URL, TOKEN_KEY } from '../utils/constants';
 import { setSession } from '../reducers/session';
 import { setProjectTitle } from '../reducers/project-title';
 import { getTokenFromCookie } from '../utils/token';
@@ -73,7 +73,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         }
         getToken() {
             try {
-                const token = getTokenFromCookie('access_token');
+                const token = getTokenFromCookie(TOKEN_KEY);
                 this.props.onSetSession(token);
                 this.fetchProject(this.props.reduxProjectId, this.props.loadingState);
             } catch (error) {

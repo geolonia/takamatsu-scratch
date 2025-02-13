@@ -1,4 +1,5 @@
 import { store } from '../lib/app-state-hoc.jsx';
+import Cookies from 'js-cookie'
 
 export function getToken() {
     const state = store.getState();
@@ -6,19 +7,9 @@ export function getToken() {
 }
 
 export function getTokenFromCookie(key) {
-    const cookieContent = document.cookie
-      .split(";")
-      .map((cookie) => cookie.split("="))
-      .reduce(
-        (accumulator, [key, value]) => ({
-          ...accumulator,
-          [key.trim()]: decodeURIComponent(value),
-        }),
-        {},
-      );
-    return cookieContent[key];
+    return Cookies.get(key);
 }
 
-export function setTokenInCookie(token) {
-    document.cookie = `access_token=${token}`;
+export function setTokenInCookie(key, token) {
+    Cookies.set(key, token)
 }
