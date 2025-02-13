@@ -1,6 +1,7 @@
 import { BASE_API_URL } from '../utils/constants';
 import refreshToken from './refreshToken';
 import xhr from 'xhr';
+import { setTokenInCookie } from '../utils/token';
 
 export default function customFetch (url, method, token, onSetSession) {
     const options = {
@@ -21,6 +22,7 @@ export default function customFetch (url, method, token, onSetSession) {
                 try {
                     refreshToken(token).then((newToken) => {
                         onSetSession(newToken);
+                        setTokenInCookie(newToken);
                         // repeat request with new token
                         options.headers['Authorization'] = `Bearer ${newToken}`;
                         return xhr(options, (err, response) => {
