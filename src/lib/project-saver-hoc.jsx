@@ -6,7 +6,6 @@ import VM from 'scratch-vm';
 
 import collectMetadata from '../lib/collect-metadata';
 import log from '../lib/log';
-import storage from '../lib/storage';
 import dataURItoBlob from '../lib/data-uri-to-blob';
 import saveProjectToServer from '../lib/save-project-to-server';
 
@@ -231,7 +230,8 @@ const ProjectSaverHOC = function (WrappedComponent) {
                 .then(response => {
                     this.props.onSetProjectUnchanged();
                     if(response.id){
-                        this.props.onSetProjectId(response.id);
+                        this.props.onSetProjectId(response.id.toString());
+                        window.history.pushState({}, '', `/projects/${response.id}`);
                         const id = response.id.toString();
                         if (id && this.props.onUpdateProjectThumbnail) {
                             this.storeProjectThumbnail(id);
@@ -241,8 +241,8 @@ const ProjectSaverHOC = function (WrappedComponent) {
                     return response;
                 })
                 .catch(err => {
-                    log.error(err);
-                    throw err; // pass the error up the chain
+                    console.error("project-saver-hoc: Error when storing a project:",err);
+                    throw err;
                 });
         }
 
