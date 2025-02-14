@@ -1,8 +1,11 @@
+import { getUsernameFromToken } from "../lib/session-utils";
+
 const SET_SESSION = 'SET_SESSION';
 const GET_SESSION = 'GET_SESSION';
 
 const initialState = {
     session: {
+        user: '',
         token: '',
     }
 };
@@ -13,6 +16,7 @@ const reducer = function (state, action) {
         case SET_SESSION:
             return Object.assign({}, state, {
                 session: {
+                    user: action.user,
                     token: action.token,
                 },
             });
@@ -30,8 +34,10 @@ const getSession = function () {
 };
 
 const setSession = function (token) {
+    const user = getUsernameFromToken(token);
     return {
         type: SET_SESSION,
+        user: user,
         token: token,
     };
 };

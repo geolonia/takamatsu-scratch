@@ -42,7 +42,7 @@ const mapStateToProps = state => ({
     thumbnailUrl: state.session && state.session.session && state.session.session.user ?
         state.session.session.user.thumbnailUrl : null,
     username: state.session && state.session.session && state.session.session.user ?
-        state.session.session.user.username : ''
+        state.session.session.user : 'MyUsername' // TODO: get username from session
 });
 
 const mapDispatchToProps = () => ({});
