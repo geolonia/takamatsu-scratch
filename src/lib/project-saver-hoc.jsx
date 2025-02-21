@@ -6,7 +6,6 @@ import VM from 'scratch-vm';
 
 import collectMetadata from '../lib/collect-metadata';
 import log from '../lib/log';
-import storage from '../lib/storage';
 import dataURItoBlob from '../lib/data-uri-to-blob';
 import saveProjectToServer from '../lib/save-project-to-server';
 
@@ -31,7 +30,8 @@ import {
     getIsShowingWithId,
     getIsShowingWithoutId,
     getIsUpdating,
-    projectError
+    projectError,
+    setProjectId
 } from '../reducers/project-state';
 
 /**
@@ -226,37 +226,23 @@ const ProjectSaverHOC = function (WrappedComponent) {
             // serialized project refers to a newer asset than what
             // we just finished saving).
             const savedVMState = this.props.vm.toJSON();
-            return Promise.all(this.props.vm.assets
-                .filter(asset => !asset.clean)
-                .map(
-                    asset => storage.store(
-                        asset.assetType,
-                        asset.dataFormat,
-                        asset.data,
-                        asset.assetId
-                    ).then(response => {
-                        // Asset servers respond with {status: ok} for successful POSTs
-                        if (response.status !== 'ok') {
-                            // Errors include a `code` property, e.g. "Forbidden"
-                            return Promise.reject(response.code);
-                        }
-                        asset.clean = true;
-                    })
-                )
-            )
-                .then(() => this.props.onUpdateProjectData(projectId, savedVMState, requestParams))
+            return this.props.onUpdateProjectData(projectId, savedVMState, requestParams, this.props.reduxProjectTitle)
                 .then(response => {
                     this.props.onSetProjectUnchanged();
-                    const id = response.id.toString();
-                    if (id && this.props.onUpdateProjectThumbnail) {
-                        this.storeProjectThumbnail(id);
+                    if(response.id){
+                        this.props.onSetProjectId(response.id.toString());
+                        window.history.pushState({}, '', `/projects/${response.id}`);
+                        const id = response.id.toString();
+                        if (id && this.props.onUpdateProjectThumbnail) {
+                            this.storeProjectThumbnail(id);
+                        }
+                        this.reportTelemetryEvent('projectDidSave');
                     }
-                    this.reportTelemetryEvent('projectDidSave');
                     return response;
                 })
                 .catch(err => {
-                    log.error(err);
-                    throw err; // pass the error up the chain
+                    console.error("project-saver-hoc: Error when storing a project:",err);
+                    throw err;
                 });
         }
 
@@ -339,6 +325,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
                 onUpdatedProject,
                 onUpdateProjectData,
                 onUpdateProjectThumbnail,
+                onSetProjectId,
                 reduxProjectId,
                 reduxProjectTitle,
                 setAutoSaveTimeoutId: setAutoSaveTimeoutIdProp,
@@ -391,6 +378,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         onUpdateProjectData: PropTypes.func.isRequired,
         onUpdateProjectThumbnail: PropTypes.func,
         onUpdatedProject: PropTypes.func,
+        onSetProjectId: PropTypes.func,
         projectChanged: PropTypes.bool,
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         reduxProjectTitle: PropTypes.string,
@@ -402,6 +390,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         onRemixing: () => {},
         onSetProjectThumbnailer: () => {},
         onSetProjectSaver: () => {},
+        onSetProjectId: () => {},
         onUpdateProjectData: saveProjectToServer
     };
     const mapStateToProps = (state, ownProps) => {
@@ -441,6 +430,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         onShowSaveSuccessAlert: () => showAlertWithTimeout(dispatch, 'saveSuccess'),
         onShowSavingAlert: () => showAlertWithTimeout(dispatch, 'saving'),
         onUpdatedProject: loadingState => dispatch(doneUpdatingProject(loadingState)),
+        onSetProjectId: id => dispatch(setProjectId(id)),
         setAutoSaveTimeoutId: id => dispatch(setAutoSaveTimeoutId(id))
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.

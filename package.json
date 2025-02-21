@@ -43,6 +43,7 @@
     "immutable": "3.8.2",
     "intl": "1.2.5",
     "js-base64": "2.4.9",
+    "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "keymirror": "0.1.1",
     "lodash.bindall": "4.4.0",

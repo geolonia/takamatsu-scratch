@@ -42,9 +42,9 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
-import { BASE_API_URL, BASE_API_URL_LOCAL } from '../utils/constants.js';
-import { setModalExtension } from '../reducers/modal-choose-extension.js';
+import { BASE_API_URL } from '../utils/constants.js';
 import customFetch from '../apis/customFetch.js';
+import { setModalExtension } from '../reducers/modal-choose-extension.js';
 
 class GUI extends React.Component {
     constructor (props) {
