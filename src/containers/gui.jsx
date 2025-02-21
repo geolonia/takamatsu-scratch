@@ -96,7 +96,7 @@ class GUI extends React.Component {
             });
         }
     getSoundsFromApi () {
-        this.props.onCustomFetch(`${BASE_API_URL_LOCAL}/md/api/sounds`, 'GET', this.props.token, this.props.onSetSession)
+        this.props.onCustomFetch(`${BASE_API_URL}/md/api/assets/sounds`, 'GET', this.props.token, this.props.onSetSession)
             .then(response => {
                 this.props.onSetSounds(response);
             })
