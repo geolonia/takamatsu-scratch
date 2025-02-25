@@ -25,7 +25,7 @@ import {
     closeTelemetryModal,
     openExtensionLibrary
 } from '../reducers/modals';
-import { setCostumes, setSprites } from '../reducers/assets.js';
+import { setCostumes, setSounds, setSprites } from '../reducers/assets.js';
 import { setSession } from "../reducers/session.js";
 
 import FontLoaderHOC from '../lib/font-loader-hoc.jsx';
@@ -68,6 +68,7 @@ class GUI extends React.Component {
         if(this.props.token !== prevProps.token){
             this.getSpritesFromApi();
             this.getCostumesFromApi();
+            this.getSoundsFromApi();
         }
     }
     getSpritesFromApi () {
@@ -94,6 +95,18 @@ class GUI extends React.Component {
                 );
             });
         }
+    getSoundsFromApi () {
+        this.props.onCustomFetch(`${BASE_API_URL}/md/api/assets/sounds`, 'GET', this.props.token, this.props.onSetSession)
+            .then(response => {
+                this.props.onSetSounds(response);
+            })
+            .catch(error => {
+                console.error(
+                    'There was a problem fetching the sounds:',
+                    error
+                );
+            });
+    }
     handleShowExtension(isFromButtonClick = false) {
         if(isFromButtonClick) {
             this.props.showExtension();
@@ -122,6 +135,7 @@ class GUI extends React.Component {
             onVmInit,
             onSetSprites,
             onSetCostumes,
+            onSetSounds,
             onSetSession,
             onProjectError,
             onCustomFetch,
@@ -167,6 +181,7 @@ GUI.propTypes = {
     onVmInit: PropTypes.func,
     onSetSprites: PropTypes.func,
     onSetCostumes: PropTypes.func,
+    onSetSounds: PropTypes.func,
     onSetSession: PropTypes.func,
     onProjectError: PropTypes.func,
     onCustomFetch: PropTypes.func.isRequired,
@@ -229,6 +244,7 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
     onSetSprites: (sprites) => dispatch(setSprites(sprites)),
     onSetCostumes: (costumes) => dispatch(setCostumes(costumes)),
+    onSetSounds: (sounds) => dispatch(setSounds(sounds)),
     onSetSession: (token) => dispatch(setSession(token)),
     onProjectError: error => dispatch(projectError(error)),
     showExtension: () => dispatch(openExtensionLibrary()),

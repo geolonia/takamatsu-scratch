@@ -10,7 +10,6 @@ import LibraryComponent from '../components/library/library.jsx';
 import soundIcon from '../components/library-item/lib-icon--sound.svg';
 import soundIconRtl from '../components/library-item/lib-icon--sound-rtl.svg';
 
-import soundLibraryContent from '../lib/libraries/sounds.json';
 import soundTags from '../lib/libraries/sound-tags';
 
 import {connect} from 'react-redux';
@@ -147,6 +146,7 @@ class SoundLibrary extends React.PureComponent {
     }
     render () {
         // @todo need to use this hack to avoid library using md5 for image
+        const soundLibraryContent = this.props.sounds
         const soundLibraryThumbnailData = soundLibraryContent.map(sound => {
             const {
                 md5ext,
@@ -160,18 +160,20 @@ class SoundLibrary extends React.PureComponent {
         });
 
         return (
-            <LibraryComponent
-                showPlayButton
-                data={soundLibraryThumbnailData}
-                id="soundLibrary"
-                setStopHandler={this.setStopHandler}
-                tags={soundTags}
-                title={this.props.intl.formatMessage(messages.libraryTitle)}
-                onItemMouseEnter={this.handleItemMouseEnter}
-                onItemMouseLeave={this.handleItemMouseLeave}
-                onItemSelected={this.handleItemSelected}
-                onRequestClose={this.props.onRequestClose}
-            />
+            this.props.sounds
+                ? <LibraryComponent
+                    showPlayButton
+                    data={soundLibraryThumbnailData}
+                    id="soundLibrary"
+                    setStopHandler={this.setStopHandler}
+                    tags={soundTags}
+                    title={this.props.intl.formatMessage(messages.libraryTitle)}
+                    onItemMouseEnter={this.handleItemMouseEnter}
+                    onItemMouseLeave={this.handleItemMouseLeave}
+                    onItemSelected={this.handleItemSelected}
+                    onRequestClose={this.props.onRequestClose}
+                />
+                : null
         );
     }
 }
@@ -181,11 +183,13 @@ SoundLibrary.propTypes = {
     isRtl: PropTypes.bool,
     onNewSound: PropTypes.func.isRequired,
     onRequestClose: PropTypes.func,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    sounds: PropTypes.arrayOf(PropTypes.object)
 };
 
 const mapStateToProps = state => ({
-    isRtl: state.locales.isRtl
+    isRtl: state.locales.isRtl,
+    sounds: state.assets.sounds,
 });
 
 const mapDispatchToProps = () => ({});
