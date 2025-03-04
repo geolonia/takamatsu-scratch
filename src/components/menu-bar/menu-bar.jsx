@@ -61,6 +61,7 @@ import collectMetadata from '../../lib/collect-metadata';
 import styles from './menu-bar.css';
 
 import remixIcon from './icon--remix.svg';
+import mystuffIcon from './icon--mystuff.png';
 import dropdownCaret from './dropdown-caret.svg';
 import languageIcon from '../language-selector/language-icon.svg';
 import aboutIcon from './icon--about.svg';
@@ -629,6 +630,21 @@ class MenuBar extends React.Component {
                         )}
                     </div>
                     {this.props.sessionExists &&
+                    <React.Fragment>
+                        <a href={`${BASE_API_URL}`}>
+                            <div
+                                className={classNames(
+                                    styles.menuBarItem,
+                                    styles.hoverable,
+                                    styles.mystuffButton
+                                )}
+                            >
+                                <img
+                                    className={styles.mystuffIcon}
+                                    src={mystuffIcon}
+                                />
+                            </div>
+                        </a>
                         <AccountNav
                             className={classNames(
                                 styles.menuBarItem,
@@ -641,7 +657,9 @@ class MenuBar extends React.Component {
                             onClick={this.props.onClickAccount}
                             onClose={this.props.onRequestCloseAccount}
                             onLogOut={this.handleLogout}
-                        />}
+                        />
+                    </React.Fragment>
+                    }
                 </div>
 
                 {aboutButton}

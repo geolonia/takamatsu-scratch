@@ -4,6 +4,7 @@ import React from 'react';
 import {injectIntl} from 'react-intl';
 
 import LibraryItemComponent from '../components/library-item/library-item.jsx';
+import { BASE_API_URL } from '../utils/constants.js';
 
 class LibraryItem extends React.PureComponent {
     constructor (props) {
@@ -106,7 +107,7 @@ class LibraryItem extends React.PureComponent {
     render () {
         const iconMd5 = this.curIconMd5();
         const iconURL = iconMd5 ?
-            `https://cdn.assets.scratch.mit.edu/internalapi/asset/${iconMd5}/get/` :
+            `${BASE_API_URL}/md/api/assets?assetID=${iconMd5.replace(/\.[^.]+$/, '')}` :
             this.props.iconRawURL;
         return (
             <LibraryItemComponent

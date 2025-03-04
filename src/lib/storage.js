@@ -32,7 +32,7 @@ class Storage extends ScratchStorage {
         );
         this.addWebStore(
             [this.AssetType.Sound],
-            asset => `static/extension-assets/scratch3_music/${asset.assetId}.${asset.dataFormat}`
+            asset => `${BASE_API_URL}/md/api/assets?assetID=${asset.assetId}`
         );
     }
     setProjectHost (projectHost) {

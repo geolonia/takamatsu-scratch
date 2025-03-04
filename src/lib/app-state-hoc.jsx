@@ -7,6 +7,7 @@ import ConnectedIntlProvider from './connected-intl-provider.jsx';
 import localesReducer, {initLocale, localesInitialState} from '../reducers/locales';
 import sessionReducer, { sessionInitialState } from "../reducers/session";
 import {setPlayer, setFullScreen} from '../reducers/mode.js';
+import assetsReducer, { assetsInitialState } from "../reducers/assets.js";
 
 import locales from 'scratch-l10n';
 import {detectLocale} from './detect-locale';
@@ -72,11 +73,13 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                     locales: localesReducer,
                     scratchGui: guiReducer,
                     scratchPaint: ScratchPaintReducer,
+                    assets: assetsReducer,
                     session: sessionReducer,
                 };
                 initialState = {
                     locales: initializedLocales,
                     scratchGui: initializedGui,
+                    assets: assetsInitialState,
                     session: sessionInitialState,
                 };
                 enhancer = composeEnhancers(guiMiddleware);

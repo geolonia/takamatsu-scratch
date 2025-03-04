@@ -25,6 +25,7 @@ import {
     closeTelemetryModal,
     openExtensionLibrary
 } from '../reducers/modals';
+import { setCostumes, setSounds, setSprites } from '../reducers/assets.js';
 import { setSession } from "../reducers/session.js";
 
 import FontLoaderHOC from '../lib/font-loader-hoc.jsx';
@@ -41,6 +42,8 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
+import { BASE_API_URL } from '../utils/constants.js';
+import customFetch from '../apis/customFetch.js';
 import { setModalExtension } from '../reducers/modal-choose-extension.js';
 
 class GUI extends React.Component {
@@ -62,6 +65,47 @@ class GUI extends React.Component {
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded();
         }
+        if(this.props.token !== prevProps.token){
+            this.getSpritesFromApi();
+            this.getCostumesFromApi();
+            this.getSoundsFromApi();
+        }
+    }
+    getSpritesFromApi () {
+        this.props.onCustomFetch(`${BASE_API_URL}/md/api/sprites`, 'GET', this.props.token, this.props.onSetSession)
+            .then(response => {
+                this.props.onSetSprites(response);
+            })
+            .catch(error => {
+                console.error(
+                    'There was a problem fetching the sprites:',
+                    error
+                );
+            });
+    }
+    getCostumesFromApi () {
+        this.props.onCustomFetch(`${BASE_API_URL}/md/api/costumes`, 'GET', this.props.token, this.props.onSetSession)
+            .then(response => {
+                this.props.onSetCostumes(response);
+            })
+            .catch(error => {
+                console.error(
+                    'There was a problem fetching the costumes:',
+                    error
+                );
+            });
+        }
+    getSoundsFromApi () {
+        this.props.onCustomFetch(`${BASE_API_URL}/md/api/assets/sounds`, 'GET', this.props.token, this.props.onSetSession)
+            .then(response => {
+                this.props.onSetSounds(response);
+            })
+            .catch(error => {
+                console.error(
+                    'There was a problem fetching the sounds:',
+                    error
+                );
+            });
     }
     handleShowExtension(isFromButtonClick = false) {
         if(isFromButtonClick) {
@@ -89,8 +133,12 @@ class GUI extends React.Component {
             onStorageInit,
             onUpdateProjectId,
             onVmInit,
+            onSetSprites,
+            onSetCostumes,
+            onSetSounds,
             onSetSession,
             onProjectError,
+            onCustomFetch,
             projectHost,
             projectId,
             showExtension,
@@ -131,14 +179,19 @@ GUI.propTypes = {
     onStorageInit: PropTypes.func,
     onUpdateProjectId: PropTypes.func,
     onVmInit: PropTypes.func,
+    onSetSprites: PropTypes.func,
+    onSetCostumes: PropTypes.func,
+    onSetSounds: PropTypes.func,
     onSetSession: PropTypes.func,
     onProjectError: PropTypes.func,
+    onCustomFetch: PropTypes.func.isRequired,
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     setModalExtensionVisibility: PropTypes.func,
     // showExtension: PropTypes.func,
     telemetryModalVisible: PropTypes.bool,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    token: PropTypes.string
 };
 
 GUI.defaultProps = {
@@ -146,7 +199,8 @@ GUI.defaultProps = {
     onStorageInit: storageInstance => storageInstance.addOfficialScratchWebStores(),
     onProjectLoaded: () => {},
     onUpdateProjectId: () => {},
-    onVmInit: (/* vm */) => {}
+    onVmInit: (/* vm */) => {},
+    onCustomFetch: customFetch,
 };
 
 const mapStateToProps = state => {
@@ -176,7 +230,8 @@ const mapStateToProps = state => {
         ),
         telemetryModalVisible: state.scratchGui.modals.telemetryModal,
         tipsLibraryVisible: state.scratchGui.modals.tipsLibrary,
-        vm: state.scratchGui.vm
+        vm: state.scratchGui.vm,
+        token: state.session.session.token
     };
 };
 
@@ -187,6 +242,9 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
+    onSetSprites: (sprites) => dispatch(setSprites(sprites)),
+    onSetCostumes: (costumes) => dispatch(setCostumes(costumes)),
+    onSetSounds: (sounds) => dispatch(setSounds(sounds)),
     onSetSession: (token) => dispatch(setSession(token)),
     onProjectError: error => dispatch(projectError(error)),
     showExtension: () => dispatch(openExtensionLibrary()),
