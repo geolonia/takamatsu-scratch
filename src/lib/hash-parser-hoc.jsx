@@ -23,10 +23,6 @@ const HashParserHOC = function (WrappedComponent) {
         }
         componentDidMount () {
             window.addEventListener('hashchange', this.handleHashChange);
-            // FIXME: remove this mock
-            window.addEventListener('load', () => {
-                window.location.hash = '/projects/new'
-            });
             this.handleHashChange();
         }
         componentDidUpdate (prevProps) {
@@ -41,7 +37,7 @@ const HashParserHOC = function (WrappedComponent) {
             window.removeEventListener('hashchange', this.handleHashChange);
         }
         handleHashChange () {
-            const hashMatch = window.location.hash.match(/\/(\d+)$/); // FIXME: use pathname instead of hash
+            const hashMatch = window.location.pathname.match(/\/(\d+)$/);
             const hashProjectId = hashMatch === null ? defaultProjectId : hashMatch[1];
             this.props.setProjectId(hashProjectId.toString());
         }
