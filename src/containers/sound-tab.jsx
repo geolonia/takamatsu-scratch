@@ -110,7 +110,6 @@ class SoundTab extends React.Component {
     }
 
     handleSurpriseSound () {
-        // TODO: maybe wrap this code inside if statement this.props.sounds
         const soundLibraryContent = this.props.sounds;
         const soundItem = soundLibraryContent[Math.floor(Math.random() * soundLibraryContent.length)];
         const vmSound = {
