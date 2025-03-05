@@ -7,6 +7,7 @@ const initialState = {
     session: {
         user: '',
         token: '',
+        refreshToken: ''
     }
 };
 
@@ -18,6 +19,7 @@ const reducer = function (state, action) {
                 session: {
                     user: action.user,
                     token: action.token,
+                    refreshToken: action.refreshToken
                 },
             });
         case GET_SESSION:
@@ -33,12 +35,13 @@ const getSession = function () {
     };
 };
 
-const setSession = function (token) {
+const setSession = function (token, refreshToken) {
     const user = getUsernameFromToken(token);
     return {
         type: SET_SESSION,
         user: user,
         token: token,
+        refreshToken: refreshToken
     };
 };
 

@@ -22,7 +22,7 @@ import {
 
 import log from './log';
 import storage from './storage';
-import { BASE_API_URL, TOKEN_KEY } from '../utils/constants';
+import { BASE_API_URL, REFRESH_TOKEN_KEY, TOKEN_KEY } from '../utils/constants';
 import { setSession } from '../reducers/session';
 import { setProjectTitle } from '../reducers/project-title';
 import { getTokenFromCookie } from '../utils/token';
@@ -74,7 +74,8 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         getToken() {
             try {
                 const token = getTokenFromCookie(TOKEN_KEY);
-                this.props.onSetSession(token);
+                const refreshToken = getTokenFromCookie(REFRESH_TOKEN_KEY);
+                this.props.onSetSession(token, refreshToken);
                 this.fetchProject(this.props.reduxProjectId, this.props.loadingState);
             } catch (error) {
                 console.error(
@@ -190,7 +191,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         setProjectId: projectId => dispatch(setProjectId(projectId)),
         onProjectUnchanged: () => dispatch(setProjectUnchanged()),
         onProjectError: error => dispatch(projectError(error)),
-        onSetSession: (token) => dispatch(setSession(token)),
+        onSetSession: (token, refreshToken) => dispatch(setSession(token, refreshToken)),
         onSetProjectTitle: title => dispatch(setProjectTitle(title))
     });
     // Allow incoming props to override redux-provided props. Used to mock in tests.

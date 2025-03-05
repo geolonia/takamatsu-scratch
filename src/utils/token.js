@@ -6,6 +6,11 @@ export function getToken() {
     return state.session.session.token;
 }
 
+export function getRefreshToken() {
+    const state = store.getState();
+    return state.session.session.refreshToken;
+}
+
 export function getTokenFromCookie(key) {
     return Cookies.get(key);
 }
