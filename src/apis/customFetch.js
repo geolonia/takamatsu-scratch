@@ -1,9 +1,9 @@
-import { BASE_API_URL, TOKEN_KEY } from '../utils/constants';
-import refreshToken from './refreshToken';
+import { BASE_API_URL, REFRESH_TOKEN_KEY, TOKEN_KEY } from '../utils/constants';
+import refreshTokenFn from './refreshToken';
 import xhr from 'xhr';
 import { setTokenInCookie } from '../utils/token';
 
-export default function customFetch (url, method, token, onSetSession) {
+export default function customFetch (url, method, token, refreshToken, onSetSession) {
     const options = {
             method: method,
             url: url,
@@ -20,9 +20,10 @@ export default function customFetch (url, method, token, onSetSession) {
             if (response.statusCode === 401) {
                 // token expired, try to refresh it
                 try {
-                    refreshToken(token).then((newToken) => {
-                        onSetSession(newToken);
+                    refreshTokenFn(refreshToken).then((newToken, newRefreshToken) => {
+                        onSetSession(newToken, newRefreshToken);
                         setTokenInCookie(TOKEN_KEY, newToken);
+                        setTokenInCookie(REFRESH_TOKEN_KEY, newRefreshToken);
                         // repeat request with new token
                         options.headers['Authorization'] = `Bearer ${newToken}`;
                         return xhr(options, (err, response) => {
