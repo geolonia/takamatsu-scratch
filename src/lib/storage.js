@@ -39,7 +39,6 @@ class Storage extends ScratchStorage {
         this.projectHost = projectHost;
     }
     getProjectGetConfig (projectAsset) {
-        console.log('[getProjectGetConfig]');
         const token = getToken();
         return {
             url: `${this.projectHost}/${projectAsset.assetId}`,
@@ -50,7 +49,6 @@ class Storage extends ScratchStorage {
         }
     }
     getProjectCreateConfig () {
-        console.log('[getProjectCreateConfig]');
         const token = getToken();
         return {
             url: `${this.projectHost}/`,
@@ -61,7 +59,6 @@ class Storage extends ScratchStorage {
         };
     }
     getProjectUpdateConfig (projectAsset) {
-        console.log('[getProjectUpdateConfig]');
         const token = getToken();
         return {
             url: `${this.projectHost}/${projectAsset.assetId}`,
