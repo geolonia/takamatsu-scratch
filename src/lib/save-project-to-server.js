@@ -58,6 +58,7 @@ export default function (projectId, vmState, params, projectTitle) {
             xhr(opts, (err, response) => {
                 if (err) return reject(err);
                 if(response.statusCode === 401 && retryCount < 1) {
+                    console.log('[🐞 should not be inside 401]', );
                     refreshTokenFn(refreshToken).then((data) => {
                         const newToken = data[TOKEN_KEY];
                         const newRefreshToken = data[REFRESH_TOKEN_KEY];
@@ -91,7 +92,7 @@ export default function (projectId, vmState, params, projectTitle) {
         });
     }
 
-    makeRequest(opts);
+    return makeRequest(opts);
 }
 
 /**
