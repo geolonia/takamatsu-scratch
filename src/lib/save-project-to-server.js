@@ -3,7 +3,6 @@ import xhr from 'xhr';
 import { BASE_API_URL, REFRESH_TOKEN_KEY, TOKEN_KEY } from '../utils/constants';
 import { getRefreshToken, getToken, setTokenInCookie } from '../utils/token';
 import { store } from '../lib/app-state-hoc.jsx';
-// import refreshTokenFn from '../apis/refreshToken.js';
 import { setSession } from '../reducers/session.js';
 
 /**
@@ -51,29 +50,24 @@ export default function (projectId, vmState, params, projectTitle) {
             url: `${BASE_API_URL}/md/api/projects/${projectId}`
         });
     }
-    console.log('[🫠]', );
 
     const makeRequest = (opts, retryCount = 0) => {
         return new Promise((resolve, reject) => {
             xhr(opts, (err, response) => {
                 if (err) return reject(err);
                 if(response.statusCode === 401 && retryCount < 1) {
-                    console.log('[🐞 should not be inside 401]', );
                     refreshTokenFn(refreshToken).then((data) => {
                         const newToken = data[TOKEN_KEY];
                         const newRefreshToken = data[REFRESH_TOKEN_KEY];
-                        console.log('[👹]', );
-                        console.log('[newToken]', newToken);
-                        console.log('[newRefreshToken]', newRefreshToken);
-                        // Atualize o token e o refresh token nos cookies e no Redux
+                        // update token and refresh token in cookies and Redux
                         setTokenInCookie(TOKEN_KEY, newToken);
                         setTokenInCookie(REFRESH_TOKEN_KEY, newRefreshToken);
                         store.dispatch(setSession(newToken, newRefreshToken));
 
-                        // Atualize o cabeçalho de autorização com o novo token
+                        // update authorization header with new token
                         opts.headers['Authorization'] = `Bearer ${newToken}`;
 
-                        // Tente novamente com o novo token
+                        // try again with new token
                         makeRequest(opts, retryCount + 1).then(resolve).catch(reject);
                     }).catch(err => {
                         return reject(err);
@@ -86,7 +80,6 @@ export default function (projectId, vmState, params, projectTitle) {
                 } catch (e) {
                     return reject(e);
                 }
-                console.log('[returning body]', body);
                 resolve(body);
             });
         });
@@ -94,12 +87,6 @@ export default function (projectId, vmState, params, projectTitle) {
 
     return makeRequest(opts);
 }
-
-/**
- * se response id is 401
- * then make request to refresh token
- * make again request with new token
- */
 
 function refreshTokenFn (refreshToken) {
     return new Promise((resolve, reject) => {
@@ -119,7 +106,6 @@ function refreshTokenFn (refreshToken) {
                 return reject(new Error(`Failed to get new token: ${response.statusCode}`));
             }
             const data = JSON.parse(response.body);
-            console.log('[data]', data);
             resolve(data);
         });
     });
