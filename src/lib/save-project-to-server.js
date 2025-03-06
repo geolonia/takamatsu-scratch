@@ -92,7 +92,7 @@ function refreshTokenFn (refreshToken) {
     return new Promise((resolve, reject) => {
         const options = {
             method: 'POST',
-            url: `${BASE_API_URL}/md/api/auth/refresh?userId=1`,
+            url: `${BASE_API_URL}/md/api/auth/refresh`,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${refreshToken}`

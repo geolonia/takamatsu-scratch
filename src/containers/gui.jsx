@@ -43,7 +43,7 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 import { BASE_API_URL } from '../utils/constants.js';
-import customFetch from '../apis/customFetch.js';
+import customRequest from '../apis/customRequest.js';
 import { setModalExtension } from '../reducers/modal-choose-extension.js';
 
 class GUI extends React.Component {
@@ -72,7 +72,7 @@ class GUI extends React.Component {
         }
     }
     getSpritesFromApi () {
-        this.props.onCustomFetch(`${BASE_API_URL}/md/api/sprites`, 'GET', this.props.token, this.props.onSetSession)
+        this.props.onCustomRequest(`${BASE_API_URL}/md/api/sprites`, 'GET', this.props.token)
             .then(response => {
                 this.props.onSetSprites(response);
             })
@@ -84,7 +84,7 @@ class GUI extends React.Component {
             });
     }
     getCostumesFromApi () {
-        this.props.onCustomFetch(`${BASE_API_URL}/md/api/costumes`, 'GET', this.props.token, this.props.onSetSession)
+        this.props.onCustomRequest(`${BASE_API_URL}/md/api/costumes`, 'GET', this.props.token)
             .then(response => {
                 this.props.onSetCostumes(response);
             })
@@ -96,7 +96,7 @@ class GUI extends React.Component {
             });
         }
     getSoundsFromApi () {
-        this.props.onCustomFetch(`${BASE_API_URL}/md/api/assets/sounds`, 'GET', this.props.token, this.props.onSetSession)
+        this.props.onCustomRequest(`${BASE_API_URL}/md/api/assets/sounds`, 'GET', this.props.token)
             .then(response => {
                 this.props.onSetSounds(response);
             })
@@ -138,7 +138,7 @@ class GUI extends React.Component {
             onSetSounds,
             onSetSession,
             onProjectError,
-            onCustomFetch,
+            onCustomRequest,
             projectHost,
             projectId,
             showExtension,
@@ -184,7 +184,7 @@ GUI.propTypes = {
     onSetSounds: PropTypes.func,
     onSetSession: PropTypes.func,
     onProjectError: PropTypes.func,
-    onCustomFetch: PropTypes.func.isRequired,
+    onCustomRequest: PropTypes.func.isRequired,
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     setModalExtensionVisibility: PropTypes.func,
@@ -200,7 +200,7 @@ GUI.defaultProps = {
     onProjectLoaded: () => {},
     onUpdateProjectId: () => {},
     onVmInit: (/* vm */) => {},
-    onCustomFetch: customFetch,
+    onCustomRequest: customRequest,
 };
 
 const mapStateToProps = state => {
