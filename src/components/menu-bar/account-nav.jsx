@@ -68,7 +68,7 @@ const AccountNavComponent = ({
                         description="Text to link to sign out, in the account navigation menu"
                         id="gui.accountMenu.signOut"
                     /> */}
-                    Sign out v3
+                    Sign out v4
                 </MenuItemContainer>
             </MenuSection>
         </MenuBarMenu>
