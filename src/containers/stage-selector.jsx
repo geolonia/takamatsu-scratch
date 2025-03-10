@@ -161,19 +161,20 @@ class StageSelector extends React.Component {
             'asset', 'dispatchSetHoveredSprite', 'id', 'intl',
             'onActivateTab', 'onSelect', 'onShowImporting', 'onCloseImporting']);
         return (
-            <DroppableThrottledStage
-                componentRef={this.setRef}
-                fileInputRef={this.setFileInput}
-                onBackdropFileUpload={this.handleBackdropUpload}
-                onBackdropFileUploadClick={this.handleFileUploadClick}
-                onClick={this.handleClick}
-                onDrop={this.handleDrop}
-                onEmptyBackdropClick={this.handleEmptyBackdrop}
-                onMouseEnter={this.handleMouseEnter}
-                onMouseLeave={this.handleMouseLeave}
-                onSurpriseBackdropClick={this.handleSurpriseBackdrop}
-                {...componentProps}
-            />
+            <div></div>
+            // <DroppableThrottledStage
+            //     componentRef={this.setRef}
+            //     fileInputRef={this.setFileInput}
+            //     onBackdropFileUpload={this.handleBackdropUpload}
+            //     onBackdropFileUploadClick={this.handleFileUploadClick}
+            //     onClick={this.handleClick}
+            //     onDrop={this.handleDrop}
+            //     onEmptyBackdropClick={this.handleEmptyBackdrop}
+            //     onMouseEnter={this.handleMouseEnter}
+            //     onMouseLeave={this.handleMouseLeave}
+            //     onSurpriseBackdropClick={this.handleSurpriseBackdrop}
+            //     {...componentProps}
+            // />
         );
     }
 }
