@@ -645,7 +645,7 @@ class MenuBar extends React.Component {
                                 />
                             </div>
                         </a>
-                        <AccountNav
+                        {/* <AccountNav
                             className={classNames(
                                 styles.menuBarItem,
                                 styles.hoverable,
@@ -657,7 +657,7 @@ class MenuBar extends React.Component {
                             onClick={this.props.onClickAccount}
                             onClose={this.props.onRequestCloseAccount}
                             onLogOut={this.handleLogout}
-                        />
+                        /> */}
                     </React.Fragment>
                     }
                 </div>
