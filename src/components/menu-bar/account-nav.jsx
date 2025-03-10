@@ -62,13 +62,12 @@ const AccountNavComponent = ({
         >
             <MenuSection>
                 <MenuItemContainer onClick={onLogOut}>
-                {/* // FIXME: this is a temporary change for checking if deploy is complete. */}
-                    {/* <FormattedMessage
+                    <FormattedMessage
                         defaultMessage="Sign out"
                         description="Text to link to sign out, in the account navigation menu"
                         id="gui.accountMenu.signOut"
-                    /> */}
-                    Sign out v4
+                    />
+                    Sign out
                 </MenuItemContainer>
             </MenuSection>
         </MenuBarMenu>
