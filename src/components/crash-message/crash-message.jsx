@@ -33,7 +33,7 @@ const CrashMessage = props => (
                     />
                 </p>
             )}
-            <a href={`${BASE_API_URL}/`} className={styles.textLink}>Go back to projects list</a>
+            <a href={`${BASE_API_URL}/app`} className={styles.textLink}>Go back to projects list</a>
         </Box>
     </div>
 );

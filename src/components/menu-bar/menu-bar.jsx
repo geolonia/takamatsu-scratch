@@ -631,7 +631,7 @@ class MenuBar extends React.Component {
                     </div>
                     {this.props.sessionExists &&
                     <React.Fragment>
-                        <a href={`${BASE_API_URL}`}>
+                        <a href={`${BASE_API_URL}/app`}>
                             <div
                                 className={classNames(
                                     styles.menuBarItem,
