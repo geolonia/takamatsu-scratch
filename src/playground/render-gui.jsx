@@ -6,9 +6,10 @@ import AppStateHOC from '../lib/app-state-hoc.jsx';
 import GUI from '../containers/gui.jsx';
 import HashParserHOC from '../lib/hash-parser-hoc.jsx';
 import log from '../lib/log.js';
+import { BASE_API_URL } from '../utils/constants.js';
 
 const onClickLogo = () => {
-    window.location = 'https://chizubouken-lab.jp';
+    window.location = `${BASE_API_URL}/app`;
 };
 
 const handleTelemetryModalCancel = () => {
