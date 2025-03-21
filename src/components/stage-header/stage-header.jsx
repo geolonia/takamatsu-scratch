@@ -18,6 +18,7 @@ import unFullScreenIcon from './icon--unfullscreen.svg';
 
 import siteLogo from '../menu-bar/logo.svg';
 import styles from './stage-header.css';
+import { BASE_API_URL } from '../../utils/constants.js';
 
 const messages = defineMessages({
     largeStageSizeMessage: {
@@ -68,7 +69,7 @@ const StageHeaderComponent = function (props) {
         const stageButton = showBranding ? (
             <div className={styles.embedScratchLogo}>
                 <a
-                    href="https://scratch.mit.edu"
+                    href={`${BASE_API_URL}/app`}
                     rel="noopener noreferrer"
                     target="_blank"
                 >
