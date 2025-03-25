@@ -134,7 +134,7 @@ module.exports = [
             'player': './src/playground/player.jsx'
         },
         output: {
-            path: path.resolve(__dirname, 'build'),
+            path: path.resolve(__dirname, 'projects'),
             filename: '[name].js'
         },
         module: {
