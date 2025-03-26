@@ -10,8 +10,6 @@ import LibraryComponent from '../components/library/library.jsx';
 import soundIcon from '../components/library-item/lib-icon--sound.svg';
 import soundIconRtl from '../components/library-item/lib-icon--sound-rtl.svg';
 
-import soundTags from '../lib/libraries/sound-tags';
-
 import {connect} from 'react-redux';
 
 const messages = defineMessages({
@@ -166,7 +164,7 @@ class SoundLibrary extends React.PureComponent {
                     data={soundLibraryThumbnailData}
                     id="soundLibrary"
                     setStopHandler={this.setStopHandler}
-                    tags={soundTags}
+                    tags={this.props.tags}
                     title={this.props.intl.formatMessage(messages.libraryTitle)}
                     onItemMouseEnter={this.handleItemMouseEnter}
                     onItemMouseLeave={this.handleItemMouseLeave}
@@ -184,12 +182,14 @@ SoundLibrary.propTypes = {
     onNewSound: PropTypes.func.isRequired,
     onRequestClose: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired,
-    sounds: PropTypes.arrayOf(PropTypes.object)
+    sounds: PropTypes.arrayOf(PropTypes.object),
+    tags: PropTypes.arrayOf(PropTypes.object)
 };
 
 const mapStateToProps = state => ({
     isRtl: state.locales.isRtl,
     sounds: state.assets.sounds,
+    tags: state.assets.tags.sounds
 });
 
 const mapDispatchToProps = () => ({});

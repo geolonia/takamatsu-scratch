@@ -71,6 +71,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 this.props.onActivateTab(BLOCKS_TAB_INDEX);
             }
         }
+        // TODO: refator fn name, and error msg
         getToken() {
             try {
                 const token = getTokenFromCookie(TOKEN_KEY);

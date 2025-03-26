@@ -25,7 +25,7 @@ import {
     closeTelemetryModal,
     openExtensionLibrary
 } from '../reducers/modals';
-import { setCostumes, setSounds, setSprites } from '../reducers/assets.js';
+import { setCostumes, setSounds, setSprites, setTags } from '../reducers/assets.js';
 import { setSession } from "../reducers/session.js";
 
 import FontLoaderHOC from '../lib/font-loader-hoc.jsx';
@@ -69,6 +69,7 @@ class GUI extends React.Component {
             this.getSpritesFromApi();
             this.getCostumesFromApi();
             this.getSoundsFromApi();
+            this.getTagsFromApi();
         }
     }
     getSpritesFromApi () {
@@ -107,6 +108,40 @@ class GUI extends React.Component {
                 );
             });
     }
+    getTagsFromApi () {
+        this.props.onCustomRequest(`${BASE_API_URL}/md/api/tag-categories`, 'GET', this.props.token)
+            .then(response => {
+                const formattedTags = this.getFormattedTags(response);
+                this.props.onSetTags(formattedTags);
+            })
+            .catch(error => {
+                console.error(
+                    'There was a problem fetching the tags:',
+                    error
+                );
+            });
+    }
+    getFormattedTags(tagsData){
+        const formattedTags = {
+            sprites: [],
+            sounds: []
+        }
+        let sprites = [];
+        let sounds = [];
+        if(tagsData.sprites.length > 0){
+            sprites = tagsData.sprites.map(tag => {
+                return {tag: tag};
+            });
+        }
+        if(tagsData.sounds.length > 0){
+            sounds = tagsData.sounds.map(tag => {
+                return {tag: tag};
+            });
+        }
+        formattedTags.sprites = sprites;
+        formattedTags.sounds = sounds;
+        return formattedTags;
+    }
     handleShowExtension(isFromButtonClick = false) {
         if(isFromButtonClick) {
             this.props.showExtension();
@@ -136,6 +171,7 @@ class GUI extends React.Component {
             onSetSprites,
             onSetCostumes,
             onSetSounds,
+            onSetTags,
             onSetSession,
             onProjectError,
             onCustomRequest,
@@ -182,6 +218,7 @@ GUI.propTypes = {
     onSetSprites: PropTypes.func,
     onSetCostumes: PropTypes.func,
     onSetSounds: PropTypes.func,
+    onSetTags: PropTypes.func,
     onSetSession: PropTypes.func,
     onProjectError: PropTypes.func,
     onCustomRequest: PropTypes.func.isRequired,
@@ -245,6 +282,7 @@ const mapDispatchToProps = dispatch => ({
     onSetSprites: (sprites) => dispatch(setSprites(sprites)),
     onSetCostumes: (costumes) => dispatch(setCostumes(costumes)),
     onSetSounds: (sounds) => dispatch(setSounds(sounds)),
+    onSetTags: (tags) => dispatch(setTags(tags)),
     onSetSession: (token) => dispatch(setSession(token)),
     onProjectError: error => dispatch(projectError(error)),
     showExtension: () => dispatch(openExtensionLibrary()),

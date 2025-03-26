@@ -5,7 +5,6 @@ import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import VM from 'scratch-vm';
 import {connect} from 'react-redux';
 
-import spriteTags from '../lib/libraries/sprite-tags';
 import LibraryComponent from '../components/library/library.jsx';
 
 const messages = defineMessages({
@@ -40,7 +39,7 @@ class CostumeLibrary extends React.PureComponent {
             ? <LibraryComponent
                 data={this.props.costumes}
                 id="costumeLibrary"
-                tags={spriteTags}
+                tags={this.props.tags}
                 title={this.props.intl.formatMessage(messages.libraryTitle)}
                 onItemSelected={this.handleItemSelected}
                 onRequestClose={this.props.onRequestClose}
@@ -53,12 +52,15 @@ class CostumeLibrary extends React.PureComponent {
 CostumeLibrary.propTypes = {
     intl: intlShape.isRequired,
     onRequestClose: PropTypes.func,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    costumes: PropTypes.arrayOf(PropTypes.object),
+    tags: PropTypes.arrayOf(PropTypes.object)
 };
 
 const mapStateToProps = state => {
     return {
         costumes: state.assets.costumes,
+        tags: state.assets.tags.sprites
     };
 };
 

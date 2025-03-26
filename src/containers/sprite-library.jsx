@@ -6,8 +6,6 @@ import VM from 'scratch-vm';
 import {connect} from 'react-redux';
 
 import randomizeSpritePosition from '../lib/randomize-sprite-position';
-import spriteTags from '../lib/libraries/sprite-tags';
-
 import LibraryComponent from '../components/library/library.jsx';
 
 const messages = defineMessages({
@@ -38,7 +36,7 @@ class SpriteLibrary extends React.PureComponent {
             ? <LibraryComponent
                 data={this.props.sprites}
                 id="spriteLibrary"
-                tags={spriteTags}
+                tags={this.props.tags}
                 title={this.props.intl.formatMessage(messages.libraryTitle)}
                 onItemSelected={this.handleItemSelect}
                 onRequestClose={this.props.onRequestClose}
@@ -53,12 +51,14 @@ SpriteLibrary.propTypes = {
     onActivateBlocksTab: PropTypes.func.isRequired,
     onRequestClose: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired,
-    sprites: PropTypes.arrayOf(PropTypes.object)
+    sprites: PropTypes.arrayOf(PropTypes.object),
+    tags: PropTypes.arrayOf(PropTypes.object)
 };
 
 const mapStateToProps = state => {
     return {
         sprites: state.assets.sprites,
+        tags: state.assets.tags.sprites
     };
 };
 

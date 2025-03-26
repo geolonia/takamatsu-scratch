@@ -1,11 +1,13 @@
 const SET_SPRITES = 'SET_SPRITES';
 const SET_COSTUMES = 'SET_COSTUMES';
 const SET_SOUNDS = 'SET_SOUNDS';
+const SET_TAGS = 'SET_TAGS';
 
 const initialState = {
     sprites: [{}],
     costumes: [{}],
     sounds: [{}],
+    tags: [{}]
 };
 
 const reducer = function (state, action) {
@@ -22,6 +24,10 @@ const reducer = function (state, action) {
         case SET_SOUNDS:
             return Object.assign({}, state, {
                 sounds: action.payload,
+            });
+        case SET_TAGS:
+            return Object.assign({}, state, {
+                tags: action.payload,
             });
         default:
             return state;
@@ -49,10 +55,18 @@ const setSounds = function (sounds) {
     };
 };
 
+const setTags = function (tags) {
+    return {
+        type: SET_TAGS,
+        payload: tags
+    };
+};
+
 export {
     reducer as default,
     initialState as assetsInitialState,
     setSprites,
     setCostumes,
-    setSounds
+    setSounds,
+    setTags
 };

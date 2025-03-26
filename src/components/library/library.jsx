@@ -26,7 +26,7 @@ const messages = defineMessages({
     }
 });
 
-const ALL_TAG = {tag: 'all', intlLabel: messages.allTag};
+const ALL_TAG = {tag: 'all'};
 const tagListPrefix = [ALL_TAG];
 
 class LibraryComponent extends React.Component {
@@ -269,7 +269,7 @@ LibraryComponent.propTypes = {
     onRequestClose: PropTypes.func,
     setStopHandler: PropTypes.func,
     showPlayButton: PropTypes.bool,
-    tags: PropTypes.arrayOf(PropTypes.shape(TagButton.propTypes)),
+    tags: PropTypes.arrayOf(PropTypes.object),
     title: PropTypes.string.isRequired
 };
 
