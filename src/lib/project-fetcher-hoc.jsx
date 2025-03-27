@@ -62,7 +62,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 storage.setAssetHost(this.props.assetHost);
             }
             if (this.props.isFetchingWithId && !prevProps.isFetchingWithId) {
-                this.getToken();
+                this.getTokenAndProject();
             }
             if (this.props.isShowingProject && !prevProps.isShowingProject) {
                 this.props.onProjectUnchanged();
@@ -71,8 +71,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 this.props.onActivateTab(BLOCKS_TAB_INDEX);
             }
         }
-        // TODO: refator fn name, and error msg
-        getToken() {
+        getTokenAndProject() {
             try {
                 const token = getTokenFromCookie(TOKEN_KEY);
                 const refreshToken = getTokenFromCookie(REFRESH_TOKEN_KEY);
@@ -80,7 +79,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 this.fetchProject(this.props.reduxProjectId, this.props.loadingState);
             } catch (error) {
                 console.error(
-                    '[project-fetcher-hoc] There was a problem when getting token:',
+                    '[project-fetcher-hoc] There was a problem when getting token or fetching project:',
                     error
                 );
                 this.props.onProjectError(error);
