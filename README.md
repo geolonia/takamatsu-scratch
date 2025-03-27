@@ -7,13 +7,13 @@
 ### How to run locally
 
 - git clone git@github.com:geolonia/geo-scratch.git
-- npm install
+- `npm install`
 - `npm start` *
 - open http://127.0.0.1:8080
 - set token in the browser cookie:
   - go to [postman collection](https://macareux-inc.postman.co/workspace/Adventure-Lab~9816a342-7a0b-40f0-b52e-63ffae6ec10c/request/36823844-e0e2c7a6-3124-44ff-aa87-22d530722843) then select production environment variable
   - run `Token (temp)` API, it will generate `access_token` and `refresh_token`
-  - In the browser open devtools application>cookies>localhost:8080 then add the tokens generate in the previous step.
+  - In the browser open devtools application>cookies>http://localhost:8080 then add the tokens generate in the previous step.
 - reload the page. If still does not work and shows an error indication an invalid token, open the project in a new tab
 
 (*) If you see this error: `Error: error:0308010C:digital envelope routines::unsupported`, it means your Node.js version has additional security checks. As a workaround you can add `NODE_OPTIONS=--openssl-legacy-provider` to your package.json scripts (example below) or use Node.js v16.
@@ -24,6 +24,33 @@ package.json:
 ```
 
 ### How to deploy
+- in the `takamatsu-scratch` repo run `npm run build`
+- copy `projects` folder
+- in the `adventure-lab-cms` repo, replace folder web/projects with generated folder in previous step
+- commit the changes and push to remote
+- once merged into main branch, usually it takes 1~2 minutes to be reflected in production https://chizubouken-lab.jp/app
+
+### About project loading
+
+#### how to show project by id
+To show project id 8:
+
+In the file `hash-parser-hoc.jsx`
+
+Add this code in `componentDidMount()`. It sets the url hash.
+```
+window.addEventListener('load', () => {
+    window.location.hash = '/projects/8'
+});
+```
+Then in the function `handleHashChange()` replace pathname to hash:
+
+change `const hashMatch = window.location.pathname.match(/\/(\d+)$/);`
+
+to `const hashMatch = window.location.hash.match(/\/(\d+)$/);`
+
+#### how to show default project
+It is the same steps as above the only difference is the value set to hash inside the load event listener: `window.location.hash = '/projects/new'`
 
 
 ---
