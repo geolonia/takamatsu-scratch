@@ -33,7 +33,7 @@ package.json:
 ### About project loading
 
 #### how to show project by id
-To show project id 8:
+Example to show project id 8(access CMS dashboard to check existing project id):
 
 In the file `hash-parser-hoc.jsx`
 
