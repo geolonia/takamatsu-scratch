@@ -271,7 +271,7 @@ class GUIComponent extends React.Component {
                                                 id="gui.gui.codeTab"
                                             />
                                         </Tab>
-                                        {/* <Tab
+                                        {/*<Tab
                                             className={tabClassNames.tab}
                                             onClick={onActivateCostumesTab}
                                         >
@@ -292,8 +292,8 @@ class GUIComponent extends React.Component {
                                                     id="gui.gui.costumesTab"
                                                 />
                                             )}
-                                        </Tab> */}
-                                        {/* <Tab
+                                        </Tab>
+                                        <Tab
                                             className={tabClassNames.tab}
                                             onClick={onActivateSoundsTab}
                                         >
@@ -306,7 +306,7 @@ class GUIComponent extends React.Component {
                                                 description="Button to get to the sounds panel"
                                                 id="gui.gui.soundsTab"
                                             />
-                                        </Tab> */}
+                                        </Tab>*/}
                                     </TabList>
                                     <TabPanel className={tabClassNames.tabPanel}>
                                         <Box className={styles.blocksWrapper}>
@@ -338,12 +338,12 @@ class GUIComponent extends React.Component {
                                             <Watermark />
                                         </Box>
                                     </TabPanel>
-                                    <TabPanel className={tabClassNames.tabPanel}>
+                                    {/*<TabPanel className={tabClassNames.tabPanel}>
                                         {costumesTabVisible ? <CostumeTab vm={vm} /> : null}
                                     </TabPanel>
                                     <TabPanel className={tabClassNames.tabPanel}>
                                         {soundsTabVisible ? <SoundTab vm={vm} /> : null}
-                                    </TabPanel>
+                                    </TabPanel>*/}
                                 </Tabs>
                                 {backpackVisible ? (
                                     <Backpack host={backpackHost} />
