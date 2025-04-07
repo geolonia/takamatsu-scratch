@@ -10,7 +10,8 @@ import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import {
     getIsError,
     getIsShowingProject,
-    projectError
+    projectError,
+    setProjectId
 } from '../reducers/project-state';
 import {
     activateTab,
@@ -45,6 +46,8 @@ import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 import { BASE_API_URL } from '../utils/constants.js';
 import customRequest from '../apis/customRequest.js';
 import { setModalExtension } from '../reducers/modal-choose-extension.js';
+import saveProjectToServer from '../lib/save-project-to-server.js';
+import defaultProjectState from '../utils/defaultProjectState.js';
 
 class GUI extends React.Component {
     constructor (props) {
@@ -58,6 +61,7 @@ class GUI extends React.Component {
     }
     componentDidUpdate (prevProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
+            this.createProjectIfNew();
             this.props.onUpdateProjectId(this.props.projectId);
         }
         if (this.props.isShowingProject && !prevProps.isShowingProject) {
@@ -70,6 +74,16 @@ class GUI extends React.Component {
             this.getCostumesFromApi();
             this.getSoundsFromApi();
             this.getTagsFromApi();
+        }
+    }
+    createProjectIfNew() {
+        if(this.props.reduxProjectId === '0' || this.props.reduxProjectId === 0){
+            return saveProjectToServer("0", defaultProjectState, {}, "New Project").then(response => {
+                this.props.setProjectId(response.id.toString());
+                window.history.pushState({}, '', `/projects/${response.id.toString()}`);
+            }).catch(err => {
+                console.error("[containers/gui] Error creating project: ", err);
+            })
         }
     }
     getSpritesFromApi () {
@@ -183,6 +197,8 @@ class GUI extends React.Component {
             fetchingProject,
             isLoading,
             loadingStateVisible,
+            reduxProjectId,
+            setProjectId,
             ...componentProps
         } = this.props;
         return (
@@ -224,11 +240,13 @@ GUI.propTypes = {
     onCustomRequest: PropTypes.func.isRequired,
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    setProjectId: PropTypes.func,
     setModalExtensionVisibility: PropTypes.func,
     // showExtension: PropTypes.func,
     telemetryModalVisible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired,
-    token: PropTypes.string
+    token: PropTypes.string,
+    reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 GUI.defaultProps = {
@@ -268,7 +286,8 @@ const mapStateToProps = state => {
         telemetryModalVisible: state.scratchGui.modals.telemetryModal,
         tipsLibraryVisible: state.scratchGui.modals.tipsLibrary,
         vm: state.scratchGui.vm,
-        token: state.session.session.token
+        token: state.session.session.token,
+        reduxProjectId: state.scratchGui.projectState.projectId,
     };
 };
 
@@ -287,6 +306,9 @@ const mapDispatchToProps = dispatch => ({
     onProjectError: error => dispatch(projectError(error)),
     showExtension: () => dispatch(openExtensionLibrary()),
     setModalExtensionVisibility: (isOpened) => dispatch(setModalExtension(isOpened)),
+    setProjectId: projectId => {
+        dispatch(setProjectId(projectId));
+    },
 });
 
 const ConnectedGUI = injectIntl(connect(

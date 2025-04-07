@@ -1,7 +1,7 @@
 import queryString from 'query-string';
 import xhr from 'xhr';
 import { BASE_API_URL, REFRESH_TOKEN_KEY, TOKEN_KEY } from '../utils/constants';
-import { getRefreshToken, getToken, setTokenInCookie } from '../utils/token';
+import { getRefreshToken, getTokenFromCookie, setTokenInCookie } from '../utils/token';
 import { store } from '../lib/app-state-hoc.jsx';
 import { setSession } from '../reducers/session.js';
 
@@ -18,7 +18,7 @@ import { setSession } from '../reducers/session.js';
  * @return {Promise} A promise that resolves when the network request resolves.
  */
 export default function (projectId, vmState, params, projectTitle) {
-    const token = getToken();
+    const token = getTokenFromCookie(TOKEN_KEY);
     const refreshToken = getRefreshToken();
     let opts = {
         body: JSON.stringify({
