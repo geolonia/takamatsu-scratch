@@ -30,28 +30,26 @@ package.json:
 - commit the changes and push to remote
 - once merged into main branch, usually it takes 1~2 minutes to be reflected in production https://chizubouken-lab.jp/app
 
-### About project loading
+### About project loading LOCALLY ONLY (don't commit these changes, they are just for the purpose of local test)
 
 #### how to show project by id
-Example to show project id 8(access CMS dashboard to check existing project id):
+Example to show project id 19(access CMS dashboard to check existing projects id):
 
 In the file `hash-parser-hoc.jsx`
 
-Add this code in `componentDidMount()`. It sets the url hash.
-```
-window.addEventListener('load', () => {
-    window.location.hash = '/projects/8'
-});
-```
-Then in the function `handleHashChange()` replace pathname to hash:
+comment these two lines, then add assign project id to `hashProjectId` variable
 
-change `const hashMatch = window.location.pathname.match(/\/(\d+)$/);`
-
-to `const hashMatch = window.location.hash.match(/\/(\d+)$/);`
+```
+handleHashChange () {
+    // const hashMatch = window.location.pathname.match(/\/(\d+)$/);
+    // const hashProjectId = hashMatch === null ? defaultProjectId : hashMatch[1];
+    const hashProjectId = "19";
+    this.props.setProjectId(hashProjectId.toString());
+}
+```
 
 #### how to show default project
-It is the same steps as above the only difference is the value set to hash inside the load event listener: `window.location.hash = '/projects/new'`
-
+No change needed.
 
 ---
 
