@@ -22,7 +22,7 @@ const sync = () => {
         .source('extensions/geolonia/gui/')
         .destination('src/lib/libraries/extensions/')
         .execute((error, code, cmd) => {
-            console.log(`OK: \`${cmd}\``)
+            console.log(`OK: \`${cmd}\``);
         });
 
     new Rsync()
@@ -30,25 +30,26 @@ const sync = () => {
         .source('extensions/modules/')
         .destination('node_modules/')
         .execute((error, code, cmd) => {
-            console.log(`OK: \`${cmd}\``)
+            console.log(`OK: \`${cmd}\``);
         });
-}
+};
 
-if ('true' === process.env.WEBPACK_DEV_SERVER) {
+if (process.env.WEBPACK_DEV_SERVER === 'true') {
     chokidar.watch('./extensions/').on('all', (event, path) => {
-        sync()
+        sync();
     });
 }
 
-sync()
+sync();
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
     devServer: {
         contentBase: path.resolve(__dirname, 'build'),
-        host: '0.0.0.0',
-        port: process.env.PORT || 8080
+        host: '127.0.0.1',
+        port: process.env.PORT || 8080,
+        open: true
     },
     output: {
         library: 'GUI',
