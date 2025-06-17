@@ -10,19 +10,19 @@ const Message = {
 const AvailableLocales = ['en', 'ja', 'ja-Hira'];
 
 class Scratch3GeoloniaBlocks {
-    constructor (runtime) {
+    constructor(runtime) {
         this.runtime = runtime;
         this.addr = {
             code: '',
             prefecture: '',
             city: ''
         }
-        this.center = {lng: 0, lat: 0}
+        this.center = { lng: 0, lat: 0 }
         this.features = []
         this.loaded = false
     }
 
-    getInfo () {
+    getInfo() {
         this._locale = this.setLocale();
 
         return {
@@ -45,6 +45,17 @@ class Scratch3GeoloniaBlocks {
                         ZOOM: {
                             type: ArgumentType.NUMBER,
                             defaultValue: 10,
+                        },
+                    }
+                },
+                {
+                    opcode: 'setBaseMap',
+                    blockType: BlockType.COMMAND,
+                    text: '背景地図を [STYLE] に変更する',
+                    arguments: {
+                        STYLE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'streets',
                         },
                     }
                 },
@@ -72,18 +83,18 @@ class Scratch3GeoloniaBlocks {
                     blockType: BlockType.COMMAND,
                     text: "経度 [LNG] 緯度 [LAT] ズーム [ZOOM] にジャンプ",
                     arguments: {
-                      LNG: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 139.74,
-                      },
-                      LAT: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 35.65,
-                      },
-                      ZOOM: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 10,
-                      },
+                        LNG: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 139.74,
+                        },
+                        LAT: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 35.65,
+                        },
+                        ZOOM: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 10,
+                        },
                     }
                 },
                 {
@@ -236,6 +247,14 @@ class Scratch3GeoloniaBlocks {
         })
     }
 
+    setBaseMap(args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。')
+            return
+        }
+        this.map.setStyle(args.STYLE)
+    }
+
     addLayer(args) {
         if (!this.loaded) {
             console.error('まず地図を表示してください。')
@@ -329,7 +348,7 @@ class Scratch3GeoloniaBlocks {
         }
 
         const promise = new Promise((resolve) => {
-            this.map.flyTo({center: [args.LNG, args.LAT], zoom: args.ZOOM});
+            this.map.flyTo({ center: [args.LNG, args.LAT], zoom: args.ZOOM });
 
             this.map.once('moveend', () => {
                 resolve()
@@ -344,12 +363,12 @@ class Scratch3GeoloniaBlocks {
     }
 
     setLocale() {
-      let locale = formatMessage.setup().locale;
-      if (AvailableLocales.includes(locale)) {
-        return locale;
-      } else {
-        return 'en';
-      }
+        let locale = formatMessage.setup().locale;
+        if (AvailableLocales.includes(locale)) {
+            return locale;
+        } else {
+            return 'en';
+        }
     }
 }
 
