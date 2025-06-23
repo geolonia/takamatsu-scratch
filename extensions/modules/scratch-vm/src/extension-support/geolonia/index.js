@@ -2,7 +2,7 @@ const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
 const formatMessage = require('format-message');
-const { openReverseGeocoder } = require('@geolonia/open-reverse-geocoder');
+const {openReverseGeocoder} = require('@geolonia/open-reverse-geocoder');
 
 const Message = {
 }
@@ -17,7 +17,7 @@ class Scratch3GeoloniaBlocks {
             prefecture: '',
             city: ''
         }
-        this.center = { lng: 0, lat: 0 }
+        this.center = {lng: 0, lat: 0}
         this.features = []
         this.loaded = false
     }
@@ -55,8 +55,9 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         STYLE: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'streets',
-                        },
+                            menu: 'baseMapStyles', // ドロップダウンメニューを指定
+                            defaultValue: '標準'
+                        }
                     }
                 },
                 {
@@ -165,9 +166,16 @@ class Scratch3GeoloniaBlocks {
                     opcode: 'getName',
                     blockType: BlockType.REPORTER,
                     text: "場所の名前",
-                },
+                }
             ],
             menus: {
+                // TODO：sdk側のmaplibreバージョンを上げてからGSI、ゲーム風のスタイルを有効にする（spriteの配列指定ができない為）
+                baseMapStyles: [
+                    {text: '標準', value: 'https://geoloniamaps.github.io/gsi/style.json'},
+                    // {text: 'GSI', value: 'https://smartmap.styles.geoloniamaps.com/style.json'},
+                    {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'}
+                    // {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/rpg-style.json'}
+                ]
             }
         };
     }
@@ -249,10 +257,11 @@ class Scratch3GeoloniaBlocks {
 
     setBaseMap(args) {
         if (!this.loaded) {
-            console.error('まず地図を表示してください。')
-            return
+            // eslint-disable-next-line no-console
+            console.error('まず地図を表示してください。');
+            return;
         }
-        this.map.setStyle(args.STYLE)
+        this.map.setStyle(args.STYLE);
     }
 
     addLayer(args) {
@@ -348,7 +357,7 @@ class Scratch3GeoloniaBlocks {
         }
 
         const promise = new Promise((resolve) => {
-            this.map.flyTo({ center: [args.LNG, args.LAT], zoom: args.ZOOM });
+            this.map.flyTo({center: [args.LNG, args.LAT], zoom: args.ZOOM});
 
             this.map.once('moveend', () => {
                 resolve()
