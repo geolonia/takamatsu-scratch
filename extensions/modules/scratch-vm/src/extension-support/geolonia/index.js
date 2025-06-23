@@ -286,8 +286,7 @@ class Scratch3GeoloniaBlocks {
     }
 
     selectPointLayer () {
-        // ここにレイヤー選択時の処理を書く
-        // 例: this.selectedLayer = args.LAYER;
+        // TODO: 選択されたレイヤーのスプライトを変更する
     }
 
     setBaseMap (args) {
