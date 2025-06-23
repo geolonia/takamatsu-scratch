@@ -2,7 +2,7 @@ const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
 const formatMessage = require('format-message');
-const { openReverseGeocoder } = require('@geolonia/open-reverse-geocoder');
+const {openReverseGeocoder} = require('@geolonia/open-reverse-geocoder');
 
 const Message = {
 }
@@ -10,7 +10,7 @@ const Message = {
 const AvailableLocales = ['en', 'ja', 'ja-Hira'];
 
 class Scratch3GeoloniaBlocks {
-    constructor (runtime) {
+    constructor(runtime) {
         this.runtime = runtime;
         this.addr = {
             code: '',
@@ -22,7 +22,7 @@ class Scratch3GeoloniaBlocks {
         this.loaded = false
     }
 
-    getInfo () {
+    getInfo() {
         this._locale = this.setLocale();
 
         return {
@@ -49,6 +49,18 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'setBaseMap',
+                    blockType: BlockType.COMMAND,
+                    text: '背景地図を [STYLE] に変更する',
+                    arguments: {
+                        STYLE: {
+                            type: ArgumentType.STRING,
+                            menu: 'baseMapStyles', // ドロップダウンメニューを指定
+                            defaultValue: '標準'
+                        }
+                    }
+                },
+                {
                     opcode: 'addLayer',
                     blockType: BlockType.COMMAND,
                     text: 'レイヤー [LAYER] を 色 [COLOR] 透明度 [OPACITY] で表示',
@@ -72,18 +84,18 @@ class Scratch3GeoloniaBlocks {
                     blockType: BlockType.COMMAND,
                     text: "経度 [LNG] 緯度 [LAT] ズーム [ZOOM] にジャンプ",
                     arguments: {
-                      LNG: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 139.74,
-                      },
-                      LAT: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 35.65,
-                      },
-                      ZOOM: {
-                        type: ArgumentType.NUMBER,
-                        defaultValue: 10,
-                      },
+                        LNG: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 139.74,
+                        },
+                        LAT: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 35.65,
+                        },
+                        ZOOM: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 10,
+                        },
                     }
                 },
                 {
@@ -154,9 +166,16 @@ class Scratch3GeoloniaBlocks {
                     opcode: 'getName',
                     blockType: BlockType.REPORTER,
                     text: "場所の名前",
-                },
+                }
             ],
             menus: {
+                // TODO：sdk側のmaplibreバージョンを上げてからGSI、ゲーム風のスタイルを有効にする（spriteの配列指定ができない為）
+                baseMapStyles: [
+                    {text: '標準', value: 'https://geoloniamaps.github.io/gsi/style.json'},
+                    // {text: 'GSI', value: 'https://smartmap.styles.geoloniamaps.com/style.json'},
+                    {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'}
+                    // {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/rpg-style.json'}
+                ]
             }
         };
     }
@@ -234,6 +253,15 @@ class Scratch3GeoloniaBlocks {
                 resolve()
             })
         })
+    }
+
+    setBaseMap(args) {
+        if (!this.loaded) {
+            // eslint-disable-next-line no-console
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.setStyle(args.STYLE);
     }
 
     addLayer(args) {
@@ -344,12 +372,12 @@ class Scratch3GeoloniaBlocks {
     }
 
     setLocale() {
-      let locale = formatMessage.setup().locale;
-      if (AvailableLocales.includes(locale)) {
-        return locale;
-      } else {
-        return 'en';
-      }
+        let locale = formatMessage.setup().locale;
+        if (AvailableLocales.includes(locale)) {
+            return locale;
+        } else {
+            return 'en';
+        }
     }
 }
 
