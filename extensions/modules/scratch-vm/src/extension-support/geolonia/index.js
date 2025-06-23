@@ -62,6 +62,23 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'selectPointLayer',
+                    blockType: BlockType.COMMAND,
+                    text: '[LAYER] を [ICON] で表示する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'allLayerNames', // ←ここでメニュー名を指定
+                            defaultValue: ''
+                        },
+                        ICON: {
+                            type: ArgumentType.STRING,
+                            menu: 'iconNames', // アイコンのメニューを指定
+                            defaultValue: 'お店'
+                        }
+                    }
+                },
+                {
                     opcode: 'addLayer',
                     blockType: BlockType.COMMAND,
                     text: 'レイヤー [LAYER] を 色 [COLOR] 透明度 [OPACITY] で表示',
@@ -176,7 +193,8 @@ class Scratch3GeoloniaBlocks {
                     // {text: 'GSI', value: 'https://smartmap.styles.geoloniamaps.com/style.json'},
                     {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'}
                     // {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/rpg-style.json'}
-                ]
+                ],
+                allLayerNames: () => this.getAllLayerNames()
             }
         };
     }
@@ -256,6 +274,20 @@ class Scratch3GeoloniaBlocks {
                 resolve();
             });
         });
+    }
+
+    getAllLayerNames () {
+        if (!this.map || !this.map.getStyle) return [['(なし)', '']];
+        const layers = this.map.getStyle().layers || [];
+        const result = layers
+            .filter(layer => layer.id && (layer.type === 'symbol' || layer.type === 'circle'))
+            .map(layer => [layer.id, layer.id]);
+        return result.length > 0 ? result : [['(なし)', '']];
+    }
+
+    selectPointLayer () {
+        // ここにレイヤー選択時の処理を書く
+        // 例: this.selectedLayer = args.LAYER;
     }
 
     setBaseMap (args) {
