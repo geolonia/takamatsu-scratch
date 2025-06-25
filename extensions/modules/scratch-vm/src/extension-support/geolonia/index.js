@@ -18,6 +18,7 @@ class Scratch3GeoloniaBlocks {
             city: ''
         }
         this.center = {lng: 0, lat: 0}
+        this.zoom = 10
         this.features = []
         this.loaded = false
     }
@@ -44,7 +45,7 @@ class Scratch3GeoloniaBlocks {
                         },
                         ZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 10,
+                            defaultValue: this.zoom,
                         },
                     }
                 },
@@ -68,6 +69,28 @@ class Scratch3GeoloniaBlocks {
                             type: ArgumentType.STRING,
                             menu: 'baseMapStyles', // ドロップダウンメニューを指定
                             defaultValue: '標準'
+                        }
+                    }
+                },
+                {
+                    opcode: 'setMaxZoom',
+                    blockType: BlockType.COMMAND,
+                    text: '地図の最大ズームレベルを [MAXZOOM] に変更する',
+                    arguments: {
+                        MAXZOOM: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 18
+                        }
+                    }
+                },
+                {
+                    opcode: 'setMinZoom',
+                    blockType: BlockType.COMMAND,
+                    text: '地図の最大ズームレベルを [MINZOOM] に変更する',
+                    arguments: {
+                        MINZOOM: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 4
                         }
                     }
                 },
@@ -174,6 +197,11 @@ class Scratch3GeoloniaBlocks {
                     text: "経度",
                 },
                 {
+                    opcode: 'getZoom',
+                    blockType: BlockType.REPORTER,
+                    text: 'zoom'
+                },
+                {
                     opcode: 'getName',
                     blockType: BlockType.REPORTER,
                     text: "場所の名前",
@@ -216,6 +244,10 @@ class Scratch3GeoloniaBlocks {
         return ''
     }
 
+    getZoom () {
+        return `${Math.round(this.zoom * 1000) / 1000}`;
+    }
+
     displayMap(args) {
         return new Promise((resolve) => {
             const mapContainer = document.getElementById('geolonia')
@@ -251,6 +283,10 @@ class Scratch3GeoloniaBlocks {
                         layers: ['poi']
                     })
                 })
+
+                this.map.on('zoomend', () => {
+                    this.zoom = this.map.getZoom();
+                });
 
                 const resizeObserver = new ResizeObserver(entries => {
                     this.map.resize()
@@ -290,6 +326,24 @@ class Scratch3GeoloniaBlocks {
             return;
         }
         this.map.setStyle(args.STYLE);
+    }
+
+    setMaxZoom (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        this.map.setMaxZoom(Number(args.MAXZOOM));
+    }
+
+    setMinZoom (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        this.map.setMinZoom(Number(args.MINZOOM));
     }
 
     addLayer(args) {
