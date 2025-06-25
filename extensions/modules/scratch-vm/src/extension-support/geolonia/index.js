@@ -49,6 +49,17 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'changePitch',
+                    blockType: BlockType.COMMAND,
+                    text: '地図の傾きを [PITCH] 度に変更する',
+                    arguments: {
+                        PITCH: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 0
+                        }
+                    }
+                },
+                {
                     opcode: 'setBaseMap',
                     blockType: BlockType.COMMAND,
                     text: '背景地図を [STYLE] に変更する',
@@ -253,6 +264,24 @@ class Scratch3GeoloniaBlocks {
                 resolve()
             })
         })
+    }
+
+    changePitch (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        return new Promise((resolve) => {
+            this.map.easeTo({
+                pitch: Number(args.PITCH),
+                easing: this.easing
+            });
+
+            this.map.once('moveend', () => {
+                resolve();
+            });
+        });
     }
 
     setBaseMap(args) {
