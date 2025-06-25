@@ -223,7 +223,7 @@ class Scratch3GeoloniaBlocks {
 
             this.map = {}
 
-            this.map = new city.Takamatsu.Map({
+            this.map = new geolonia.japan.Map({
                 container: 'geolonia-map',
                 zoom: args.ZOOM,
                 pitch: 0,
@@ -270,10 +270,10 @@ class Scratch3GeoloniaBlocks {
             return
         }
 
-        this.map.loadData(args.LAYER, {
-            'fill-color': args.COLOR,
-            'fill-opacity': Number(args.OPACITY),
-        })
+        // this.map.loadData(args.LAYER, {
+        //     'fill-color': args.COLOR,
+        //     'fill-opacity': Number(args.OPACITY),
+        // })
     }
 
     zoomTo(args) {
