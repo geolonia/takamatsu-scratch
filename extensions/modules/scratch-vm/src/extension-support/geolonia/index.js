@@ -72,6 +72,28 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'setMaxZoom',
+                    blockType: BlockType.COMMAND,
+                    text: '地図の最大ズームレベルを [MAXZOOM] に変更する',
+                    arguments: {
+                        MAXZOOM: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 18
+                        }
+                    }
+                },
+                {
+                    opcode: 'setMinZoom',
+                    blockType: BlockType.COMMAND,
+                    text: '地図の最大ズームレベルを [MINZOOM] に変更する',
+                    arguments: {
+                        MINZOOM: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 4
+                        }
+                    }
+                },
+                {
                     opcode: 'addLayer',
                     blockType: BlockType.COMMAND,
                     text: 'レイヤー [LAYER] を 色 [COLOR] 透明度 [OPACITY] で表示',
@@ -291,6 +313,24 @@ class Scratch3GeoloniaBlocks {
             return;
         }
         this.map.setStyle(args.STYLE);
+    }
+
+    setMaxZoom (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        this.map.setMaxZoom(Number(args.MAXZOOM));
+    }
+
+    setMinZoom (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        this.map.setMinZoom(Number(args.MINZOOM));
     }
 
     addLayer(args) {
