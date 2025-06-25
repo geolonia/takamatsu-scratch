@@ -194,7 +194,17 @@ class Scratch3GeoloniaBlocks {
                     {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'}
                     // {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/rpg-style.json'}
                 ],
-                allLayerNames: () => this.getAllLayerNames()
+                allLayerNames: () => this.getAllLayerNames(),
+                iconNames: [
+                    {text: 'お店', value: 'shop'},
+                    {text: '公園', value: 'park'},
+                    {text: '学校', value: 'school'},
+                    {text: '病院', value: 'hospital'},
+                    {text: '駅', value: 'station'},
+                    {text: 'バス停', value: 'bus_stop'},
+                    {text: '観光地', value: 'tourist_attraction'},
+                    {text: 'その他', value: 'other'}
+                ]
             }
         };
     }
