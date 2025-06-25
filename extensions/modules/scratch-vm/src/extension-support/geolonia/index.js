@@ -18,6 +18,7 @@ class Scratch3GeoloniaBlocks {
             city: ''
         }
         this.center = {lng: 0, lat: 0}
+        this.zoom = 10
         this.features = []
         this.loaded = false
     }
@@ -44,7 +45,7 @@ class Scratch3GeoloniaBlocks {
                         },
                         ZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 10,
+                            defaultValue: this.zoom,
                         },
                     }
                 },
@@ -196,6 +197,11 @@ class Scratch3GeoloniaBlocks {
                     text: "経度",
                 },
                 {
+                    opcode: 'getZoom',
+                    blockType: BlockType.REPORTER,
+                    text: 'zoom'
+                },
+                {
                     opcode: 'getName',
                     blockType: BlockType.REPORTER,
                     text: "場所の名前",
@@ -239,6 +245,10 @@ class Scratch3GeoloniaBlocks {
         return ''
     }
 
+    getZoom () {
+        return `${Math.round(this.zoom * 1000) / 1000}`;
+    }
+
     displayMap(args) {
         return new Promise((resolve) => {
             const mapContainer = document.getElementById('geolonia')
@@ -274,6 +284,10 @@ class Scratch3GeoloniaBlocks {
                         layers: ['poi']
                     })
                 })
+
+                this.map.on('zoomend', () => {
+                    this.zoom = this.map.getZoom();
+                });
 
                 const resizeObserver = new ResizeObserver(entries => {
                     this.map.resize()
