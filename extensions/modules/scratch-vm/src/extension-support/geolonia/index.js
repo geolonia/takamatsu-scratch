@@ -21,6 +21,10 @@ class Scratch3GeoloniaBlocks {
         this.zoom = 10
         this.features = []
         this.loaded = false
+        this.geojson = {
+            type: 'FeatureCollection',
+            features: []
+        };
     }
 
     getInfo() {
@@ -101,16 +105,16 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LAYER: {
                             type: ArgumentType.STRING,
-                            defaultValue: '都市計画区域界',
+                            defaultValue: '都市計画区域界'
                         },
                         COLOR: {
                             type: ArgumentType.COLOR,
-                            defaultValue: '#FF0000',
+                            defaultValue: '#FF0000'
                         },
                         OPACITY: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 0.4,
-                        },
+                            defaultValue: 0.4
+                        }
                     }
                 },
                 {
@@ -205,6 +209,27 @@ class Scratch3GeoloniaBlocks {
                     opcode: 'getName',
                     blockType: BlockType.REPORTER,
                     text: "場所の名前",
+                },
+                {
+                    opcode: 'getGeojson',
+                    blockType: BlockType.REPORTER,
+                    text: 'geojson'
+                },
+                {
+                    opcode: 'setVariable',
+                    blockType: BlockType.COMMAND,
+                    text: '[VARIABLE_NAME] を [VALUE] にする',
+                    arguments: {
+                        VARIABLE_NAME: {
+                            type: ArgumentType.STRING,
+                            menu: 'variableMenu',
+                            defaultValue: 'getPref'
+                        },
+                        VALUE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '沖縄県'
+                        }
+                    }
                 }
             ],
             menus: {
@@ -213,7 +238,19 @@ class Scratch3GeoloniaBlocks {
                     {text: 'GSI', value: 'https://smartmap.styles.geoloniamaps.com/style.json'},
                     {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'},
                     {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/rpg-style.json'}
-                ]
+                ],
+                variableMenu: function () {
+                    const variableNames = [
+                        ['都道府県名', 'getPref'],
+                        ['市区町村名', 'getCity'],
+                        ['緯度', 'getLat'],
+                        ['経度', 'getLng'],
+                        ['zoom', 'getZoom'],
+                        ['場所の名前', 'getName'],
+                        ['geojson', 'getGeojson']
+                    ];
+                    return variableNames;
+                }
             }
         };
     }
@@ -246,6 +283,53 @@ class Scratch3GeoloniaBlocks {
 
     getZoom () {
         return `${Math.round(this.zoom * 1000) / 1000}`;
+    }
+
+    getGeojson () {
+        if (typeof this.geojson === 'object') {
+            return JSON.stringify(this.geojson);
+        }
+        return this.geojson;
+    }
+
+    setVariable (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        switch (args.VARIABLE_NAME) {
+        case 'getPref':
+            this.addr.prefecture = args.VALUE;
+            break;
+        case 'getCity':
+            this.addr.city = args.VALUE;
+            break;
+        case 'getLat':
+            this.center.lat = Number(args.VALUE);
+            break;
+        case 'getLng':
+            this.center.lng = Number(args.VALUE);
+            break;
+        case 'getZoom':
+            this.zoom = Number(args.VALUE);
+            break;
+        case 'getName':
+            // features配列の先頭のnameを書き換える例
+            if (this.features.length > 0) {
+                this.features[0].properties.name = args.VALUE;
+            }
+            break;
+        case 'getGeojson':
+            try {
+                this.geojson = JSON.parse(args.VALUE);
+            } catch (e) {
+                this.geojson = args.VALUE;
+            }
+            break;
+        default:
+            break;
+        }
     }
 
     displayMap(args) {
@@ -346,12 +430,12 @@ class Scratch3GeoloniaBlocks {
         this.map.setMinZoom(Number(args.MINZOOM));
     }
 
-    addLayer(args) {
+    addLayer (args) {
         if (!this.loaded) {
-            console.error('まず地図を表示してください。')
-            return
+            console.error('まず地図を表示してください。');
+            return;
         }
-
+        // TODO: （点、線、面）レイヤー追加を実装する
         // this.map.loadData(args.LAYER, {
         //     'fill-color': args.COLOR,
         //     'fill-opacity': Number(args.OPACITY),
