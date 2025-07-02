@@ -95,7 +95,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'setMinZoom',
                     blockType: BlockType.COMMAND,
-                    text: '地図の最大ズームレベルを [MINZOOM] に変更する',
+                    text: '地図の最小ズームレベルを [MINZOOM] に変更する',
                     arguments: {
                         MINZOOM: {
                             type: ArgumentType.NUMBER,
