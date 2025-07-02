@@ -118,7 +118,7 @@ class Scratch3GeoloniaBlocks {
                         ICON: {
                             type: ArgumentType.STRING,
                             menu: 'iconMenu',
-                            defaultValue: 'map-pin-red'
+                            defaultValue: 'map-pin'
                         },
                         NAME: {
                             type: ArgumentType.STRING,
