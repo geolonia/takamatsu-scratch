@@ -25,6 +25,10 @@ class Scratch3GeoloniaBlocks {
             type: 'FeatureCollection',
             features: []
         };
+        this.customMarkers = {
+            type: 'FeatureCollection',
+            features: []
+        };
     }
 
     getInfo() {
@@ -99,9 +103,9 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
-                    opcode: 'setMinZoom',
+                    opcode: 'addSymbolMarker',
                     blockType: BlockType.COMMAND,
-                    text: '緯度 [LAT] 経度 [LON] に [ICON] を表示する',
+                    text: '緯度 [LAT] 経度 [LON] に [ICON] を [NAME] という名前で表示する',
                     arguments: {
                         LAT: {
                             type: ArgumentType.NUMBER,
@@ -113,7 +117,12 @@ class Scratch3GeoloniaBlocks {
                         },
                         ICON: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'marker'
+                            menu: 'iconMenu',
+                            defaultValue: 'map-pin-red'
+                        },
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'お店'
                         }
                     }
                 },
@@ -269,7 +278,27 @@ class Scratch3GeoloniaBlocks {
                         ['geojson', 'getGeojson']
                     ];
                     return variableNames;
-                }
+                },
+                iconMenu: [
+                    {text: 'ピン', value: 'map-pin-red'},
+                    // {text: '星', value: 'star'},
+                    // {text: 'モンスター1', value: 'monster1'},
+                    // {text: 'モンスター2', value: 'monster2'},
+                    // {text: '宝箱', value: 'treasure'},
+                    // {text: '旗', value: 'flag'},
+                    // {text: '飲食店', value: 'restaurant'},
+                    // {text: 'カフェ', value: 'cafe'},
+                    // {text: 'コンビニ', value: 'convenience_store'},
+                    {text: '病院', value: 'hospital'},
+                    {text: '学校', value: 'preschool'},
+                    // {text: '図書館', value: 'library'},
+                    // {text: '郵便局', value: 'post_office'},
+                    // {text: '銀行', value: 'bank'},
+                    // {text: 'バス停', value: 'bus_stop'},
+                    // {text: '鉄道駅', value: 'railway_station'},
+                    // {text: '駐車場', value: 'parking'},
+                    // {text: '家', value: 'home'}
+                ]
             }
         };
     }
@@ -447,6 +476,38 @@ class Scratch3GeoloniaBlocks {
         }
 
         this.map.setMinZoom(Number(args.MINZOOM));
+    }
+
+    addSymbolMarker (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        const sourceName = 'custom-markers';
+        
+        this.customMarkers.features.push({
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [Number(args.LON), Number(args.LAT)]
+            },
+            properties: {
+                icon: `marker:${args.ICON}` || 'marker:map-pin',
+                name: args.NAME || '',
+                lngLat: `${args.LAT}, ${args.LON}`
+            }
+        });
+
+        // eslint-disable-next-line no-negated-condition
+        if (!this.map.getSource(sourceName)) {
+            this.map.loadGeojson(this.customMarkers, sourceName, {
+                'marker-symbol': ['get', 'icon'],
+                'title': ['get', 'name'],
+                'marker-size': 'medium'
+            });
+        } else {
+            this.map.getSource(sourceName).setData(this.customMarkers);
+        }
     }
 
     addLayer (args) {
