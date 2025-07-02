@@ -118,6 +118,17 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'isTouchingLayer',
+                    blockType: BlockType.BOOLEAN,
+                    text: 'レイヤー [LAYER] に触れた',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '都市計画区域界'
+                        }
+                    }
+                },
+                {
                     opcode: 'flyTo',
                     blockType: BlockType.COMMAND,
                     text: "経度 [LNG] 緯度 [LAT] ズーム [ZOOM] にジャンプ",
@@ -383,6 +394,28 @@ class Scratch3GeoloniaBlocks {
                 resolve()
             })
         })
+    }
+
+    // クラス内にメソッドを追加
+    isTouchingLayer (args, util) {
+        // 例: キャラクターの座標とレイヤーのジオメトリを比較して判定
+        if (!this.loaded || !this.map) return false;
+
+        // Scratchキャラクターの座標取得（例: util.target.x, util.target.y）
+        const spriteX = util && util.target && util.target.x;
+        const spriteY = util && util.target && util.target.y;
+        if (typeof spriteX !== 'number' || typeof spriteY !== 'number') return false;
+
+        // 地図座標に変換（必要に応じて調整）
+        const lngLat = this.map.unproject([spriteX, spriteY]);
+
+        // 指定レイヤーのフィーチャを取得
+        const features = this.map.queryRenderedFeatures(this.map.project(lngLat), {
+            layers: [args.LAYER]
+        });
+
+        // 何かフィーチャがあれば「触れている」と判定
+        return features && features.length > 0;
     }
 
     changePitch (args) {
