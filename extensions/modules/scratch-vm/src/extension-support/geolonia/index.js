@@ -99,6 +99,25 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'setMinZoom',
+                    blockType: BlockType.COMMAND,
+                    text: '緯度 [LAT] 経度 [LON] に [ICON] を表示する',
+                    arguments: {
+                        LAT: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 35.65
+                        },
+                        LON: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 139.74
+                        },
+                        ICON: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'marker'
+                        }
+                    }
+                },
+                {
                     opcode: 'addLayer',
                     blockType: BlockType.COMMAND,
                     text: 'レイヤー [LAYER] を 色 [COLOR] 透明度 [OPACITY] で表示',
