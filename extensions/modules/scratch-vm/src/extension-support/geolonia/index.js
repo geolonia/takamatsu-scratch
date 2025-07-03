@@ -459,7 +459,7 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
-        this.map.setStyle(args.STYLE);
+        this.map.setBaseMapStyle(args.STYLE);
     }
 
     setMaxZoom (args) {
