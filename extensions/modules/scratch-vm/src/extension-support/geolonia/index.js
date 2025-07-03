@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
@@ -5,7 +6,7 @@ const formatMessage = require('format-message');
 const {openReverseGeocoder} = require('@geolonia/open-reverse-geocoder');
 
 const Message = {
-}
+};
 
 const AvailableLocales = ['en', 'ja', 'ja-Hira'];
 
@@ -16,11 +17,11 @@ class Scratch3GeoloniaBlocks {
             code: '',
             prefecture: '',
             city: ''
-        }
-        this.center = {lng: 0, lat: 0}
-        this.zoom = 10
-        this.features = []
-        this.loaded = false
+        };
+        this.center = {lng: 0, lat: 0};
+        this.zoom = 10;
+        this.features = [];
+        this.loaded = false;
         this.geojson = {
             type: 'FeatureCollection',
             features: []
@@ -41,7 +42,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'displayMap',
                     blockType: BlockType.COMMAND,
-                    text: '高松市をズーム [ZOOM] で表示',
+                    text: '地図を緯度 [LAT] 経度 [LNG] ズーム [ZOOM] で表示',
                     arguments: {
                         LNG: {
                             type: ArgumentType.NUMBER,
@@ -94,7 +95,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'setMinZoom',
                     blockType: BlockType.COMMAND,
-                    text: '地図の最大ズームレベルを [MINZOOM] に変更する',
+                    text: '地図の最小ズームレベルを [MINZOOM] に変更する',
                     arguments: {
                         MINZOOM: {
                             type: ArgumentType.NUMBER,
@@ -159,7 +160,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'flyTo',
                     blockType: BlockType.COMMAND,
-                    text: "経度 [LNG] 緯度 [LAT] ズーム [ZOOM] にジャンプ",
+                    text: '経度 [LNG] 緯度 [LAT] ズーム [ZOOM] にジャンプ',
                     arguments: {
                         LNG: {
                             type: ArgumentType.NUMBER,
@@ -178,7 +179,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'zoomTo',
                     blockType: BlockType.COMMAND,
-                    text: "地図のズームレベルを [ZOOM] 変更する",
+                    text: '地図のズームレベルを [ZOOM] 変更する',
                     arguments: {
                         ZOOM: {
                             type: ArgumentType.NUMBER,
@@ -189,7 +190,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'bearingTo',
                     blockType: BlockType.COMMAND,
-                    text: "地図を [DEGREE] 度回転する",
+                    text: '地図を [DEGREE] 度回転する',
                     arguments: {
                         DEGREE: {
                             type: ArgumentType.NUMBER,
@@ -200,7 +201,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'moveVertical',
                     blockType: BlockType.COMMAND,
-                    text: "地図を縦に [DISTANCE] ピクセル移動する",
+                    text: '地図を縦に [DISTANCE] ピクセル移動する',
                     arguments: {
                         DISTANCE: {
                             type: ArgumentType.NUMBER,
@@ -211,7 +212,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'moveHorizontal',
                     blockType: BlockType.COMMAND,
-                    text: "地図を横に [DISTANCE] ピクセル移動する",
+                    text: '地図を横に [DISTANCE] ピクセル移動する',
                     arguments: {
                         DISTANCE: {
                             type: ArgumentType.NUMBER,
@@ -222,22 +223,22 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'getPref',
                     blockType: BlockType.REPORTER,
-                    text: "都道府県名",
+                    text: '都道府県名',
                 },
                 {
                     opcode: 'getCity',
                     blockType: BlockType.REPORTER,
-                    text: "市区町村名",
+                    text: '市区町村名',
                 },
                 {
                     opcode: 'getLat',
                     blockType: BlockType.REPORTER,
-                    text: "緯度",
+                    text: '緯度',
                 },
                 {
                     opcode: 'getLng',
                     blockType: BlockType.REPORTER,
-                    text: "経度",
+                    text: '経度',
                 },
                 {
                     opcode: 'getZoom',
@@ -247,7 +248,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'getName',
                     blockType: BlockType.REPORTER,
-                    text: "場所の名前",
+                    text: '場所の名前',
                 },
                 {
                     opcode: 'getGeojson',
@@ -315,29 +316,29 @@ class Scratch3GeoloniaBlocks {
     }
 
     getLat() {
-        return `${this.center.lat.toFixed(4)}`
+        return `${this.center.lat.toFixed(4)}`;
     }
 
     getLng() {
-        return `${this.center.lng.toFixed(4)}`
+        return `${this.center.lng.toFixed(4)}`;
     }
 
     getPref() {
-        return this.addr.prefecture
+        return this.addr.prefecture;
     }
 
     getCity() {
-        return this.addr.city
+        return this.addr.city;
     }
 
     getName() {
         for (let i = 0; i < this.features.length; i++) {
             if ('symbol' === this.features[i].layer.type && this.features[i].properties.name) {
-                return this.features[i].properties.name
+                return this.features[i].properties.name;
             }
         }
 
-        return ''
+        return '';
     }
 
     getZoom () {
@@ -391,57 +392,58 @@ class Scratch3GeoloniaBlocks {
         }
     }
 
-    displayMap(args) {
+    displayMap (args) {
         return new Promise((resolve) => {
-            const mapContainer = document.getElementById('geolonia')
+            const mapContainer = document.getElementById('geolonia');
 
             if (document.getElementById('geolonia-map')) {
-                mapContainer.removeChild(document.getElementById('geolonia-map'))
+                mapContainer.removeChild(document.getElementById('geolonia-map'));
             }
 
-            div = document.createElement("div");
+            div = document.createElement('div');
             div.id = 'geolonia-map';
-            div.setAttribute("style", "width:100%;height:100%;");
+            div.setAttribute('style', 'width:100%;height:100%;');
             div.dataset.navigationControl = 'off';
 
             mapContainer.appendChild(div);
 
-            this.map = {}
+            this.map = {};
 
             this.map = new geolonia.japan.Map({
                 container: 'geolonia-map',
+                center: [args.LAT, args.LNG],
                 zoom: args.ZOOM,
-                pitch: 0,
-            })
+                pitch: 0
+            });
 
             this.map.once('load', () => {
                 this.map.on('moveend', (e) => {
-                    this.center = this.map.getCenter()
+                    this.center = this.map.getCenter();
 
                     openReverseGeocoder(Object.values(this.center)).then(res => {
-                        this.addr = res
-                    })
+                        this.addr = res;
+                    });
 
                     this.features = this.map.queryRenderedFeatures(this.map.project(this.center), {
                         layers: ['poi']
-                    })
-                })
+                    });
+                });
 
                 this.map.on('zoomend', () => {
                     this.zoom = this.map.getZoom();
                 });
 
                 const resizeObserver = new ResizeObserver(entries => {
-                    this.map.resize()
+                    this.map.resize();
                 });
 
                 resizeObserver.observe(mapContainer);
 
-                this.loaded = true
+                this.loaded = true;
 
-                resolve()
-            })
-        })
+                resolve();
+            });
+        });
     }
 
     // クラス内にメソッドを追加
@@ -557,8 +559,8 @@ class Scratch3GeoloniaBlocks {
 
     zoomTo(args) {
         if (!this.loaded) {
-            console.error('まず地図を表示してください。')
-            return
+            console.error('まず地図を表示してください。');
+            return;
         }
 
         return new Promise((resolve) => {
@@ -568,15 +570,15 @@ class Scratch3GeoloniaBlocks {
             });
 
             this.map.once('moveend', () => {
-                resolve()
-            })
-        })
+                resolve();
+            });
+        });
     }
 
     bearingTo(args) {
         if (!this.loaded) {
-            console.error('まず地図を表示してください。')
-            return
+            console.error('まず地図を表示してください。');
+            return;
         }
 
         return new Promise((resolve) => {
@@ -586,15 +588,15 @@ class Scratch3GeoloniaBlocks {
             });
 
             this.map.once('moveend', () => {
-                resolve()
-            })
-        })
+                resolve();
+            });
+        });
     }
 
     moveVertical(args) {
         if (!this.loaded) {
-            console.error('まず地図を表示してください。')
-            return
+            console.error('まず地図を表示してください。');
+            return;
         }
 
         const promise = new Promise((resolve) => {
@@ -603,17 +605,17 @@ class Scratch3GeoloniaBlocks {
             });
 
             this.map.once('moveend', () => {
-                resolve()
-            })
-        })
+                resolve();
+            });
+        });
 
-        return promise
+        return promise;
     }
 
     moveHorizontal(args) {
         if (!this.loaded) {
-            console.error('まず地図を表示してください。')
-            return
+            console.error('まず地図を表示してください。');
+            return;
         }
 
         const promise = new Promise((resolve) => {
@@ -622,28 +624,28 @@ class Scratch3GeoloniaBlocks {
             });
 
             this.map.once('moveend', () => {
-                resolve()
-            })
-        })
+                resolve();
+            });
+        });
 
-        return promise
+        return promise;
     }
 
     flyTo(args) {
         if (!this.loaded) {
-            console.error('まず地図を表示してください。')
-            return
+            console.error('まず地図を表示してください。');
+            return;
         }
 
         const promise = new Promise((resolve) => {
             this.map.flyTo({center: [args.LNG, args.LAT], zoom: args.ZOOM});
 
             this.map.once('moveend', () => {
-                resolve()
-            })
-        })
+                resolve();
+            });
+        });
 
-        return promise
+        return promise;
     }
 
     easing(t) {
