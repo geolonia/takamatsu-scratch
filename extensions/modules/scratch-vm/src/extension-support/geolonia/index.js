@@ -44,18 +44,18 @@ class Scratch3GeoloniaBlocks {
                     blockType: BlockType.COMMAND,
                     text: '地図を緯度 [LAT] 経度 [LNG] ズーム [ZOOM] で表示',
                     arguments: {
-                        LNG: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 0,
-                        },
                         LAT: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 0,
+                            defaultValue: 35.65
+                        },
+                        LNG: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 139.74
                         },
                         ZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: this.zoom,
-                        },
+                            defaultValue: this.zoom
+                        }
                     }
                 },
                 {
@@ -400,7 +400,7 @@ class Scratch3GeoloniaBlocks {
 
             this.map = new geolonia.japan.Map({
                 container: 'geolonia-map',
-                center: [args.LAT, args.LNG],
+                center: [args.LNG, args.LAT],
                 zoom: args.ZOOM,
                 pitch: 0
             });
