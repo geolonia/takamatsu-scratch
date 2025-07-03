@@ -453,7 +453,7 @@ class Scratch3GeoloniaBlocks {
         });
     }
 
-    setBaseMap(args) {
+    setBaseMap (args) {
         if (!this.loaded) {
             // eslint-disable-next-line no-console
             console.error('まず地図を表示してください。');
