@@ -463,6 +463,7 @@ class Scratch3GeoloniaBlocks {
         if (!bounds) {
             return false;
         }
+        
         const stage = document.getElementById('geolonia');
         const width = stage.offsetWidth;
         const height = stage.offsetHeight;
@@ -473,36 +474,12 @@ class Scratch3GeoloniaBlocks {
             [bounds.right + width / 2, height / 2 - bounds.bottom]
         ];
         
-        const features = this.map.queryRenderedFeatures(bbox);
-        console.log('isTouchingLayer: ', features);
-        
-        const isTouching = features.some(feature => {
-            if (
-                feature.geometry.type === 'LineString' ||
-                feature.geometry.type === 'Polygon' ||
-                feature.geometry.type === 'MultiPolygon'
-            ) {
-                return false;
-            }
-
-            const coordinates = [feature.geometry.coordinates];
-            const bool = coordinates.some(([lng, lat]) => {
-                const { x, y } = this.map.project({ lng, lat });
-                return (
-                    x >= bbox[0][0] && x <= bbox[1][0] &&
-                    y >= bbox[0][1] && y <= bbox[1][1]
-                );
-            });
-            if(bool) {
-                console.log('触れているフィーチャー: ', feature);
-            }
-            
-            // 各座標をピクセル座標に変換し、bbox内にあるか判定
-            return bool;
+        const features = this.map.queryRenderedFeatures(bbox, {
+            layers: [args.LAYER]
         });
 
         // 何かフィーチャがあれば「触れている」と判定
-        return isTouching;
+        return features.length > 0;
     }
 
     changePitch (args) {
