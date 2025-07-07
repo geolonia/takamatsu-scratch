@@ -4,6 +4,7 @@ const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
 const formatMessage = require('format-message');
 const {openReverseGeocoder} = require('@geolonia/open-reverse-geocoder');
+const { getBBoxFromCorners } = require('./utils');
 
 const Message = {
 };
@@ -11,6 +12,10 @@ const Message = {
 const AvailableLocales = ['en', 'ja', 'ja-Hira'];
 
 class Scratch3GeoloniaBlocks {
+
+
+    sourceName = 'custom-markers';
+
     constructor(runtime) {
         this.runtime = runtime;
         this.addr = {
@@ -448,24 +453,56 @@ class Scratch3GeoloniaBlocks {
 
     // クラス内にメソッドを追加
     isTouchingLayer (args, util) {
-        // 例: キャラクターの座標とレイヤーのジオメトリを比較して判定
-        if (!this.loaded || !this.map) return false;
+        if (!this.loaded || !this.map) {
+            return false;
+        }
 
-        // Scratchキャラクターの座標取得（例: util.target.x, util.target.y）
-        const spriteX = util && util.target && util.target.x;
-        const spriteY = util && util.target && util.target.y;
-        if (typeof spriteX !== 'number' || typeof spriteY !== 'number') return false;
+        // spriteの表示領域
+        const bounds = util.target.getBounds();
 
-        // 地図座標に変換（必要に応じて調整）
-        const lngLat = this.map.unproject([spriteX, spriteY]);
+        if (!bounds) {
+            return false;
+        }
+        const stage = document.getElementById('geolonia');
+        const width = stage.offsetWidth;
+        const height = stage.offsetHeight;
 
-        // 指定レイヤーのフィーチャを取得
-        const features = this.map.queryRenderedFeatures(this.map.project(lngLat), {
-            layers: [args.LAYER]
+        // xy座標のbboxを取得
+        const bbox = [
+            [bounds.left + width / 2, height / 2 - bounds.top],
+            [bounds.right + width / 2, height / 2 - bounds.bottom]
+        ];
+        
+        const features = this.map.queryRenderedFeatures(bbox);
+        console.log('isTouchingLayer: ', features);
+        
+        const isTouching = features.some(feature => {
+            if (
+                feature.geometry.type === 'LineString' ||
+                feature.geometry.type === 'Polygon' ||
+                feature.geometry.type === 'MultiPolygon'
+            ) {
+                return false;
+            }
+
+            const coordinates = [feature.geometry.coordinates];
+            const bool = coordinates.some(([lng, lat]) => {
+                const { x, y } = this.map.project({ lng, lat });
+                return (
+                    x >= bbox[0][0] && x <= bbox[1][0] &&
+                    y >= bbox[0][1] && y <= bbox[1][1]
+                );
+            });
+            if(bool) {
+                console.log('触れているフィーチャー: ', feature);
+            }
+            
+            // 各座標をピクセル座標に変換し、bbox内にあるか判定
+            return bool;
         });
 
         // 何かフィーチャがあれば「触れている」と判定
-        return features && features.length > 0;
+        return isTouching;
     }
 
     changePitch (args) {
@@ -518,7 +555,6 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
-        const sourceName = 'custom-markers';
         
         this.customMarkers.features.push({
             type: 'Feature',
@@ -534,14 +570,14 @@ class Scratch3GeoloniaBlocks {
         });
 
         // eslint-disable-next-line no-negated-condition
-        if (!this.map.getSource(sourceName)) {
-            this.map.loadGeojson(this.customMarkers, sourceName, {
+        if (!this.map.getSource(this.sourceName)) {
+            this.map.loadGeojson(this.customMarkers, this.sourceName, {
                 'marker-symbol': ['get', 'icon'],
                 'title': ['get', 'name'],
                 'marker-size': 'medium'
             });
         } else {
-            this.map.getSource(sourceName).setData(this.customMarkers);
+            this.map.getSource(this.sourceName).setData(this.customMarkers);
         }
     }
 
