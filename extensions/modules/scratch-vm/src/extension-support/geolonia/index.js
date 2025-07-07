@@ -154,11 +154,11 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'isTouchingLayer',
                     blockType: BlockType.BOOLEAN,
-                    text: 'レイヤー [LAYER] に触れた',
+                    text: 'レイヤー [NAME] に触れた',
                     arguments: {
-                        LAYER: {
+                        NAME: {
                             type: ArgumentType.STRING,
-                            defaultValue: '都市計画区域界'
+                            defaultValue: 'お店'
                         }
                     }
                 },
@@ -463,7 +463,7 @@ class Scratch3GeoloniaBlocks {
         if (!bounds) {
             return false;
         }
-        
+
         const stage = document.getElementById('geolonia');
         const width = stage.offsetWidth;
         const height = stage.offsetHeight;
@@ -475,11 +475,13 @@ class Scratch3GeoloniaBlocks {
         ];
         
         const features = this.map.queryRenderedFeatures(bbox, {
-            layers: [args.LAYER]
+            layers: [this.sourceName]
         });
 
+        const markerFeatures = features.filter(feature => feature.properties.name === args.NAME);
+
         // 何かフィーチャがあれば「触れている」と判定
-        return features.length > 0;
+        return markerFeatures.length > 0;
     }
 
     changePitch (args) {
