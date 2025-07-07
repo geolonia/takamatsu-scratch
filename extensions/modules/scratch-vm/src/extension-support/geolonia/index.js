@@ -133,6 +133,17 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'removeSymbolMarker',
+                    blockType: BlockType.COMMAND,
+                    text: '[NAME] を削除する',
+                    arguments: {
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'お店'
+                        }
+                    }
+                },
+                {
                     opcode: 'addLayer',
                     blockType: BlockType.COMMAND,
                     text: 'レイヤー [LAYER] を 色 [COLOR] 透明度 [OPACITY] で表示',
@@ -587,6 +598,23 @@ class Scratch3GeoloniaBlocks {
         } else {
             this.map.getSource(this.sourceName).setData(this.customMarkers);
         }
+    }
+
+    removeSymbolMarker (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        const sources = this.map.getSource(this.sourceName);
+        if (!sources) {
+            console.error('マーカーが表示されていません。');
+            return;
+        }
+        this.customMarkers.features = this.customMarkers.features.filter((feature) =>
+            feature.properties.name !== args.NAME
+        );
+        sources.setData(this.customMarkers);
     }
 
     addLayer (args) {
