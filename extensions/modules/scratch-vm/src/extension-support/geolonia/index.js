@@ -163,6 +163,17 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'isSpriteClicked',
+                    blockType: BlockType.BOOLEAN,
+                    text: '[NAME] にマウスが触れた',
+                    arguments: {
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'お店'
+                        }
+                    }
+                },
+                {
                     opcode: 'flyTo',
                     blockType: BlockType.COMMAND,
                     text: '経度 [LNG] 緯度 [LAT] ズーム [ZOOM] にジャンプ',
@@ -481,6 +492,24 @@ class Scratch3GeoloniaBlocks {
         const markerFeatures = features.filter(feature => feature.properties.name === args.NAME);
 
         // 何かフィーチャがあれば「触れている」と判定
+        return markerFeatures.length > 0;
+    }
+
+    isSpriteClicked (args) {
+        if (!this.loaded || !this.map) {
+            return false;
+        }
+        this._prevMouseDown = this._prevMouseDown || false;
+        const mouse = this.runtime.ioDevices.mouse;
+        const x = mouse.getClientX();
+        const y = mouse.getClientY();
+
+        const features = this.map.queryRenderedFeatures([x, y], {
+            layers: [this.sourceName]
+        });
+
+        const markerFeatures = features.filter(feature => feature.properties.name === args.NAME);
+
         return markerFeatures.length > 0;
     }
 
