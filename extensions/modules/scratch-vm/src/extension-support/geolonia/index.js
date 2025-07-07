@@ -297,7 +297,7 @@ class Scratch3GeoloniaBlocks {
                     return variableNames;
                 },
                 iconMenu: [
-                    {text: 'ピン', value: 'map-pin-red'},
+                    {text: 'ピン', value: 'map-pin'},
                     // {text: '星', value: 'star'},
                     // {text: 'モンスター1', value: 'monster1'},
                     // {text: 'モンスター2', value: 'monster2'},
