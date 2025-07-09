@@ -12,7 +12,7 @@ class Scratch3GeoloniaBlocks {
 
     sourceName = 'custom-markers';
 
-    constructor(runtime) {
+    constructor (runtime) {
         this.runtime = runtime;
         this.addr = {
             code: '',
@@ -27,6 +27,7 @@ class Scratch3GeoloniaBlocks {
             type: 'FeatureCollection',
             features: []
         };
+        this.csv = '';
         this.customMarkers = {
             type: 'FeatureCollection',
             features: []
@@ -267,6 +268,11 @@ class Scratch3GeoloniaBlocks {
                     text: '場所の名前',
                 },
                 {
+                    opcode: 'getCSV',
+                    blockType: BlockType.REPORTER,
+                    text: 'csv'
+                },
+                {
                     opcode: 'getGeojson',
                     blockType: BlockType.REPORTER,
                     text: 'geojson'
@@ -303,7 +309,8 @@ class Scratch3GeoloniaBlocks {
                         ['経度', 'getLng'],
                         ['zoom', 'getZoom'],
                         ['場所の名前', 'getName'],
-                        ['geojson', 'getGeojson']
+                        ['geojson', 'getGeojson'],
+                        ['CSV', 'getCSV']
                     ];
                     return variableNames;
                 },
@@ -359,6 +366,13 @@ class Scratch3GeoloniaBlocks {
 
     getZoom () {
         return `${Math.round(this.zoom * 1000) / 1000}`;
+    }
+
+    getCSV () {
+        if (typeof this.csv === 'object') {
+            return JSON.stringify(this.csv);
+        }
+        return this.csv;
     }
 
     getGeojson () {
