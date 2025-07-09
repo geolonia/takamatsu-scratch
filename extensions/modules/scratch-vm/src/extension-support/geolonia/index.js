@@ -618,6 +618,8 @@ class Scratch3GeoloniaBlocks {
 
             return;
         }
+
+        console.error('geojsonまたはCSVデータを指定してください。');
     }
 
     zoomTo(args) {
