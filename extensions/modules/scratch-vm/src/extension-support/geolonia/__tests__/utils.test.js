@@ -52,4 +52,19 @@ describe('isCSVData', () => {
     it('空文字でfalse', () => {
         expect(isCSVData('')).toBe(false);
     });
+    it('ヘッダーがlat,lonのみでtrue', () => {
+        expect(isCSVData('lat,lon\n35.6,139.7')).toBe(true);
+    });
+    it('ヘッダーが緯度,経度でtrue', () => {
+        expect(isCSVData('緯度,経度\n35.6,139.7')).toBe(true);
+    });
+    it('ヘッダーがlatitude,longitudeでtrue', () => {
+        expect(isCSVData('latitude,longitude\n35.6,139.7')).toBe(true);
+    });
+    it('URLがhttpで.csv拡張子でtrue', () => {
+        expect(isCSVData('http://example.com/data.csv')).toBe(true);
+    });
+    it('URLがhttpsで.csv拡張子でtrue', () => {
+        expect(isCSVData('https://example.com/data.csv')).toBe(true);
+    });
 });

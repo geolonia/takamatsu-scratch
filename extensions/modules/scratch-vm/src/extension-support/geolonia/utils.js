@@ -39,10 +39,14 @@ export const isCSVData = (data) => {
         return true;
     }
     // 文字列の場合、カンマ区切りのヘッダー行があるか簡易チェック
-    if (typeof data === 'string') {
-        // 1行目にカンマが含まれていればCSVとみなす（簡易判定）
-        const firstLine = data.trim().split('\n')[0];
-        if (firstLine && firstLine.includes(',')) {
+    if (typeof data === 'string' && data.trim() === '') {
+        const firstLine = data.trim().split('\n')[0].toLowerCase();
+        // lng, lon, long, latitude, lat, 緯度, 経度 などを判定
+        if (
+            (firstLine.includes('lat') && firstLine.includes('lon')) ||
+            (firstLine.includes('緯度') && firstLine.includes('経度')) ||
+            (firstLine.includes('latitude') && firstLine.includes('longitude'))
+        ) {
             return true;
         }
     }
