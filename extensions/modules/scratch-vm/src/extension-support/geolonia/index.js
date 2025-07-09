@@ -4,7 +4,7 @@ const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
 const formatMessage = require('format-message');
 const {openReverseGeocoder} = require('@geolonia/open-reverse-geocoder');
-const { getBBoxFromCorners } = require('./utils');
+const { getBBoxFromCorners, isCSVData } = require('./utils');
 
 const Message = {
 };
@@ -593,17 +593,31 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
-        // TODO: （点、線、面）レイヤー追加を実装する
-        this.map.loadGeojson(args.DATA, args.NAME, {
-            'fill-color': args.COLOR,
-            'fill-opacity': Number(args.OPACITY),
-            'marker-color': args.COLOR,
-            'stroke': args.COLOR
-        });
-        // this.map.loadData(args.LAYER, {
-        //     'fill-color': args.COLOR,
-        //     'fill-opacity': Number(args.OPACITY),
-        // })
+
+        // geojsonかどうかを確認する
+        const isGeojson = isGeojsonData(args.DATA);
+        if (!isGeojson) {
+            this.map.loadGeojson(args.DATA, args.NAME, {
+                'fill-color': args.COLOR,
+                'fill-opacity': Number(args.OPACITY),
+                'marker-color': args.COLOR,
+                'stroke': args.COLOR
+            });
+
+            return;
+        }
+
+        const isCSV = isCSVData(args.DATA);
+        if (!isCSV) {
+            this.map.loadCSV(args.DATA, args.NAME, {
+                'fill-color': args.COLOR,
+                'fill-opacity': Number(args.OPACITY),
+                'marker-color': args.COLOR,
+                'stroke': args.COLOR
+            });
+
+            return;
+        }
     }
 
     zoomTo(args) {
