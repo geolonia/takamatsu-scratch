@@ -35,13 +35,20 @@ export const isGeojsonData = (data) => {
  */
 export const isCSVData = (data) => {
     // URLの場合
-    if (typeof data === 'string' && /^https?:\/\//.test(data) && data.match(/\.csv(\?.*)?$/i)) {
+    if (
+        typeof data === 'string' &&
+        /^https?:\/\//.test(data) &&
+        (
+            data.match(/\.csv(\?.*)?$/i) ||
+            // Googleスプレッドシートの公開CSV形式に対応
+            (data.includes('docs.google.com/spreadsheets') && data.includes('output=csv'))
+        )
+    ) {
         return true;
     }
     // 文字列の場合、カンマ区切りのヘッダー行があるか簡易チェック
-    if (typeof data === 'string' && data.trim() === '') {
+    if (typeof data === 'string') {
         const firstLine = data.trim().split('\n')[0].toLowerCase();
-        // lng, lon, long, latitude, lat, 緯度, 経度 などを判定
         if (
             (firstLine.includes('lat') && firstLine.includes('lon')) ||
             (firstLine.includes('緯度') && firstLine.includes('経度')) ||

@@ -67,4 +67,7 @@ describe('isCSVData', () => {
     it('URLがhttpsで.csv拡張子でtrue', () => {
         expect(isCSVData('https://example.com/data.csv')).toBe(true);
     });
+    it('Googleスプレッドシート公開CSVでtrue', () => {
+        expect(isCSVData('https://docs.google.com/spreadsheets/d/e/xxxx/pub?gid=0&single=true&output=csv')).toBe(true);
+    });
 });
