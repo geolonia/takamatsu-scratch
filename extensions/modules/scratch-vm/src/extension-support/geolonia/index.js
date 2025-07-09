@@ -592,7 +592,7 @@ class Scratch3GeoloniaBlocks {
 
         // geojsonかどうかを確認する
         const isGeojson = isGeojsonData(args.DATA);
-        if (!isGeojson) {
+        if (isGeojson) {
             this.map.loadGeojson(args.DATA, args.NAME, {
                 'fill-color': args.COLOR,
                 'fill-opacity': Number(args.OPACITY),
@@ -604,7 +604,7 @@ class Scratch3GeoloniaBlocks {
         }
 
         const isCSV = isCSVData(args.DATA);
-        if (!isCSV) {
+        if (isCSV) {
             this.map.loadCSV(args.DATA, args.NAME, {
                 'fill-color': args.COLOR,
                 'fill-opacity': Number(args.OPACITY),
