@@ -1,13 +1,9 @@
 /* eslint-disable no-undef */
 const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
-const Cast = require('../../util/cast');
 const formatMessage = require('format-message');
 const {openReverseGeocoder} = require('@geolonia/open-reverse-geocoder');
-const { getBBoxFromCorners } = require('./utils');
-
-const Message = {
-};
+const {isCSVData, isGeojsonData} = require('./utils');
 
 const AvailableLocales = ['en', 'ja', 'ja-Hira'];
 
@@ -16,7 +12,7 @@ class Scratch3GeoloniaBlocks {
 
     sourceName = 'custom-markers';
 
-    constructor(runtime) {
+    constructor (runtime) {
         this.runtime = runtime;
         this.addr = {
             code: '',
@@ -31,6 +27,7 @@ class Scratch3GeoloniaBlocks {
             type: 'FeatureCollection',
             features: []
         };
+        this.csv = '';
         this.customMarkers = {
             type: 'FeatureCollection',
             features: []
@@ -271,6 +268,11 @@ class Scratch3GeoloniaBlocks {
                     text: '場所の名前',
                 },
                 {
+                    opcode: 'getCSV',
+                    blockType: BlockType.REPORTER,
+                    text: 'csv'
+                },
+                {
                     opcode: 'getGeojson',
                     blockType: BlockType.REPORTER,
                     text: 'geojson'
@@ -307,7 +309,8 @@ class Scratch3GeoloniaBlocks {
                         ['経度', 'getLng'],
                         ['zoom', 'getZoom'],
                         ['場所の名前', 'getName'],
-                        ['geojson', 'getGeojson']
+                        ['geojson', 'getGeojson'],
+                        ['CSV', 'getCSV']
                     ];
                     return variableNames;
                 },
@@ -363,6 +366,13 @@ class Scratch3GeoloniaBlocks {
 
     getZoom () {
         return `${Math.round(this.zoom * 1000) / 1000}`;
+    }
+
+    getCSV () {
+        if (typeof this.csv === 'object') {
+            return JSON.stringify(this.csv);
+        }
+        return this.csv;
     }
 
     getGeojson () {
@@ -593,17 +603,33 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
-        // TODO: （点、線、面）レイヤー追加を実装する
-        this.map.loadGeojson(args.DATA, args.NAME, {
-            'fill-color': args.COLOR,
-            'fill-opacity': Number(args.OPACITY),
-            'marker-color': args.COLOR,
-            'stroke': args.COLOR
-        });
-        // this.map.loadData(args.LAYER, {
-        //     'fill-color': args.COLOR,
-        //     'fill-opacity': Number(args.OPACITY),
-        // })
+
+        // geojsonかどうかを確認する
+        const isGeojson = isGeojsonData(args.DATA);
+        if (isGeojson) {
+            this.map.loadGeojson(args.DATA, args.NAME, {
+                'fill-color': args.COLOR,
+                'fill-opacity': Number(args.OPACITY),
+                'marker-color': args.COLOR,
+                'stroke': args.COLOR
+            });
+
+            return;
+        }
+
+        const isCSV = isCSVData(args.DATA);
+        if (isCSV) {
+            this.map.loadCSV(args.DATA, args.NAME, {
+                'fill-color': args.COLOR,
+                'fill-opacity': Number(args.OPACITY),
+                'marker-color': args.COLOR,
+                'stroke': args.COLOR
+            });
+
+            return;
+        }
+
+        console.error('geojsonまたはCSVデータを指定してください。');
     }
 
     zoomTo(args) {
