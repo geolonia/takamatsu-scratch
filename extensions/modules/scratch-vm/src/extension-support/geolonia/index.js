@@ -135,11 +135,15 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'addLayer',
                     blockType: BlockType.COMMAND,
-                    text: 'レイヤー [LAYER] を 色 [COLOR] 透明度 [OPACITY] で表示',
+                    text: '[NAME] として [DATA] を 色 [COLOR]・透明度 [OPACITY] で表示',
                     arguments: {
-                        LAYER: {
+                        NAME: {
                             type: ArgumentType.STRING,
-                            defaultValue: '都市計画区域界'
+                            defaultValue: 'サンプル'
+                        },
+                        DATA: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'サンプルデータ'
                         },
                         COLOR: {
                             type: ArgumentType.COLOR,
@@ -369,11 +373,6 @@ class Scratch3GeoloniaBlocks {
     }
 
     setVariable (args) {
-        if (!this.loaded) {
-            console.error('まず地図を表示してください。');
-            return;
-        }
-
         switch (args.VARIABLE_NAME) {
         case 'getPref':
             this.addr.prefecture = args.VALUE;
@@ -595,6 +594,12 @@ class Scratch3GeoloniaBlocks {
             return;
         }
         // TODO: （点、線、面）レイヤー追加を実装する
+        this.map.loadGeojson(args.DATA, args.NAME, {
+            'fill-color': args.COLOR,
+            'fill-opacity': Number(args.OPACITY),
+            'marker-color': args.COLOR,
+            'stroke': args.COLOR
+        });
         // this.map.loadData(args.LAYER, {
         //     'fill-color': args.COLOR,
         //     'fill-opacity': Number(args.OPACITY),
