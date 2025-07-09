@@ -1,13 +1,9 @@
 /* eslint-disable no-undef */
 const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
-const Cast = require('../../util/cast');
 const formatMessage = require('format-message');
 const {openReverseGeocoder} = require('@geolonia/open-reverse-geocoder');
-const { getBBoxFromCorners, isCSVData } = require('./utils');
-
-const Message = {
-};
+const {isCSVData, isGeojsonData} = require('./utils');
 
 const AvailableLocales = ['en', 'ja', 'ja-Hira'];
 
