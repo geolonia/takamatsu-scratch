@@ -23,11 +23,7 @@ class Scratch3GeoloniaBlocks {
         this.zoom = 10;
         this.features = [];
         this.loaded = false;
-        this.geojson = {
-            type: 'FeatureCollection',
-            features: []
-        };
-        this.csv = '';
+        this.data = '';
         this.customMarkers = {
             type: 'FeatureCollection',
             features: []
@@ -268,14 +264,9 @@ class Scratch3GeoloniaBlocks {
                     text: '場所の名前',
                 },
                 {
-                    opcode: 'getCSV',
+                    opcode: 'getData',
                     blockType: BlockType.REPORTER,
-                    text: 'csv'
-                },
-                {
-                    opcode: 'getGeojson',
-                    blockType: BlockType.REPORTER,
-                    text: 'geojson'
+                    text: 'データ'
                 },
                 {
                     opcode: 'setVariable',
@@ -309,8 +300,7 @@ class Scratch3GeoloniaBlocks {
                         ['経度', 'getLng'],
                         ['zoom', 'getZoom'],
                         ['場所の名前', 'getName'],
-                        ['geojson', 'getGeojson'],
-                        ['CSV', 'getCSV']
+                        ['データ', 'getData']
                     ];
                     return variableNames;
                 },
@@ -368,18 +358,11 @@ class Scratch3GeoloniaBlocks {
         return `${Math.round(this.zoom * 1000) / 1000}`;
     }
 
-    getCSV () {
-        if (typeof this.csv === 'object') {
-            return JSON.stringify(this.csv);
+    getData () {
+        if (typeof this.data === 'object') {
+            return JSON.stringify(this.data);
         }
-        return this.csv;
-    }
-
-    getGeojson () {
-        if (typeof this.geojson === 'object') {
-            return JSON.stringify(this.geojson);
-        }
-        return this.geojson;
+        return this.data;
     }
 
     setVariable (args) {
@@ -405,11 +388,11 @@ class Scratch3GeoloniaBlocks {
                 this.features[0].properties.name = args.VALUE;
             }
             break;
-        case 'getGeojson':
+        case 'getData':
             try {
-                this.geojson = JSON.parse(args.VALUE);
+                this.data = JSON.parse(args.VALUE);
             } catch (e) {
-                this.geojson = args.VALUE;
+                this.data = args.VALUE;
             }
             break;
         default:
