@@ -234,6 +234,30 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'addOSMLayer',
+                    blockType: BlockType.COMMAND,
+                    text: 'OpenStreetMapの [LAYER] を表示する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'osmLayerMenu', // ここを追加
+                            defaultValue: 'レストラン'
+                        }
+                    }
+                },
+                {
+                    opcode: 'removeOSMLayer',
+                    blockType: BlockType.COMMAND,
+                    text: 'OpenStreetMapの [LAYER] を非表示にする',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'osmLayerMenu', // ここも追加
+                            defaultValue: 'レストラン'
+                        }
+                    }
+                },
+                {
                     opcode: 'getPref',
                     blockType: BlockType.REPORTER,
                     text: '都道府県名',
@@ -323,7 +347,18 @@ class Scratch3GeoloniaBlocks {
                     // {text: '鉄道駅', value: 'railway_station'},
                     // {text: '駐車場', value: 'parking'},
                     // {text: '家', value: 'home'}
-                ]
+                ],
+                osmLayerMenu: function () {
+                    // SDKのgetOsmPoiLayers()を利用してメニューを動的生成
+                    if (typeof japan !== 'undefined' && typeof japan.getOsmPoiLayers === 'function') {
+                        return japan.getOsmPoiLayers().map(layer => ({
+                            text: layer.label || layer.name || layer,
+                            value: layer.name || layer
+                        }));
+                    }
+                    // デフォルト値
+                    return [{text: 'レストラン', value: 'レストラン'}];
+                }
             }
         };
     }
@@ -503,6 +538,22 @@ class Scratch3GeoloniaBlocks {
         const markerFeatures = features.filter(feature => feature.properties.name === args.NAME);
 
         return markerFeatures.length > 0;
+    }
+
+    addOSMLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.loadOsmPoi(args.LAYER);
+    }
+
+    removeOSMLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.removeOsmPoi(args.LAYER);
     }
 
     changePitch (args) {
