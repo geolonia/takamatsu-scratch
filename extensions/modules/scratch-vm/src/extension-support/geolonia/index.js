@@ -451,7 +451,6 @@ class Scratch3GeoloniaBlocks {
                 this.map.on('moveend', (e) => {
                     this.center = this.map.getCenter();
                     this.osmPoiLayers = this.map.getOsmPoiLayers();
-                    console.log('OSM POI Layers:', this.osmPoiLayers);
 
                     openReverseGeocoder(Object.values(this.center)).then(res => {
                         this.addr = res;
