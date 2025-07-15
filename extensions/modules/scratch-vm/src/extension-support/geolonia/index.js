@@ -28,6 +28,7 @@ class Scratch3GeoloniaBlocks {
             type: 'FeatureCollection',
             features: []
         };
+        this.osmPoiLayers = null;
     }
 
     getInfo() {
@@ -234,6 +235,28 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'addOSMPoiLayer',
+                    blockType: BlockType.COMMAND,
+                    text: 'OpenStreetMapの [LAYER] を表示する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'レストラン'
+                        }
+                    }
+                },
+                {
+                    opcode: 'removeOSMPoiLayer',
+                    blockType: BlockType.COMMAND,
+                    text: 'OpenStreetMapの [LAYER] を非表示にする',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'レストラン'
+                        }
+                    }
+                },
+                {
                     opcode: 'getPref',
                     blockType: BlockType.REPORTER,
                     text: '都道府県名',
@@ -427,6 +450,7 @@ class Scratch3GeoloniaBlocks {
             this.map.once('load', () => {
                 this.map.on('moveend', (e) => {
                     this.center = this.map.getCenter();
+                    this.osmPoiLayers = this.map.getOsmPoiLayers();
 
                     openReverseGeocoder(Object.values(this.center)).then(res => {
                         this.addr = res;
@@ -503,6 +527,22 @@ class Scratch3GeoloniaBlocks {
         const markerFeatures = features.filter(feature => feature.properties.name === args.NAME);
 
         return markerFeatures.length > 0;
+    }
+
+    addOSMPoiLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.loadOsmPoi(args.LAYER);
+    }
+
+    removeOSMPoiLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.removeOsmPoi(args.LAYER);
     }
 
     changePitch (args) {
