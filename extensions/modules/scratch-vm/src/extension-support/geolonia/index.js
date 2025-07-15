@@ -538,6 +538,14 @@ class Scratch3GeoloniaBlocks {
         this.map.loadOsmPoi(args.LAYER);
     }
 
+    removeOSMPoiLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.removeOsmPoi(args.LAYER);
+    }
+
     changePitch (args) {
         if (!this.loaded) {
             console.error('まず地図を表示してください。');
