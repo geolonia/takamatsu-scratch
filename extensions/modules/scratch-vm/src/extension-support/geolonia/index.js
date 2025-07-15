@@ -28,6 +28,7 @@ class Scratch3GeoloniaBlocks {
             type: 'FeatureCollection',
             features: []
         };
+        this.osmPoiLayers = null;
     }
 
     getInfo() {
@@ -234,25 +235,23 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
-                    opcode: 'addOSMLayer',
+                    opcode: 'addOSMPoiLayer',
                     blockType: BlockType.COMMAND,
                     text: 'OpenStreetMapの [LAYER] を表示する',
                     arguments: {
                         LAYER: {
                             type: ArgumentType.STRING,
-                            menu: 'osmLayerMenu', // ここを追加
                             defaultValue: 'レストラン'
                         }
                     }
                 },
                 {
-                    opcode: 'removeOSMLayer',
+                    opcode: 'removeOSMPoiLayer',
                     blockType: BlockType.COMMAND,
                     text: 'OpenStreetMapの [LAYER] を非表示にする',
                     arguments: {
                         LAYER: {
                             type: ArgumentType.STRING,
-                            menu: 'osmLayerMenu', // ここも追加
                             defaultValue: 'レストラン'
                         }
                     }
@@ -347,18 +346,7 @@ class Scratch3GeoloniaBlocks {
                     // {text: '鉄道駅', value: 'railway_station'},
                     // {text: '駐車場', value: 'parking'},
                     // {text: '家', value: 'home'}
-                ],
-                osmLayerMenu: function () {
-                    // SDKのgetOsmPoiLayers()を利用してメニューを動的生成
-                    if (typeof japan !== 'undefined' && typeof japan.getOsmPoiLayers === 'function') {
-                        return japan.getOsmPoiLayers().map(layer => ({
-                            text: layer.label || layer.name || layer,
-                            value: layer.name || layer
-                        }));
-                    }
-                    // デフォルト値
-                    return [{text: 'レストラン', value: 'レストラン'}];
-                }
+                ]
             }
         };
     }
@@ -462,6 +450,8 @@ class Scratch3GeoloniaBlocks {
             this.map.once('load', () => {
                 this.map.on('moveend', (e) => {
                     this.center = this.map.getCenter();
+                    this.osmPoiLayers = this.map.getOsmPoiLayers();
+                    console.log('OSM POI Layers:', this.osmPoiLayers);
 
                     openReverseGeocoder(Object.values(this.center)).then(res => {
                         this.addr = res;
@@ -540,20 +530,12 @@ class Scratch3GeoloniaBlocks {
         return markerFeatures.length > 0;
     }
 
-    addOSMLayer (args) {
+    addOSMPoiLayer (args) {
         if (!this.loaded) {
             console.error('まず地図を表示してください。');
             return;
         }
         this.map.loadOsmPoi(args.LAYER);
-    }
-
-    removeOSMLayer (args) {
-        if (!this.loaded) {
-            console.error('まず地図を表示してください。');
-            return;
-        }
-        this.map.removeOsmPoi(args.LAYER);
     }
 
     changePitch (args) {
