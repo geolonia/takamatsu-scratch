@@ -313,7 +313,7 @@ class Scratch3GeoloniaBlocks {
                     {text: '標準', value: 'https://geoloniamaps.github.io/gsi/style.json'},
                     {text: 'GSI', value: 'https://smartmap.styles.geoloniamaps.com/style.json'},
                     {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'},
-                    {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/rpg-style.json'}
+                    {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/style.json'}
                 ],
                 variableMenu: function () {
                     const variableNames = [
