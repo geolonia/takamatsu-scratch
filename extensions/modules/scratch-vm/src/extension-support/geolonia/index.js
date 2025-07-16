@@ -455,10 +455,6 @@ class Scratch3GeoloniaBlocks {
                     openReverseGeocoder(Object.values(this.center)).then(res => {
                         this.addr = res;
                     });
-
-                    this.features = this.map.queryRenderedFeatures(this.map.project(this.center), {
-                        layers: ['poi']
-                    });
                 });
 
                 this.map.on('zoomend', () => {
