@@ -41,7 +41,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'displayMap',
                     blockType: BlockType.COMMAND,
-                    text: '地図を緯度 [LAT] 経度 [LNG] ズーム [ZOOM] で表示',
+                    text: '地図を経度 [LNG] 緯度 [LAT] ズーム [ZOOM] で表示',
                     arguments: {
                         LAT: {
                             type: ArgumentType.NUMBER,
@@ -105,7 +105,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'addSymbolMarker',
                     blockType: BlockType.COMMAND,
-                    text: '緯度 [LAT] 経度 [LON] に [ICON] を [NAME] という名前で表示する',
+                    text: '経度 [LON] 緯度 [LAT] に [ICON] を [NAME] という名前で表示する',
                     arguments: {
                         LAT: {
                             type: ArgumentType.NUMBER,
