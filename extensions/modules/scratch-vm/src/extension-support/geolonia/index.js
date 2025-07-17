@@ -105,7 +105,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'addSymbolMarker',
                     blockType: BlockType.COMMAND,
-                    text: '経度 [LON] 緯度 [LAT] に [ICON] を [NAME] という名前で表示する',
+                    text: '経度 [LON] 緯度 [LAT] に [LAYER] を [NAME] という名前で表示する',
                     arguments: {
                         LAT: {
                             type: ArgumentType.NUMBER,
@@ -115,9 +115,9 @@ class Scratch3GeoloniaBlocks {
                             type: ArgumentType.NUMBER,
                             defaultValue: 139.74
                         },
-                        ICON: {
+                        LAYER: {
                             type: ArgumentType.STRING,
-                            menu: 'iconMenu',
+                            menu: 'layerMenu',
                             defaultValue: 'map-pin'
                         },
                         NAME: {
@@ -327,7 +327,7 @@ class Scratch3GeoloniaBlocks {
                     ];
                     return variableNames;
                 },
-                iconMenu: [
+                layerMenu: [
                     {text: 'ピン', value: 'map-pin'},
                     // {text: '星', value: 'star'},
                     // {text: 'モンスター1', value: 'monster1'},
