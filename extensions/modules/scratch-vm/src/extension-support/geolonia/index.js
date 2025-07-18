@@ -105,7 +105,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'addSymbolMarker',
                     blockType: BlockType.COMMAND,
-                    text: '経度 [LON] 緯度 [LAT] に [LAYER] を [NAME] という名前で表示する',
+                    text: '経度 [LON] 緯度 [LAT] に [ICON] を [NAME] という名前で表示する',
                     arguments: {
                         LAT: {
                             type: ArgumentType.NUMBER,
@@ -115,14 +115,30 @@ class Scratch3GeoloniaBlocks {
                             type: ArgumentType.NUMBER,
                             defaultValue: 139.74
                         },
-                        LAYER: {
+                        ICON: {
                             type: ArgumentType.STRING,
-                            menu: 'layerMenu',
+                            menu: 'iconMenu',
                             defaultValue: 'map-pin'
                         },
                         NAME: {
                             type: ArgumentType.STRING,
                             defaultValue: 'お店'
+                        }
+                    }
+                },
+                {
+                    opcode: 'changeLayerIcon',
+                    blockType: BlockType.COMMAND,
+                    text: '[LAYER] のアイコンを [ICON] に変更する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'お店'
+                        },
+                        ICON: {
+                            type: ArgumentType.STRING,
+                            menu: 'iconMenu',
+                            defaultValue: 'map-pin'
                         }
                     }
                 },
@@ -327,7 +343,7 @@ class Scratch3GeoloniaBlocks {
                     ];
                     return variableNames;
                 },
-                layerMenu: [
+                iconMenu: [
                     {text: 'ピン', value: 'map-pin'},
                     // {text: '星', value: 'star'},
                     // {text: 'モンスター1', value: 'monster1'},
@@ -474,6 +490,19 @@ class Scratch3GeoloniaBlocks {
         });
     }
 
+    // レイヤーのアイコンを変更
+    changeLayerIcon (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        const res = this.map.changeLayerIcon(args.LAYER, args.ICON, 'chizubouken-lab');
+        if (!res) {
+            console.error(`レイヤー「${args.LAYER}」が見つかりません。`);
+        }
+    }
+
     // クラス内にメソッドを追加
     isTouchingLayer (args, util) {
         if (!this.loaded || !this.map) {
@@ -530,7 +559,7 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
-        this.map.loadOsmPoi(args.LAYER);
+        this.map.loadOsmPoi(args.LAYER, 'chizubouken-lab');
     }
 
     removeOSMPoiLayer (args) {
