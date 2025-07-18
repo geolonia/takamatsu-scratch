@@ -107,6 +107,28 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'addOSMPoiLayer',
+                    blockType: BlockType.COMMAND,
+                    text: '[LAYER] を表示する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'レストラン'
+                        }
+                    }
+                },
+                {
+                    opcode: 'removeOSMPoiLayer',
+                    blockType: BlockType.COMMAND,
+                    text: '[LAYER] を非表示にする',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'レストラン'
+                        }
+                    }
+                },
+                {
                     opcode: 'changeLayerIcon',
                     blockType: BlockType.COMMAND,
                     text: '[LAYER] のアイコンを [ICON] に変更する',
@@ -228,28 +250,6 @@ class Scratch3GeoloniaBlocks {
                             type: ArgumentType.NUMBER,
                             defaultValue: 100,
                         },
-                    }
-                },
-                {
-                    opcode: 'addOSMPoiLayer',
-                    blockType: BlockType.COMMAND,
-                    text: '[LAYER] を表示する',
-                    arguments: {
-                        LAYER: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'レストラン'
-                        }
-                    }
-                },
-                {
-                    opcode: 'removeOSMPoiLayer',
-                    blockType: BlockType.COMMAND,
-                    text: '[LAYER] を非表示にする',
-                    arguments: {
-                        LAYER: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'レストラン'
-                        }
                     }
                 },
                 {
