@@ -127,6 +127,22 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'changeLayerIcon',
+                    blockType: BlockType.COMMAND,
+                    text: '[LAYER] のアイコンを [ICON] に変更する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'お店'
+                        },
+                        ICON: {
+                            type: ArgumentType.STRING,
+                            menu: 'iconMenu',
+                            defaultValue: 'map-pin'
+                        }
+                    }
+                },
+                {
                     opcode: 'addLayer',
                     blockType: BlockType.COMMAND,
                     text: '[NAME] として [DATA] を 色 [COLOR]・透明度 [OPACITY] で表示',
@@ -338,7 +354,7 @@ class Scratch3GeoloniaBlocks {
                     // {text: 'カフェ', value: 'cafe'},
                     // {text: 'コンビニ', value: 'convenience_store'},
                     {text: '病院', value: 'hospital'},
-                    {text: '学校', value: 'preschool'},
+                    {text: '学校', value: 'school'}
                     // {text: '図書館', value: 'library'},
                     // {text: '郵便局', value: 'post_office'},
                     // {text: '銀行', value: 'bank'},
@@ -474,6 +490,20 @@ class Scratch3GeoloniaBlocks {
         });
     }
 
+    // レイヤーのアイコンを変更
+    changeLayerIcon (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        const layerIds = this.map.hasLayer(args.LAYER);
+        if (layerIds.length > 0) {
+            layerIds.forEach(layerId => {
+                this.map.changeLayerIcon(layerId, args.ICON, 'chizubouken-lab');
+            });
+        }
+    }
+
     // クラス内にメソッドを追加
     isTouchingLayer (args, util) {
         if (!this.loaded || !this.map) {
@@ -530,7 +560,7 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
-        this.map.loadOsmPoi(args.LAYER);
+        this.map.loadOsmPoi(args.LAYER, 'chizubouken-lab');
     }
 
     removeOSMPoiLayer (args) {
