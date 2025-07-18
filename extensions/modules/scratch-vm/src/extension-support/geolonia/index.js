@@ -354,7 +354,7 @@ class Scratch3GeoloniaBlocks {
                     // {text: 'カフェ', value: 'cafe'},
                     // {text: 'コンビニ', value: 'convenience_store'},
                     {text: '病院', value: 'hospital'},
-                    {text: '学校', value: 'preschool'},
+                    {text: '学校', value: 'school'}
                     // {text: '図書館', value: 'library'},
                     // {text: '郵便局', value: 'post_office'},
                     // {text: '銀行', value: 'bank'},
@@ -496,11 +496,7 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
-
-        const res = this.map.changeLayerIcon(args.LAYER, args.ICON, 'chizubouken-lab');
-        if (!res) {
-            console.error(`レイヤー「${args.LAYER}」が見つかりません。`);
-        }
+        this.map.changeLayerIcon(args.LAYER, args.ICON, 'chizubouken-lab');
     }
 
     // クラス内にメソッドを追加
