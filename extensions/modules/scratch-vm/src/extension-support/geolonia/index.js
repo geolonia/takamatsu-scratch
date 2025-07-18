@@ -496,7 +496,12 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
-        this.map.changeLayerIcon(args.LAYER, args.ICON, 'chizubouken-lab');
+        const layerIds = this.map.hasLayer(args.LAYER);
+        if (layerIds.length > 0) {
+            layerIds.forEach(layerId => {
+                this.map.changeLayerIcon(layerId, args.ICON, 'chizubouken-lab');
+            });
+        }
     }
 
     // クラス内にメソッドを追加
