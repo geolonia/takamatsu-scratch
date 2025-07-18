@@ -104,6 +104,22 @@ class Scratch3GeoloniaBlocks {
                         }
                     }
                 },
+                {
+                    opcode: 'changeLayerIcon',
+                    blockType: BlockType.COMMAND,
+                    text: '[LAYER] のアイコンを [ICON] に変更する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'お店'
+                        },
+                        ICON: {
+                            type: ArgumentType.STRING,
+                            menu: 'iconMenu',
+                            defaultValue: 'ピン'
+                        }
+                    }
+                },
                 // {
                 //     opcode: 'addLayer',
                 //     blockType: BlockType.COMMAND,
@@ -488,6 +504,20 @@ class Scratch3GeoloniaBlocks {
         });
     }
 
+    // レイヤーのアイコンを変更
+    changeLayerIcon (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        const layerIds = this.map.hasLayer(args.LAYER);
+        if (layerIds.length > 0) {
+            layerIds.forEach(layerId => {
+                this.map.changeLayerIcon(layerId, args.ICON, 'chizubouken-lab');
+            });
+        }
+    }
+
     // クラス内にメソッドを追加
     isTouchingLayer (args, util) {
         if (!this.loaded || !this.map) {
@@ -544,7 +574,7 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
-        this.map.loadOsmPoi(args.LAYER);
+        this.map.loadOsmPoi(args.LAYER, 'chizubouken-lab');
     }
 
     removeOSMPoiLayer (args) {
