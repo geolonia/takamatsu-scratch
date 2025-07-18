@@ -29,6 +29,8 @@ class Scratch3GeoloniaBlocks {
             features: []
         };
         this.osmPoiLayers = null;
+        this.addedLayers = [];
+        this.addCustomMarkerNames = [];
     }
 
     getInfo() {
@@ -96,7 +98,7 @@ class Scratch3GeoloniaBlocks {
                         ICON: {
                             type: ArgumentType.STRING,
                             menu: 'iconMenu',
-                            defaultValue: 'map-pin'
+                            defaultValue: 'pin'
                         },
                         NAME: {
                             type: ArgumentType.STRING,
@@ -146,9 +148,9 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'isTouchingLayer',
                     blockType: BlockType.BOOLEAN,
-                    text: 'レイヤー [NAME] に触れた',
+                    text: 'レイヤー [LAYER] に触れた',
                     arguments: {
-                        NAME: {
+                        LAYER: {
                             type: ArgumentType.STRING,
                             defaultValue: 'お店'
                         }
@@ -520,13 +522,19 @@ class Scratch3GeoloniaBlocks {
 
     // クラス内にメソッドを追加
     isTouchingLayer (args, util) {
-        if (!this.loaded || !this.map) {
+        if (
+            !this.loaded ||
+            !this.map ||
+            (
+                !this.addedLayers.includes(args.LAYER) &&      // レイヤーが追加されてない
+                !this.addCustomMarkerNames.includes(args.LAYER)  // 名前が登録されてない
+            )
+        ) {
             return false;
         }
 
         // spriteの表示領域
         const bounds = util.target.getBounds();
-
         if (!bounds) {
             return false;
         }
@@ -540,12 +548,34 @@ class Scratch3GeoloniaBlocks {
             [bounds.left + width / 2, height / 2 - bounds.top],
             [bounds.right + width / 2, height / 2 - bounds.bottom]
         ];
-        
+
+        const layerIds = [];
+        const hasLayerName = this.addedLayers.includes(args.LAYER);
+        const hasCustomMarkerName = this.addCustomMarkerNames.includes(args.LAYER);
+
+        // レイヤーの名前が追加されてたら
+        if (hasLayerName) {
+            const layers = this.map.hasLayer(args.LAYER);
+            if (layers.length > 0) {
+                layerIds.push(...layers);
+            }
+        }
+        // カスタムマーカーの名前が登録されてたら
+        if (hasCustomMarkerName) {
+            layerIds.push(this.sourceName);
+        }
+        if (layerIds.length === 0) {
+            return false;
+        }
+
+        // レイヤーを取得
         const features = this.map.queryRenderedFeatures(bbox, {
-            layers: [this.sourceName]
+            layers: [...layerIds]
         });
 
-        const markerFeatures = features.filter(feature => feature.properties.name === args.NAME);
+        const markerFeatures = features.filter(
+            feature => feature.id === this.sourceName ? feature.properties.name === args.LAYER : true
+        );
 
         // 何かフィーチャがあれば「触れている」と判定
         return markerFeatures.length > 0;
@@ -573,6 +603,9 @@ class Scratch3GeoloniaBlocks {
         if (!this.loaded) {
             console.error('まず地図を表示してください。');
             return;
+        }
+        if (!this.addedLayers.includes(args.LAYER)) {
+            this.addedLayers.push(args.LAYER);
         }
         this.map.loadOsmPoi(args.LAYER, 'chizubouken-lab');
     }
@@ -659,6 +692,8 @@ class Scratch3GeoloniaBlocks {
         } else {
             this.map.getSource(this.sourceName).setData(this.customMarkers);
         }
+
+        this.addCustomMarkerNames.push(args.NAME);
     }
 
     addLayer (args) {
