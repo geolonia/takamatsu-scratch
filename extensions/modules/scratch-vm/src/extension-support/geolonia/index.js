@@ -81,28 +81,6 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
-                    opcode: 'setMaxZoom',
-                    blockType: BlockType.COMMAND,
-                    text: '地図の最大ズームレベルを [MAXZOOM] に変更する',
-                    arguments: {
-                        MAXZOOM: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 18
-                        }
-                    }
-                },
-                {
-                    opcode: 'setMinZoom',
-                    blockType: BlockType.COMMAND,
-                    text: '地図の最小ズームレベルを [MINZOOM] に変更する',
-                    arguments: {
-                        MINZOOM: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 4
-                        }
-                    }
-                },
-                {
                     opcode: 'addSymbolMarker',
                     blockType: BlockType.COMMAND,
                     text: '経度 [LON] 緯度 [LAT] に [ICON] を [NAME] という名前で表示する',
@@ -253,6 +231,28 @@ class Scratch3GeoloniaBlocks {
                         LAYER: {
                             type: ArgumentType.STRING,
                             defaultValue: 'レストラン'
+                        }
+                    }
+                },
+                {
+                    opcode: 'setMaxZoom',
+                    blockType: BlockType.COMMAND,
+                    text: '地図の最大ズームレベルを [MAXZOOM] に変更する',
+                    arguments: {
+                        MAXZOOM: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 18
+                        }
+                    }
+                },
+                {
+                    opcode: 'setMinZoom',
+                    blockType: BlockType.COMMAND,
+                    text: '地図の最小ズームレベルを [MINZOOM] に変更する',
+                    arguments: {
+                        MINZOOM: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 4
                         }
                     }
                 },
