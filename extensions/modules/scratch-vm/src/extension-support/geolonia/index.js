@@ -78,7 +78,7 @@ class Scratch3GeoloniaBlocks {
                         STYLE: {
                             type: ArgumentType.STRING,
                             menu: 'baseMapStyles', // ドロップダウンメニューを指定
-                            defaultValue: '標準'
+                            defaultValue: 'https://chizubouken-lab.pages.dev/style.json'
                         }
                     }
                 },
@@ -328,8 +328,7 @@ class Scratch3GeoloniaBlocks {
             ],
             menus: {
                 baseMapStyles: [
-                    {text: '標準', value: 'https://geoloniamaps.github.io/gsi/style.json'},
-                    {text: 'GSI', value: 'https://smartmap.styles.geoloniamaps.com/style.json'},
+                    {text: '標準', value: 'https://basic-v1-background-only.pages.dev/style.json'},
                     {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'},
                     {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/style.json'}
                 ],
