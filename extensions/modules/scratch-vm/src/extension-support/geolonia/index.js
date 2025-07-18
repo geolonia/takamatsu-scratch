@@ -676,7 +676,7 @@ class Scratch3GeoloniaBlocks {
                 coordinates: [Number(args.LON), Number(args.LAT)]
             },
             properties: {
-                icon: `marker:${args.ICON}` || 'marker:map-pin',
+                icon: `'chizubouken-lab:${args.ICON}` || 'chizubouken-lab:pin',
                 name: args.NAME || '',
                 lngLat: `${args.LAT}, ${args.LON}`
             }
@@ -687,7 +687,8 @@ class Scratch3GeoloniaBlocks {
             this.map.loadGeojson(this.customMarkers, this.sourceName, {
                 'marker-symbol': ['get', 'icon'],
                 'title': ['get', 'name'],
-                'marker-size': 'medium'
+                'marker-size': 'medium',
+                'sprite-sheet': 'chizubouken-lab'
             });
         } else {
             this.map.getSource(this.sourceName).setData(this.customMarkers);
