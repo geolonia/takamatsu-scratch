@@ -81,28 +81,6 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
-                    opcode: 'setMaxZoom',
-                    blockType: BlockType.COMMAND,
-                    text: '地図の最大ズームレベルを [MAXZOOM] に変更する',
-                    arguments: {
-                        MAXZOOM: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 18
-                        }
-                    }
-                },
-                {
-                    opcode: 'setMinZoom',
-                    blockType: BlockType.COMMAND,
-                    text: '地図の最小ズームレベルを [MINZOOM] に変更する',
-                    arguments: {
-                        MINZOOM: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 4
-                        }
-                    }
-                },
-                {
                     opcode: 'addSymbolMarker',
                     blockType: BlockType.COMMAND,
                     text: '経度 [LON] 緯度 [LAT] に [ICON] を [NAME] という名前で表示する',
@@ -138,33 +116,33 @@ class Scratch3GeoloniaBlocks {
                         ICON: {
                             type: ArgumentType.STRING,
                             menu: 'iconMenu',
-                            defaultValue: 'map-pin'
+                            defaultValue: 'ピン'
                         }
                     }
                 },
-                {
-                    opcode: 'addLayer',
-                    blockType: BlockType.COMMAND,
-                    text: '[NAME] として [DATA] を 色 [COLOR]・透明度 [OPACITY] で表示',
-                    arguments: {
-                        NAME: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'サンプル'
-                        },
-                        DATA: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'サンプルデータ'
-                        },
-                        COLOR: {
-                            type: ArgumentType.COLOR,
-                            defaultValue: '#FF0000'
-                        },
-                        OPACITY: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 0.4
-                        }
-                    }
-                },
+                // {
+                //     opcode: 'addLayer',
+                //     blockType: BlockType.COMMAND,
+                //     text: '[NAME] として [DATA] を 色 [COLOR]・透明度 [OPACITY] で表示',
+                //     arguments: {
+                //         NAME: {
+                //             type: ArgumentType.STRING,
+                //             defaultValue: 'サンプル'
+                //         },
+                //         DATA: {
+                //             type: ArgumentType.STRING,
+                //             defaultValue: 'サンプルデータ'
+                //         },
+                //         COLOR: {
+                //             type: ArgumentType.COLOR,
+                //             defaultValue: '#FF0000'
+                //         },
+                //         OPACITY: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 0.4
+                //         }
+                //     }
+                // },
                 {
                     opcode: 'isTouchingLayer',
                     blockType: BlockType.BOOLEAN,
@@ -253,7 +231,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'addOSMPoiLayer',
                     blockType: BlockType.COMMAND,
-                    text: 'OpenStreetMapの [LAYER] を表示する',
+                    text: '[LAYER] を表示する',
                     arguments: {
                         LAYER: {
                             type: ArgumentType.STRING,
@@ -264,11 +242,33 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'removeOSMPoiLayer',
                     blockType: BlockType.COMMAND,
-                    text: 'OpenStreetMapの [LAYER] を非表示にする',
+                    text: '[LAYER] を非表示にする',
                     arguments: {
                         LAYER: {
                             type: ArgumentType.STRING,
                             defaultValue: 'レストラン'
+                        }
+                    }
+                },
+                {
+                    opcode: 'setMaxZoom',
+                    blockType: BlockType.COMMAND,
+                    text: '地図の最大ズームレベルを [MAXZOOM] に変更する',
+                    arguments: {
+                        MAXZOOM: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 18
+                        }
+                    }
+                },
+                {
+                    opcode: 'setMinZoom',
+                    blockType: BlockType.COMMAND,
+                    text: '地図の最小ズームレベルを [MINZOOM] に変更する',
+                    arguments: {
+                        MINZOOM: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 4
                         }
                     }
                 },
@@ -302,11 +302,11 @@ class Scratch3GeoloniaBlocks {
                     blockType: BlockType.REPORTER,
                     text: '場所の名前',
                 },
-                {
-                    opcode: 'getData',
-                    blockType: BlockType.REPORTER,
-                    text: 'データ'
-                },
+                // {
+                //     opcode: 'getData',
+                //     blockType: BlockType.REPORTER,
+                //     text: 'データ'
+                // },
                 {
                     opcode: 'setVariable',
                     blockType: BlockType.COMMAND,
@@ -344,23 +344,37 @@ class Scratch3GeoloniaBlocks {
                     return variableNames;
                 },
                 iconMenu: [
-                    {text: 'ピン', value: 'map-pin'},
+                    {text: 'ピン', value: 'pin'},
                     // {text: '星', value: 'star'},
-                    // {text: 'モンスター1', value: 'monster1'},
-                    // {text: 'モンスター2', value: 'monster2'},
-                    // {text: '宝箱', value: 'treasure'},
-                    // {text: '旗', value: 'flag'},
-                    // {text: '飲食店', value: 'restaurant'},
-                    // {text: 'カフェ', value: 'cafe'},
-                    // {text: 'コンビニ', value: 'convenience_store'},
+                    {text: 'モンスター1', value: 'enemy1'},
+                    {text: 'モンスター2', value: 'enemy2'},
+                    {text: 'モンスター3', value: 'enemy3'},
+                    {text: 'モンスター4', value: 'enemy4'},
+                    {text: '宝箱', value: 'treasure-chest'},
+                    {text: '宝石（黄色）', value: 'jewelry-yellow'},
+                    {text: '宝石（青色）', value: 'jewelry-blue'},
+                    {text: '宝石（赤色）', value: 'jewelry-red'},
+                    {text: '宝石（緑色）', value: 'jewelry-green'},
+                    {text: '天使', value: 'angel'},
+                    {text: '勇者', value: 'friend1'},
+                    {text: 'レストラン', value: 'restaurant'},
+                    {text: 'カフェ', value: 'cafe'},
+                    {text: 'コンビニ', value: 'convenience'},
                     {text: '病院', value: 'hospital'},
-                    {text: '学校', value: 'school'}
+                    {text: '学校', value: 'school'},
+                    {text: '博物館', value: 'museum'},
+                    {text: 'お城', value: 'castle'},
+                    {text: 'お城（敵）', value: 'dark-castle'},
+                    {text: '銀行', value: 'bank'},
+                    {text: '鉄道駅', value: 'railway'},
+                    {text: '駐車場', value: 'parking'},
+                    {text: '公園', value: 'park'},
+                    {text: '危険マーク', value: 'danger-yellow'},
+                    {text: '危険立て札', value: 'danger-red'}
                     // {text: '図書館', value: 'library'},
                     // {text: '郵便局', value: 'post_office'},
-                    // {text: '銀行', value: 'bank'},
-                    // {text: 'バス停', value: 'bus_stop'},
-                    // {text: '鉄道駅', value: 'railway_station'},
-                    // {text: '駐車場', value: 'parking'},
+                    // {text: 'バス停', value: 'bus'},
+                    // {text: '旗', value: 'flag'},
                     // {text: '家', value: 'home'}
                 ]
             }
