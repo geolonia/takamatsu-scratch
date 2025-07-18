@@ -522,7 +522,6 @@ class Scratch3GeoloniaBlocks {
 
     // クラス内にメソッドを追加
     isTouchingLayer (args, util) {
-        console.log('isTouchingLayer', this.addCustomMarkerNames.includes(args.LAYER), args.LAYER, this.addCustomMarkerNames);
         if (
             !this.loaded ||
             !this.map ||
@@ -536,7 +535,6 @@ class Scratch3GeoloniaBlocks {
 
         // spriteの表示領域
         const bounds = util.target.getBounds();
-        console.log('bounds', bounds, util.target.getName(), args.LAYER);
         if (!bounds) {
             return false;
         }
@@ -566,7 +564,6 @@ class Scratch3GeoloniaBlocks {
         if (hasCustomMarkerName) {
             layerIds.push(this.sourceName);
         }
-        console.log('layerIds', layerIds, hasLayerName, hasCustomMarkerName);
         if (layerIds.length === 0) {
             return false;
         }
@@ -575,7 +572,6 @@ class Scratch3GeoloniaBlocks {
         const features = this.map.queryRenderedFeatures(bbox, {
             layers: [...layerIds]
         });
-        console.log('features', features, layerIds);
 
         const markerFeatures = features.filter(
             feature => feature.id === this.sourceName ? feature.properties.name === args.LAYER : true
