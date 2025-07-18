@@ -126,29 +126,29 @@ class Scratch3GeoloniaBlocks {
                         }
                     }
                 },
-                {
-                    opcode: 'addLayer',
-                    blockType: BlockType.COMMAND,
-                    text: '[NAME] として [DATA] を 色 [COLOR]・透明度 [OPACITY] で表示',
-                    arguments: {
-                        NAME: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'サンプル'
-                        },
-                        DATA: {
-                            type: ArgumentType.STRING,
-                            defaultValue: 'サンプルデータ'
-                        },
-                        COLOR: {
-                            type: ArgumentType.COLOR,
-                            defaultValue: '#FF0000'
-                        },
-                        OPACITY: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 0.4
-                        }
-                    }
-                },
+                // {
+                //     opcode: 'addLayer',
+                //     blockType: BlockType.COMMAND,
+                //     text: '[NAME] として [DATA] を 色 [COLOR]・透明度 [OPACITY] で表示',
+                //     arguments: {
+                //         NAME: {
+                //             type: ArgumentType.STRING,
+                //             defaultValue: 'サンプル'
+                //         },
+                //         DATA: {
+                //             type: ArgumentType.STRING,
+                //             defaultValue: 'サンプルデータ'
+                //         },
+                //         COLOR: {
+                //             type: ArgumentType.COLOR,
+                //             defaultValue: '#FF0000'
+                //         },
+                //         OPACITY: {
+                //             type: ArgumentType.NUMBER,
+                //             defaultValue: 0.4
+                //         }
+                //     }
+                // },
                 {
                     opcode: 'isTouchingLayer',
                     blockType: BlockType.BOOLEAN,
@@ -237,7 +237,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'addOSMPoiLayer',
                     blockType: BlockType.COMMAND,
-                    text: 'OpenStreetMapの [LAYER] を表示する',
+                    text: '[LAYER] を表示する',
                     arguments: {
                         LAYER: {
                             type: ArgumentType.STRING,
@@ -248,7 +248,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'removeOSMPoiLayer',
                     blockType: BlockType.COMMAND,
-                    text: 'OpenStreetMapの [LAYER] を非表示にする',
+                    text: '[LAYER] を非表示にする',
                     arguments: {
                         LAYER: {
                             type: ArgumentType.STRING,
@@ -286,11 +286,11 @@ class Scratch3GeoloniaBlocks {
                     blockType: BlockType.REPORTER,
                     text: '場所の名前',
                 },
-                {
-                    opcode: 'getData',
-                    blockType: BlockType.REPORTER,
-                    text: 'データ'
-                },
+                // {
+                //     opcode: 'getData',
+                //     blockType: BlockType.REPORTER,
+                //     text: 'データ'
+                // },
                 {
                     opcode: 'setVariable',
                     blockType: BlockType.COMMAND,
