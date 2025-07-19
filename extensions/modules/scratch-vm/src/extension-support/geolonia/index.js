@@ -675,7 +675,7 @@ class Scratch3GeoloniaBlocks {
                 coordinates: [Number(args.LON), Number(args.LAT)]
             },
             properties: {
-                icon: `'chizubouken-lab:${args.ICON}` || 'chizubouken-lab:pin',
+                icon: `chizubouken-lab:${args.ICON}` || 'chizubouken-lab:pin',
                 name: args.NAME || '',
                 lngLat: `${args.LAT}, ${args.LON}`
             }
