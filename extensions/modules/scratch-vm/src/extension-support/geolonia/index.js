@@ -612,7 +612,7 @@ class Scratch3GeoloniaBlocks {
         });
 
         const markerFeatures = features.filter(
-            feature => feature.id === this.sourceName ? feature.properties.name === args.LAYER : true
+            feature => feature.source === this.sourceName ? feature.properties.name === args.LAYER : true
         );
 
         // 何かフィーチャがあれば「触れている」と判定
