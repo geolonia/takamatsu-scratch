@@ -60,6 +60,11 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'removeMap',
+                    blockType: BlockType.COMMAND,
+                    text: '地図を非表示にする'
+                },
+                {
                     opcode: 'changePitch',
                     blockType: BlockType.COMMAND,
                     text: '地図の傾きを [PITCH] 度に変更する',
@@ -493,7 +498,9 @@ class Scratch3GeoloniaBlocks {
                 });
 
                 const resizeObserver = new ResizeObserver(entries => {
-                    this.map.resize();
+                    if (this.map) {
+                        this.map.resize();
+                    }
                 });
 
                 resizeObserver.observe(mapContainer);
@@ -503,6 +510,38 @@ class Scratch3GeoloniaBlocks {
                 resolve();
             });
         });
+    }
+
+    removeMap () {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        const mapContainer = document.getElementById('geolonia');
+        const mapDiv = document.getElementById('geolonia-map');
+
+        if (mapDiv) {
+            mapContainer.removeChild(mapDiv);
+        }
+        this.map.off('moveend');
+        this.map.off('zoomend');
+        this.map.remove();
+        this.map = null;
+        this.loaded = false;
+        this.addr = {
+            code: '',
+            prefecture: '',
+            city: ''
+        };
+        this.center = {lng: 0, lat: 0};
+        this.zoom = 10;
+        this.features = [];
+        this.data = '';
+        this.customMarkers.features = [];
+        this.osmPoiLayers = null;
+        this.addedLayers = [];
+        this.addCustomMarkerNames = [];
     }
 
     // レイヤーのアイコンを変更
@@ -686,7 +725,7 @@ class Scratch3GeoloniaBlocks {
             this.map.loadGeojson(this.customMarkers, this.sourceName, {
                 'marker-symbol': ['get', 'icon'],
                 'title': ['get', 'name'],
-                'marker-size': 'medium',
+                'marker-size': 'large',
                 'sprite-sheet': 'chizubouken-lab'
             });
         } else {
