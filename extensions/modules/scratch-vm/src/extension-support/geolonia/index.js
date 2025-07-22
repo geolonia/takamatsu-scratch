@@ -460,6 +460,12 @@ class Scratch3GeoloniaBlocks {
     }
 
     displayMap (args) {
+
+        // すでに地図が生成されていれば何もしない
+        if (this.map && this.loaded) {
+            return Promise.resolve();
+        }
+
         return new Promise((resolve) => {
             const mapContainer = document.getElementById('geolonia');
 
