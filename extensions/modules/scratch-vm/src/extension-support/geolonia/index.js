@@ -559,6 +559,19 @@ class Scratch3GeoloniaBlocks {
             return;
         }
         const layerIds = this.map.hasLayer(args.LAYER);
+        
+        // レイヤーがあるか判定
+        if ((!layerIds || layerIds.length === 0) && this.addCustomMarkerNames.includes(args.LAYER)) {
+            // カスタムマーカーのソースを更新
+            this.customMarkers.features = this.customMarkers.features.map(feature => {
+                if (feature.properties.name === args.LAYER) {
+                    feature.properties.icon = args.ICON;
+                }
+                return feature;
+            });
+            this.map.getSource(this.sourceName).setData(this.customMarkers);
+            return;
+        }
         if (layerIds.length > 0) {
             layerIds.forEach(layerId => {
                 this.map.changeLayerIcon(layerId, args.ICON, 'chizubouken-lab');
