@@ -463,6 +463,8 @@ class Scratch3GeoloniaBlocks {
 
         // すでに地図が生成されていれば何もしない
         if (this.map && this.loaded) {
+            this.map.setCenter([args.LNG, args.LAT]);
+            this.map.setZoom(args.ZOOM);
             return Promise.resolve();
         }
 
