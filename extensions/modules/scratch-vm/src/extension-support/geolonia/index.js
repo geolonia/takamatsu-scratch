@@ -112,6 +112,25 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'removeSymbolMarker',
+                    blockType: BlockType.COMMAND,
+                    text: '経度 [LON] 緯度 [LAT] の [NAME] を削除する',
+                    arguments: {
+                        LON: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 139.74
+                        },
+                        LAT: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 35.65
+                        },
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'お店'
+                        }
+                    }
+                },
+                {
                     opcode: 'addOSMPoiLayer',
                     blockType: BlockType.COMMAND,
                     text: '[LAYER] を表示する',
@@ -739,6 +758,25 @@ class Scratch3GeoloniaBlocks {
         }
 
         this.addCustomMarkerNames.push(args.NAME);
+    }
+
+    removeSymbolMarker (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        if (!this.addCustomMarkerNames.includes(args.NAME)) {
+            console.error('指定された名前のマーカーは存在しません。');
+            return;
+        }
+
+        // 指定された名前のマーカーを削除
+        this.addCustomMarkerNames = this.addCustomMarkerNames.filter(name => name !== args.NAME);
+        this.customMarkers.features = this.customMarkers.features.filter(
+            feature => feature.properties.name !== args.NAME && feature.properties.lngLat !== `${args.LAT}, ${args.LON}`
+        );
+
+        this.map.getSource(this.sourceName).setData(this.customMarkers);
     }
 
     addLayer (args) {
