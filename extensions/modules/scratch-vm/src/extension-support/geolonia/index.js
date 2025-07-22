@@ -725,7 +725,6 @@ class Scratch3GeoloniaBlocks {
             this.map.loadGeojson(this.customMarkers, this.sourceName, {
                 'marker-symbol': ['get', 'icon'],
                 'title': ['get', 'name'],
-                'marker-size': 'medium',
                 'sprite-sheet': 'chizubouken-lab'
             });
         } else {
