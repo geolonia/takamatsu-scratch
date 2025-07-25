@@ -584,7 +584,7 @@ class Scratch3GeoloniaBlocks {
             // カスタムマーカーのソースを更新
             this.customMarkers.features = this.customMarkers.features.map(feature => {
                 if (feature.properties.name === args.LAYER) {
-                    feature.properties.icon = args.ICON;
+                    feature.properties.icon = 'chizubouken-lab:' + args.ICON;
                 }
                 return feature;
             });
