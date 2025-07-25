@@ -333,22 +333,22 @@ class Scratch3GeoloniaBlocks {
                 //     blockType: BlockType.REPORTER,
                 //     text: 'データ'
                 // },
-                {
-                    opcode: 'setVariable',
-                    blockType: BlockType.COMMAND,
-                    text: '[VARIABLE_NAME] を [VALUE] にする',
-                    arguments: {
-                        VARIABLE_NAME: {
-                            type: ArgumentType.STRING,
-                            menu: 'variableMenu',
-                            defaultValue: 'getPref'
-                        },
-                        VALUE: {
-                            type: ArgumentType.STRING,
-                            defaultValue: '沖縄県'
-                        }
-                    }
-                }
+                // {
+                //     opcode: 'setVariable',
+                //     blockType: BlockType.COMMAND,
+                //     text: '[VARIABLE_NAME] を [VALUE] にする',
+                //     arguments: {
+                //         VARIABLE_NAME: {
+                //             type: ArgumentType.STRING,
+                //             menu: 'variableMenu',
+                //             defaultValue: 'getPref'
+                //         },
+                //         VALUE: {
+                //             type: ArgumentType.STRING,
+                //             defaultValue: '沖縄県'
+                //         }
+                //     }
+                // }
             ],
             menus: {
                 baseMapStyles: [
@@ -443,40 +443,40 @@ class Scratch3GeoloniaBlocks {
         return this.data;
     }
 
-    setVariable (args) {
-        switch (args.VARIABLE_NAME) {
-        case 'getPref':
-            this.addr.prefecture = args.VALUE;
-            break;
-        case 'getCity':
-            this.addr.city = args.VALUE;
-            break;
-        case 'getLat':
-            this.center.lat = Number(args.VALUE);
-            break;
-        case 'getLng':
-            this.center.lng = Number(args.VALUE);
-            break;
-        case 'getZoom':
-            this.zoom = Number(args.VALUE);
-            break;
-        case 'getName':
-            // features配列の先頭のnameを書き換える例
-            if (this.features.length > 0) {
-                this.features[0].properties.name = args.VALUE;
-            }
-            break;
-        case 'getData':
-            try {
-                this.data = JSON.parse(args.VALUE);
-            } catch (e) {
-                this.data = args.VALUE;
-            }
-            break;
-        default:
-            break;
-        }
-    }
+    // setVariable (args) {
+    //     switch (args.VARIABLE_NAME) {
+    //     case 'getPref':
+    //         this.addr.prefecture = args.VALUE;
+    //         break;
+    //     case 'getCity':
+    //         this.addr.city = args.VALUE;
+    //         break;
+    //     case 'getLat':
+    //         this.center.lat = Number(args.VALUE);
+    //         break;
+    //     case 'getLng':
+    //         this.center.lng = Number(args.VALUE);
+    //         break;
+    //     case 'getZoom':
+    //         this.zoom = Number(args.VALUE);
+    //         break;
+    //     case 'getName':
+    //         // features配列の先頭のnameを書き換える例
+    //         if (this.features.length > 0) {
+    //             this.features[0].properties.name = args.VALUE;
+    //         }
+    //         break;
+    //     case 'getData':
+    //         try {
+    //             this.data = JSON.parse(args.VALUE);
+    //         } catch (e) {
+    //             this.data = args.VALUE;
+    //         }
+    //         break;
+    //     default:
+    //         break;
+    //     }
+    // }
 
     displayMap (args) {
 
@@ -786,11 +786,10 @@ class Scratch3GeoloniaBlocks {
         }
 
         // 指定された名前のマーカーを削除
-        this.addCustomMarkerNames = this.addCustomMarkerNames.filter(name => name !== args.NAME);
         this.customMarkers.features = this.customMarkers.features.filter(
-            feature => feature.properties.name !== args.NAME && feature.properties.lngLat !== `${args.LAT}, ${args.LON}`
+            feature => !(feature.properties.name === args.NAME && feature.properties.lngLat === `${args.LAT}, ${args.LON}`)
         );
-
+        this.addCustomMarkerNames = [this.customMarkers.features.map(feature => feature.properties.name)].flat();
         this.map.getSource(this.sourceName).setData(this.customMarkers);
     }
 
