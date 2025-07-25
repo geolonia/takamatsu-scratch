@@ -786,11 +786,10 @@ class Scratch3GeoloniaBlocks {
         }
 
         // 指定された名前のマーカーを削除
-        this.addCustomMarkerNames = this.addCustomMarkerNames.filter(name => name !== args.NAME);
         this.customMarkers.features = this.customMarkers.features.filter(
-            feature => feature.properties.name !== args.NAME && feature.properties.lngLat !== `${args.LAT}, ${args.LON}`
+            feature => !(feature.properties.name === args.NAME && feature.properties.lngLat === `${args.LAT}, ${args.LON}`)
         );
-
+        this.addCustomMarkerNames = [this.customMarkers.features.map(feature => feature.properties.name)].flat();
         this.map.getSource(this.sourceName).setData(this.customMarkers);
     }
 
