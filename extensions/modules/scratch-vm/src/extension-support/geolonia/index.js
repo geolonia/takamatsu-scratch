@@ -159,7 +159,7 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LAYER: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'お店'
+                            defaultValue: 'レストラン'
                         },
                         ICON: {
                             type: ArgumentType.STRING,
