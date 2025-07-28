@@ -83,7 +83,7 @@ class Scratch3GeoloniaBlocks {
                         STYLE: {
                             type: ArgumentType.STRING,
                             menu: 'baseMapStyles', // ドロップダウンメニューを指定
-                            defaultValue: 'https://chizubouken-lab.pages.dev/style.json'
+                            defaultValue: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json'
                         }
                     }
                 },
@@ -376,7 +376,8 @@ class Scratch3GeoloniaBlocks {
             ],
             menus: {
                 baseMapStyles: [
-                    {text: '標準', value: 'https://basic-v1-background-only.pages.dev/style.json'},
+                    {text: '標準', value: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json'},
+                    {text: 'geolonia basic', value: 'https://basic-v1-background-only.pages.dev/style.json'},
                     {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'},
                     {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/style.json'}
                 ],
@@ -529,6 +530,7 @@ class Scratch3GeoloniaBlocks {
 
             this.map = new geolonia.japan.Map({
                 container: 'geolonia-map',
+                style: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json',
                 center: [args.LNG, args.LAT],
                 zoom: args.ZOOM,
                 pitch: 0
