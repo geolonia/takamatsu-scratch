@@ -83,7 +83,7 @@ class Scratch3GeoloniaBlocks {
                         STYLE: {
                             type: ArgumentType.STRING,
                             menu: 'baseMapStyles', // ドロップダウンメニューを指定
-                            defaultValue: 'https://chizubouken-lab.pages.dev/style.json'
+                            defaultValue: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json'
                         }
                     }
                 },
@@ -131,6 +131,30 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'changeSymbolMarkerIcon',
+                    blockType: BlockType.COMMAND,
+                    text: '経度 [LON] 緯度 [LAT] の [NAME] のアイコンを [ICON] に変更する',
+                    arguments: {
+                        LON: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 139.74
+                        },
+                        LAT: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 35.65
+                        },
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'お店'
+                        },
+                        ICON: {
+                            type: ArgumentType.STRING,
+                            menu: 'iconMenu',
+                            defaultValue: 'ピン'
+                        }
+                    }
+                },
+                {
                     opcode: 'addOSMPoiLayer',
                     blockType: BlockType.COMMAND,
                     text: '[LAYER] を表示する',
@@ -159,7 +183,7 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LAYER: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'お店'
+                            defaultValue: 'レストラン'
                         },
                         ICON: {
                             type: ArgumentType.STRING,
@@ -352,7 +376,8 @@ class Scratch3GeoloniaBlocks {
             ],
             menus: {
                 baseMapStyles: [
-                    {text: '標準', value: 'https://basic-v1-background-only.pages.dev/style.json'},
+                    {text: '標準', value: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json'},
+                    {text: 'geolonia basic', value: 'https://basic-v1-background-only.pages.dev/style.json'},
                     {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'},
                     {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/style.json'}
                 ],
@@ -505,6 +530,7 @@ class Scratch3GeoloniaBlocks {
 
             this.map = new geolonia.japan.Map({
                 container: 'geolonia-map',
+                style: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json',
                 center: [args.LNG, args.LAT],
                 zoom: args.ZOOM,
                 pitch: 0
@@ -579,23 +605,27 @@ class Scratch3GeoloniaBlocks {
         }
         const layerIds = this.map.hasLayer(args.LAYER);
         
-        // レイヤーがあるか判定
-        if ((!layerIds || layerIds.length === 0) && this.addCustomMarkerNames.includes(args.LAYER)) {
-            // カスタムマーカーのソースを更新
-            this.customMarkers.features = this.customMarkers.features.map(feature => {
-                if (feature.properties.name === args.LAYER) {
-                    feature.properties.icon = args.ICON;
-                }
-                return feature;
-            });
-            this.map.getSource(this.sourceName).setData(this.customMarkers);
-            return;
-        }
         if (layerIds.length > 0) {
             layerIds.forEach(layerId => {
                 this.map.changeLayerIcon(layerId, args.ICON, 'chizubouken-lab');
             });
         }
+    }
+
+    changeSymbolMarkerIcon (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        // 指定された名前のマーカーを削除
+        this.customMarkers.features = this.customMarkers.features.map(feature => {
+            if (feature.properties.name === args.NAME && feature.properties.lngLat === `${args.LAT}, ${args.LON}`) {
+                feature.properties.icon = `chizubouken-lab:${args.ICON}`;
+            }
+            return feature;
+        });
+        this.map.getSource(this.sourceName).setData(this.customMarkers);
     }
 
     // クラス内にメソッドを追加
