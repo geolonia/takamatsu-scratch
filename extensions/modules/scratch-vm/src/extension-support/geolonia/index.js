@@ -192,6 +192,30 @@ class Scratch3GeoloniaBlocks {
                         }
                     }
                 },
+                {
+                    opcode: 'showHazardMapLayer',
+                    blockType: BlockType.COMMAND,
+                    text: 'ハザードマップ [LAYER] を表示する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'hazardMapLayers',
+                            defaultValue: '洪水浸水想定区域(想定最大規模)'
+                        }
+                    }
+                },
+                {
+                    opcode: 'removeHazardMapLayer',
+                    blockType: BlockType.COMMAND,
+                    text: 'ハザードマップ [LAYER] を非表示にする',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'hazardMapLayers',
+                            defaultValue: '洪水浸水想定区域(想定最大規模)'
+                        }
+                    }
+                },
                 // {
                 //     opcode: 'addLayer',
                 //     blockType: BlockType.COMMAND,
@@ -392,6 +416,11 @@ class Scratch3GeoloniaBlocks {
                         ['データ', 'getData']
                     ];
                     return variableNames;
+                },
+                hazardMapLayers: function () {
+                    return [
+                        '洪水浸水想定区域(想定最大規模)'
+                    ];
                 },
                 iconMenu: [
                     {text: 'ピン', value: 'pin'},
@@ -724,6 +753,22 @@ class Scratch3GeoloniaBlocks {
             return;
         }
         this.map.removeOsmPoi(args.LAYER);
+    }
+
+    showHazardMapLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.loadHazardMapData(args.LAYER, 'chizubouken-lab');
+    }
+
+    removeHazardMapLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.removeHazardMapData(args.LAYER);
     }
 
     changePitch (args) {
