@@ -135,6 +135,7 @@ class Blocks extends React.Component {
         if (this.props.isVisible) {
             this.setLocale();
         }
+
     }
     shouldComponentUpdate (nextProps, nextState) {
         return (
@@ -224,6 +225,7 @@ class Blocks extends React.Component {
         this.workspace.toolboxRefreshEnabled_ = true;
 
         const currentCategoryPos = this.workspace.toolbox_.getCategoryPositionById(categoryId);
+        console.log('Current category position:', currentCategoryPos, 'categoryId:', categoryId);
         const currentCategoryLen = this.workspace.toolbox_.getCategoryLengthById(categoryId);
         if (offset < currentCategoryLen) {
             this.workspace.toolbox_.setFlyoutScrollPos(currentCategoryPos + offset);
