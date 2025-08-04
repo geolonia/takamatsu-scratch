@@ -216,6 +216,30 @@ class Scratch3GeoloniaBlocks {
                         }
                     }
                 },
+                {
+                    opcode: 'showNLNIMapLayer',
+                    blockType: BlockType.COMMAND,
+                    text: '国土数値情報 [LAYER] を表示する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'nlniMapLayers',
+                            defaultValue: '小学校区'
+                        }
+                    }
+                },
+                {
+                    opcode: 'removeNLNIMapLayer',
+                    blockType: BlockType.COMMAND,
+                    text: '国土数値情報 [LAYER] を非表示にする',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'nlniMapLayers',
+                            defaultValue: '小学校区'
+                        }
+                    }
+                },
                 // {
                 //     opcode: 'addLayer',
                 //     blockType: BlockType.COMMAND,
@@ -420,6 +444,11 @@ class Scratch3GeoloniaBlocks {
                 hazardMapLayers: function () {
                     return [
                         '洪水浸水想定区域(想定最大規模)'
+                    ];
+                },
+                nlniMapLayers: function () {
+                    return [
+                        '小学校区'
                     ];
                 },
                 iconMenu: [
@@ -760,7 +789,7 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
-        this.map.loadHazardMapData(args.LAYER, 'chizubouken-lab');
+        this.map.loadHazardMapData(args.LAYER);
     }
 
     removeHazardMapLayer (args) {
@@ -769,6 +798,22 @@ class Scratch3GeoloniaBlocks {
             return;
         }
         this.map.removeHazardMapData(args.LAYER);
+    }
+
+    showNLNIMapLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.loadNLNIData(args.LAYER);
+    }
+
+    removeNLNIMapLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.removeNLNIData(args.LAYER);
     }
 
     changePitch (args) {
