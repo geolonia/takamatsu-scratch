@@ -98,6 +98,9 @@ class ExtensionManager {
         dispatch.setService('extensions', this).catch(e => {
             log.error(`ExtensionManager was unable to register extension service: ${JSON.stringify(e)}`);
         });
+
+        this.loadExtensionIdSync('geolonia');
+
     }
 
     /**

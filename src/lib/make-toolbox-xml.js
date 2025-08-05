@@ -764,7 +764,9 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
     const myBlocksXML = moveCategory('procedures') || myBlocks(isInitialSetup, isStage, targetId);
 
     const everything = [
-        xmlOpen,
+        xmlOpen
+    ];
+    const blocksXML = [
         motionXML, gap,
         looksXML, gap,
         soundXML, gap,
@@ -778,6 +780,10 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
 
     for (const extensionCategory of categoriesXML) {
         everything.push(gap, extensionCategory.xml);
+    }
+
+    for (const blockXML of blocksXML) {
+        everything.push(blockXML);
     }
 
     everything.push(xmlClose);
