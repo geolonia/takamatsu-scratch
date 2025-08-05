@@ -31,6 +31,7 @@ class Scratch3GeoloniaBlocks {
         this.osmPoiLayers = null;
         this.addedLayers = [];
         this.addCustomMarkerNames = [];
+        this.hazardMapLayerNames = geolonia.japan.Map.getHazardMapData();
     }
 
     getInfo() {
@@ -442,9 +443,11 @@ class Scratch3GeoloniaBlocks {
                     return variableNames;
                 },
                 hazardMapLayers: function () {
-                    return [
-                        '洪水浸水想定区域(想定最大規模)'
-                    ];
+                    if (!this.hazardMapLayerNames) {
+                        this.hazardMapLayerNames = geolonia.japan.Map.getHazardMapData();
+                    }
+                    const res = this.hazardMapLayerNames.map(layer => [layer, layer]) ?? [['洪水浸水想定区域(想定最大規模)', '洪水浸水想定最大規模(想定最大規模)']];
+                    return res;
                 },
                 nlniMapLayers: function () {
                     return [
