@@ -32,6 +32,7 @@ class Scratch3GeoloniaBlocks {
         this.addedLayers = [];
         this.addCustomMarkerNames = [];
         this.hazardMapLayerNames = geolonia.japan.Map.getHazardMapData();
+        this.nlniLayerNames = geolonia.japan.Map.getNLNIData();
     }
 
     getInfo() {
@@ -450,9 +451,11 @@ class Scratch3GeoloniaBlocks {
                     return res;
                 },
                 nlniMapLayers: function () {
-                    return [
-                        '小学校区'
-                    ];
+                    if (!this.nlniLayerNames) {
+                        this.nlniLayerNames = geolonia.japan.Map.getNLNIData();
+                    }
+                    const res = this.nlniLayerNames.map(layer => [layer, layer]) ?? [['小学校区', '小学校区']];
+                    return res;
                 },
                 iconMenu: [
                     {text: 'ピン', value: 'pin'},
