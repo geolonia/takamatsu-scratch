@@ -214,7 +214,7 @@ class Blocks extends React.Component {
     updateToolbox () {
         this.toolboxUpdateTimeout = false;
 
-        const categoryId = this.workspace.toolbox_.getSelectedCategoryId();
+        const categoryId = 'geolonia';
         const offset = this.workspace.toolbox_.getCategoryScrollOffset();
         this.workspace.updateToolbox(this.props.toolboxXML);
         this._renderedToolboxXML = this.props.toolboxXML;
@@ -225,7 +225,6 @@ class Blocks extends React.Component {
         this.workspace.toolboxRefreshEnabled_ = true;
 
         const currentCategoryPos = this.workspace.toolbox_.getCategoryPositionById(categoryId);
-        console.log('Current category position:', currentCategoryPos, 'categoryId:', categoryId);
         const currentCategoryLen = this.workspace.toolbox_.getCategoryLengthById(categoryId);
         if (offset < currentCategoryLen) {
             this.workspace.toolbox_.setFlyoutScrollPos(currentCategoryPos + offset);
@@ -419,9 +418,11 @@ class Blocks extends React.Component {
                     // The factory should only know static info about the block: the category info and the opcode.
                     // Anything else will be picked up from the XML attached to the block instance.
                     const extendedOpcode = `${categoryInfo.id}_${blockInfo.info.opcode}`;
-                    const blockDefinition =
-                        defineDynamicBlock(this.ScratchBlocks, categoryInfo, blockInfo, extendedOpcode);
-                    this.ScratchBlocks.Blocks[extendedOpcode] = blockDefinition;
+                    if (!this.ScratchBlocks.Blocks[extendedOpcode]) {
+                        const blockDefinition =
+                            defineDynamicBlock(this.ScratchBlocks, categoryInfo, blockInfo, extendedOpcode);
+                        this.ScratchBlocks.Blocks[extendedOpcode] = blockDefinition;
+                    }
                 });
             }
         };
