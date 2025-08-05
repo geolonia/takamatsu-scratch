@@ -28,11 +28,12 @@ class Scratch3GeoloniaBlocks {
             type: 'FeatureCollection',
             features: []
         };
-        this.osmPoiLayers = null;
         this.addedLayers = [];
         this.addCustomMarkerNames = [];
         this.hazardMapLayerNames = geolonia.japan.Map.getHazardMapData();
         this.nlniLayerNames = geolonia.japan.Map.getNLNIData();
+        this.spriteName = 'chizubouken-lab';
+        this.iconNames = null;
     }
 
     getInfo() {
@@ -457,40 +458,39 @@ class Scratch3GeoloniaBlocks {
                     const res = this.nlniLayerNames.map(layer => [layer, layer]) ?? [['小学校区', '小学校区']];
                     return res;
                 },
-                iconMenu: [
-                    {text: 'ピン', value: 'pin'},
-                    // {text: '星', value: 'star'},
-                    {text: 'モンスター1', value: 'enemy1'},
-                    {text: 'モンスター2', value: 'enemy2'},
-                    {text: 'モンスター3', value: 'enemy3'},
-                    {text: 'モンスター4', value: 'enemy4'},
-                    {text: '宝箱', value: 'treasure-chest'},
-                    {text: '宝石（黄色）', value: 'jewelry-yellow'},
-                    {text: '宝石（青色）', value: 'jewelry-blue'},
-                    {text: '宝石（赤色）', value: 'jewelry-red'},
-                    {text: '宝石（緑色）', value: 'jewelry-green'},
-                    {text: '天使', value: 'angel'},
-                    {text: '勇者', value: 'friend1'},
-                    {text: 'レストラン', value: 'restaurant'},
-                    {text: 'カフェ', value: 'cafe'},
-                    {text: 'コンビニ', value: 'convenience'},
-                    {text: '病院', value: 'hospital'},
-                    {text: '学校', value: 'school'},
-                    {text: '博物館', value: 'museum'},
-                    {text: 'お城', value: 'castle'},
-                    {text: 'お城（敵）', value: 'dark-castle'},
-                    {text: '銀行', value: 'bank'},
-                    {text: '鉄道駅', value: 'railway'},
-                    {text: '駐車場', value: 'parking'},
-                    {text: '公園', value: 'park'},
-                    {text: '危険マーク', value: 'danger-yellow'},
-                    {text: '危険立て札', value: 'danger-red'}
-                    // {text: '図書館', value: 'library'},
-                    // {text: '郵便局', value: 'post_office'},
-                    // {text: 'バス停', value: 'bus'},
-                    // {text: '旗', value: 'flag'},
-                    // {text: '家', value: 'home'}
-                ]
+                iconMenu: function () {
+                    if (!this.iconNames || !Array.isArray(this.iconNames) || this.iconNames.length === 0) {
+                        return [
+                            ['ピン', 'pin'],
+                            ['モンスター1', 'enemy1'],
+                            ['モンスター2', 'enemy2'],
+                            ['モンスター3', 'enemy3'],
+                            ['モンスター4', 'enemy4'],
+                            ['宝箱', 'treasure-chest'],
+                            ['宝石（黄色）', 'jewelry-yellow'],
+                            ['宝石（青色）', 'jewelry-blue'],
+                            ['宝石（赤色）', 'jewelry-red'],
+                            ['宝石（緑色）', 'jewelry-green'],
+                            ['天使', 'angel'],
+                            ['勇者', 'friend1'],
+                            ['レストラン', 'restaurant'],
+                            ['カフェ', 'cafe'],
+                            ['コンビニ', 'convenience'],
+                            ['病院', 'hospital'],
+                            ['学校', 'school'],
+                            ['博物館', 'museum'],
+                            ['お城', 'castle'],
+                            ['お城（敵）', 'dark-castle'],
+                            ['銀行', 'bank'],
+                            ['鉄道駅', 'railway'],
+                            ['駐車場', 'parking'],
+                            ['公園', 'park'],
+                            ['危険マーク', 'danger-yellow'],
+                            ['危険立て札', 'danger-red']
+                        ];
+                    }
+                    return this.iconNames.map(layer => [layer, layer]);
+                }
             }
         };
     }
@@ -603,8 +603,6 @@ class Scratch3GeoloniaBlocks {
             this.map.once('load', () => {
                 this.map.on('moveend', (e) => {
                     this.center = this.map.getCenter();
-                    this.osmPoiLayers = this.map.getOsmPoiLayers();
-
                     openReverseGeocoder(Object.values(this.center)).then(res => {
                         this.addr = res;
                     });
@@ -656,7 +654,6 @@ class Scratch3GeoloniaBlocks {
         this.features = [];
         this.data = '';
         this.customMarkers.features = [];
-        this.osmPoiLayers = null;
         this.addedLayers = [];
         this.addCustomMarkerNames = [];
     }
