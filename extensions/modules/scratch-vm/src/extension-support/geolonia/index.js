@@ -3,7 +3,7 @@ const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const formatMessage = require('format-message');
 const {openReverseGeocoder} = require('@geolonia/open-reverse-geocoder');
-const {isCSVData, isGeojsonData} = require('./utils');
+const {isCSVData, isGeojsonData, getSpriteBBox, propertyToString} = require('./utils');
 
 const AvailableLocales = ['en', 'ja', 'ja-Hira'];
 
@@ -34,6 +34,7 @@ class Scratch3GeoloniaBlocks {
         this.nlniLayerNames = geolonia.japan.Map.getNLNIData();
         this.spriteName = 'chizubouken-lab';
         this.iconNames = null;
+        this.layerAttributes = null;
     }
 
     getInfo() {
@@ -352,6 +353,11 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'setLayerAttribute',
+                    blockType: BlockType.COMMAND,
+                    text: '触れているレイヤーの情報を取得'
+                },
+                {
                     opcode: 'setMaxZoom',
                     blockType: BlockType.COMMAND,
                     text: '地図の最大ズームレベルを [MAXZOOM] に変更する',
@@ -401,8 +407,13 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'getName',
                     blockType: BlockType.REPORTER,
-                    text: '場所の名前',
+                    text: '場所の名前'
                 },
+                {
+                    opcode: 'getLayerAttributes',
+                    blockType: BlockType.REPORTER,
+                    text: 'レイヤー情報'
+                }
                 // {
                 //     opcode: 'getData',
                 //     blockType: BlockType.REPORTER,
@@ -530,6 +541,14 @@ class Scratch3GeoloniaBlocks {
             return JSON.stringify(this.data);
         }
         return this.data;
+    }
+
+    getLayerAttributes () {
+        if (!this.layerAttributes) {
+            console.error('レイヤー情報が設定されていません。');
+            return '';
+        }
+        return JSON.stringify(this.layerAttributes);
     }
 
     // setVariable (args) {
@@ -862,6 +881,22 @@ class Scratch3GeoloniaBlocks {
         }
 
         this.map.setMinZoom(Number(args.MINZOOM));
+    }
+
+    setLayerAttribute (args, util) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        const bounds = util.target.getBounds();
+        const stage = document.getElementById('geolonia');
+
+        const bbox = getSpriteBBox(bounds, stage);
+
+        // レイヤーの情報を取得
+        const features = this.map.getFeaturesProperties(bbox, {firstOnly: true});
+
+        this.layerAttributes = propertyToString(features[0].properties);
     }
 
     addSymbolMarker (args) {

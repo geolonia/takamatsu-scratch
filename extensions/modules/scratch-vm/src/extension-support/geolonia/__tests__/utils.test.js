@@ -1,5 +1,5 @@
 /* global describe, it, expect */
-import {isGeojsonData, isCSVData} from '../utils';
+import {isGeojsonData, isCSVData, propertyToString} from '../utils';
 
 // isGeojsonDataのテスト
 describe('isGeojsonData', () => {
@@ -69,5 +69,33 @@ describe('isCSVData', () => {
     });
     it('Googleスプレッドシート公開CSVでtrue', () => {
         expect(isCSVData('https://docs.google.com/spreadsheets/d/e/xxxx/pub?gid=0&single=true&output=csv')).toBe(true);
+    });
+});
+
+describe('propertyToString', () => {
+    it('オブジェクトを "key: value, ..." 形式の文字列に変換できる', () => {
+        const obj = {foo: 'bar', num: 123, bool: true};
+        const result = propertyToString(obj);
+        // 順序は保証されないので、各ペアが含まれていることを確認
+        expect(result).toContain('foo: bar');
+        expect(result).toContain('num: 123');
+        expect(result).toContain('bool: true');
+        expect(result.split(',').length).toBe(3);
+    });
+
+    it('空オブジェクトは空文字列を返す', () => {
+        expect(propertyToString({})).toBe('');
+    });
+
+    it('nullやundefinedは空文字列を返す', () => {
+        expect(propertyToString(null)).toBe('');
+        // eslint-disable-next-line no-undefined
+        expect(propertyToString(undefined)).toBe('');
+    });
+
+    it('オブジェクト以外は空文字列を返す', () => {
+        expect(propertyToString('string')).toBe('');
+        expect(propertyToString(123)).toBe('');
+        expect(propertyToString(true)).toBe('');
     });
 });
