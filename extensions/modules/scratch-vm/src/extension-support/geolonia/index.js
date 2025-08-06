@@ -20,7 +20,7 @@ class Scratch3GeoloniaBlocks {
             city: ''
         };
         this.center = {lng: 0, lat: 0};
-        this.zoom = 10;
+        this.zoom = 14;
         this.features = [];
         this.loaded = false;
         this.data = '';
@@ -304,8 +304,8 @@ class Scratch3GeoloniaBlocks {
                         },
                         ZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 10,
-                        },
+                            defaultValue: this.zoom
+                        }
                     }
                 },
                 {
@@ -669,7 +669,7 @@ class Scratch3GeoloniaBlocks {
             city: ''
         };
         this.center = {lng: 0, lat: 0};
-        this.zoom = 10;
+        this.zoom = 14;
         this.features = [];
         this.data = '';
         this.customMarkers.features = [];
