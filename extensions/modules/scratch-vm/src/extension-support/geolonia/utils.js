@@ -69,3 +69,12 @@ export const getSpriteBBox = (bounds, stage) => {
         [bounds.right + width / 2, height / 2 - bounds.bottom]
     ];
 };
+
+export const propertyToString = (obj) => {
+    if (obj && typeof obj === 'object') {
+        return Object.entries(obj)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ');
+    }
+    return '';
+};

@@ -3,7 +3,7 @@ const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const formatMessage = require('format-message');
 const {openReverseGeocoder} = require('@geolonia/open-reverse-geocoder');
-const {isCSVData, isGeojsonData, getSpriteBBox} = require('./utils');
+const {isCSVData, isGeojsonData, getSpriteBBox, propertyToString} = require('./utils');
 
 const AvailableLocales = ['en', 'ja', 'ja-Hira'];
 
@@ -407,7 +407,7 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'getName',
                     blockType: BlockType.REPORTER,
-                    text: '場所の名前',
+                    text: '場所の名前'
                 },
                 {
                     opcode: 'getLayerAttributes',
@@ -541,6 +541,14 @@ class Scratch3GeoloniaBlocks {
             return JSON.stringify(this.data);
         }
         return this.data;
+    }
+
+    getLayerAttributes () {
+        if (!this.layerAttributes) {
+            console.error('レイヤー情報が設定されていません。');
+            return '';
+        }
+        return JSON.stringify(this.layerAttributes);
     }
 
     // setVariable (args) {
@@ -886,10 +894,9 @@ class Scratch3GeoloniaBlocks {
         const bbox = getSpriteBBox(bounds, stage);
 
         // レイヤーの情報を取得
-        const property = this.map.getFeaturesProperties(bbox, {firstOnly: true});
-        console.log(property);
+        const features = this.map.getFeaturesProperties(bbox, {firstOnly: true});
 
-        this.layerAttributes = JSON.stringify(property);
+        this.layerAttributes = propertyToString(features[0].properties);
     }
 
     addSymbolMarker (args) {
