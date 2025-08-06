@@ -154,7 +154,7 @@ class Scratch3GeoloniaBlocks {
                         ICON: {
                             type: ArgumentType.STRING,
                             menu: 'iconMenu',
-                            defaultValue: 'ピン'
+                            defaultValue: 'pin'
                         }
                     }
                 },
@@ -192,7 +192,7 @@ class Scratch3GeoloniaBlocks {
                         ICON: {
                             type: ArgumentType.STRING,
                             menu: 'iconMenu',
-                            defaultValue: 'ピン'
+                            defaultValue: 'pin'
                         }
                     }
                 },
