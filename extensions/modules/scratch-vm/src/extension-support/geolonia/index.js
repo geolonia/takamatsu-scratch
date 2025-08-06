@@ -14,15 +14,19 @@ class Scratch3GeoloniaBlocks {
 
     constructor (runtime) {
         this.runtime = runtime;
+        this.loaded = false;
+        this._initState();
+    }
+
+    _initState (lng = 139.74, lat = 35.65, zoom = 14) {
         this.addr = {
             code: '',
             prefecture: '',
             city: ''
         };
-        this.center = {lng: 139.74, lat: 35.65};
-        this.zoom = 14;
+        this.center = {lng: lng, lat: lat};
+        this.zoom = zoom;
         this.features = [];
-        this.loaded = false;
         this.data = '';
         this.customMarkers = {
             type: 'FeatureCollection',
@@ -582,8 +586,10 @@ class Scratch3GeoloniaBlocks {
 
     displayMap (args) {
 
-        // すでに地図が生成されていれば何もしない
+        // すでに地図が生成されていれば緯度経度zoomを変更、変数を初期化、レイヤーを削除
         if (this.map && this.loaded) {
+            this._initState(args.LNG, args.LAT, args.ZOOM);
+            this.map.removeAllCustomLayers();
             this.map.setCenter([args.LNG, args.LAT]);
             this.map.setZoom(args.ZOOM);
             return Promise.resolve();
