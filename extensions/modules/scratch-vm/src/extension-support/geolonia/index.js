@@ -19,7 +19,7 @@ class Scratch3GeoloniaBlocks {
             prefecture: '',
             city: ''
         };
-        this.center = {lng: 0, lat: 0};
+        this.center = {lng: 139.74, lat: 35.65};
         this.zoom = 14;
         this.features = [];
         this.loaded = false;
@@ -51,11 +51,11 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LAT: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 35.65
+                            defaultValue: this.center.lat
                         },
                         LNG: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 139.74
+                            defaultValue: this.center.lng
                         },
                         ZOOM: {
                             type: ArgumentType.NUMBER,
@@ -98,11 +98,11 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LAT: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 35.65
+                            defaultValue: this.center.lat
                         },
                         LON: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 139.74
+                            defaultValue: this.center.lng
                         },
                         ICON: {
                             type: ArgumentType.STRING,
@@ -122,11 +122,11 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LON: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 139.74
+                            defaultValue: this.center.lng
                         },
                         LAT: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 35.65
+                            defaultValue: this.center.lat
                         },
                         NAME: {
                             type: ArgumentType.STRING,
@@ -141,11 +141,11 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LON: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 139.74
+                            defaultValue: this.center.lng
                         },
                         LAT: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 35.65
+                            defaultValue: this.center.lat
                         },
                         NAME: {
                             type: ArgumentType.STRING,
@@ -296,11 +296,11 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LNG: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 139.74,
+                            defaultValue: this.center.lng
                         },
                         LAT: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 35.65,
+                            defaultValue: this.center.lat
                         },
                         ZOOM: {
                             type: ArgumentType.NUMBER,
