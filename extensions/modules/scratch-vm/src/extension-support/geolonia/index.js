@@ -523,13 +523,7 @@ class Scratch3GeoloniaBlocks {
     }
 
     getName() {
-        for (let i = 0; i < this.features.length; i++) {
-            if ('symbol' === this.features[i].layer.type && this.features[i].properties.name) {
-                return this.features[i].properties.name;
-            }
-        }
-
-        return '';
+        return (this.layerAttributes && this.layerAttributes.name) ? this.layerAttributes.name : '';
     }
 
     getZoom () {
@@ -548,7 +542,7 @@ class Scratch3GeoloniaBlocks {
             console.error('レイヤー情報が設定されていません。');
             return '';
         }
-        return JSON.stringify(this.layerAttributes);
+        return propertyToString(this.layerAttributes);
     }
 
     // setVariable (args) {
@@ -896,7 +890,7 @@ class Scratch3GeoloniaBlocks {
         // レイヤーの情報を取得
         const features = this.map.getFeaturesProperties(bbox, {firstOnly: true});
 
-        this.layerAttributes = propertyToString(features[0].properties);
+        this.layerAttributes = features[0].properties;
     }
 
     addSymbolMarker (args) {
