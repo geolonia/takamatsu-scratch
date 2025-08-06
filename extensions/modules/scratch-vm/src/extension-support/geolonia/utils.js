@@ -59,3 +59,13 @@ export const isCSVData = (data) => {
     }
     return false;
 };
+
+export const getSpriteBBox = (bounds, stage) => {
+    const width = stage.offsetWidth;
+    const height = stage.offsetHeight;
+    // xy座標のbboxを取得
+    return [
+        [bounds.left + width / 2, height / 2 - bounds.top],
+        [bounds.right + width / 2, height / 2 - bounds.bottom]
+    ];
+};
