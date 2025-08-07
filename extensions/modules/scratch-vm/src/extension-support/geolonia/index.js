@@ -371,7 +371,7 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         MAXZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 18
+                            defaultValue: this.maxZoom
                         }
                     }
                 },
@@ -382,7 +382,7 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         MINZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 4
+                            defaultValue: this.minZoom
                         }
                     }
                 },
