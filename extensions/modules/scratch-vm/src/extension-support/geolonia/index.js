@@ -19,6 +19,7 @@ class Scratch3GeoloniaBlocks {
     }
 
     _initState (lng = 139.74, lat = 35.65, zoom = 14) {
+        this.map = null;
         this.addr = {
             code: '',
             prefecture: '',
@@ -662,19 +663,8 @@ class Scratch3GeoloniaBlocks {
         this.map.off('zoomend');
         this.map.remove();
         this.map = null;
+        this._initState();
         this.loaded = false;
-        this.addr = {
-            code: '',
-            prefecture: '',
-            city: ''
-        };
-        this.center = {lng: 0, lat: 0};
-        this.zoom = 14;
-        this.features = [];
-        this.data = '';
-        this.customMarkers.features = [];
-        this.addedLayers = [];
-        this.addCustomMarkerNames = [];
     }
 
     // レイヤーのアイコンを変更
