@@ -3,7 +3,7 @@ const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const formatMessage = require('format-message');
 const {openReverseGeocoder} = require('@geolonia/open-reverse-geocoder');
-const {isCSVData, isGeojsonData} = require('./utils');
+const {isCSVData, isGeojsonData, getSpriteBBox, propertyToString} = require('./utils');
 
 const AvailableLocales = ['en', 'ja', 'ja-Hira'];
 
@@ -14,23 +14,36 @@ class Scratch3GeoloniaBlocks {
 
     constructor (runtime) {
         this.runtime = runtime;
+        this.loaded = false;
+        this._initState();
+    }
+
+    _initState (lng = 139.74, lat = 35.65, zoom = 14) {
+        this.map = null;
         this.addr = {
             code: '',
             prefecture: '',
             city: ''
         };
-        this.center = {lng: 0, lat: 0};
-        this.zoom = 10;
+        this.center = {lng: lng, lat: lat};
+        this.zoom = zoom;
+        this.maxZoom = 20;
+        this.minZoom = 8;
+        // this.mapStyle = 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json';
+        this.mapStyle = 'https://basic-v1-background-only.pages.dev/style.json';
         this.features = [];
-        this.loaded = false;
         this.data = '';
         this.customMarkers = {
             type: 'FeatureCollection',
             features: []
         };
-        this.osmPoiLayers = null;
         this.addedLayers = [];
         this.addCustomMarkerNames = [];
+        this.hazardMapLayerNames = geolonia.japan.Map.getHazardMapData();
+        this.nlniLayerNames = geolonia.japan.Map.getNLNIData();
+        this.spriteName = 'chizubouken-lab';
+        this.iconNames = null;
+        this.layerAttributes = null;
     }
 
     getInfo() {
@@ -47,11 +60,11 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LAT: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 35.65
+                            defaultValue: this.center.lat
                         },
                         LNG: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 139.74
+                            defaultValue: this.center.lng
                         },
                         ZOOM: {
                             type: ArgumentType.NUMBER,
@@ -82,8 +95,8 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         STYLE: {
                             type: ArgumentType.STRING,
-                            menu: 'baseMapStyles', // ドロップダウンメニューを指定
-                            defaultValue: 'https://chizubouken-lab.pages.dev/style.json'
+                            menu: 'baseMapStyles',
+                            defaultValue: 'https://basic-v1-background-only.pages.dev/style.json'
                         }
                     }
                 },
@@ -94,11 +107,11 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LAT: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 35.65
+                            defaultValue: this.center.lat
                         },
                         LON: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 139.74
+                            defaultValue: this.center.lng
                         },
                         ICON: {
                             type: ArgumentType.STRING,
@@ -118,15 +131,39 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LON: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 139.74
+                            defaultValue: this.center.lng
                         },
                         LAT: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 35.65
+                            defaultValue: this.center.lat
                         },
                         NAME: {
                             type: ArgumentType.STRING,
                             defaultValue: 'お店'
+                        }
+                    }
+                },
+                {
+                    opcode: 'changeSymbolMarkerIcon',
+                    blockType: BlockType.COMMAND,
+                    text: '経度 [LON] 緯度 [LAT] の [NAME] のアイコンを [ICON] に変更する',
+                    arguments: {
+                        LON: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: this.center.lng
+                        },
+                        LAT: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: this.center.lat
+                        },
+                        NAME: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'お店'
+                        },
+                        ICON: {
+                            type: ArgumentType.STRING,
+                            menu: 'iconMenu',
+                            defaultValue: 'pin'
                         }
                     }
                 },
@@ -159,12 +196,60 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LAYER: {
                             type: ArgumentType.STRING,
-                            defaultValue: 'お店'
+                            defaultValue: 'レストラン'
                         },
                         ICON: {
                             type: ArgumentType.STRING,
                             menu: 'iconMenu',
-                            defaultValue: 'ピン'
+                            defaultValue: 'pin'
+                        }
+                    }
+                },
+                {
+                    opcode: 'showHazardMapLayer',
+                    blockType: BlockType.COMMAND,
+                    text: 'ハザードマップ [LAYER] を表示する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'hazardMapLayers',
+                            defaultValue: '洪水浸水想定区域(想定最大規模)'
+                        }
+                    }
+                },
+                {
+                    opcode: 'removeHazardMapLayer',
+                    blockType: BlockType.COMMAND,
+                    text: 'ハザードマップ [LAYER] を非表示にする',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'hazardMapLayers',
+                            defaultValue: '洪水浸水想定区域(想定最大規模)'
+                        }
+                    }
+                },
+                {
+                    opcode: 'showNLNIMapLayer',
+                    blockType: BlockType.COMMAND,
+                    text: '国土数値情報 [LAYER] を表示する',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'nlniMapLayers',
+                            defaultValue: '小学校区'
+                        }
+                    }
+                },
+                {
+                    opcode: 'removeNLNIMapLayer',
+                    blockType: BlockType.COMMAND,
+                    text: '国土数値情報 [LAYER] を非表示にする',
+                    arguments: {
+                        LAYER: {
+                            type: ArgumentType.STRING,
+                            menu: 'nlniMapLayers',
+                            defaultValue: '小学校区'
                         }
                     }
                 },
@@ -220,16 +305,16 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         LNG: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 139.74,
+                            defaultValue: this.center.lng
                         },
                         LAT: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 35.65,
+                            defaultValue: this.center.lat
                         },
                         ZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 10,
-                        },
+                            defaultValue: this.zoom
+                        }
                     }
                 },
                 {
@@ -277,13 +362,18 @@ class Scratch3GeoloniaBlocks {
                     }
                 },
                 {
+                    opcode: 'setLayerAttribute',
+                    blockType: BlockType.COMMAND,
+                    text: '触れているレイヤーの情報を取得'
+                },
+                {
                     opcode: 'setMaxZoom',
                     blockType: BlockType.COMMAND,
                     text: '地図の最大ズームレベルを [MAXZOOM] に変更する',
                     arguments: {
                         MAXZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 18
+                            defaultValue: this.maxZoom
                         }
                     }
                 },
@@ -294,7 +384,7 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         MINZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 4
+                            defaultValue: this.minZoom
                         }
                     }
                 },
@@ -326,8 +416,13 @@ class Scratch3GeoloniaBlocks {
                 {
                     opcode: 'getName',
                     blockType: BlockType.REPORTER,
-                    text: '場所の名前',
+                    text: '場所の名前'
                 },
+                {
+                    opcode: 'getLayerAttributes',
+                    blockType: BlockType.REPORTER,
+                    text: 'レイヤー情報'
+                }
                 // {
                 //     opcode: 'getData',
                 //     blockType: BlockType.REPORTER,
@@ -352,7 +447,8 @@ class Scratch3GeoloniaBlocks {
             ],
             menus: {
                 baseMapStyles: [
-                    {text: '標準', value: 'https://basic-v1-background-only.pages.dev/style.json'},
+                    // {text: '標準', value: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json'},
+                    {text: 'geolonia basic', value: 'https://basic-v1-background-only.pages.dev/style.json'},
                     {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'},
                     {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/style.json'}
                 ],
@@ -368,40 +464,53 @@ class Scratch3GeoloniaBlocks {
                     ];
                     return variableNames;
                 },
-                iconMenu: [
-                    {text: 'ピン', value: 'pin'},
-                    // {text: '星', value: 'star'},
-                    {text: 'モンスター1', value: 'enemy1'},
-                    {text: 'モンスター2', value: 'enemy2'},
-                    {text: 'モンスター3', value: 'enemy3'},
-                    {text: 'モンスター4', value: 'enemy4'},
-                    {text: '宝箱', value: 'treasure-chest'},
-                    {text: '宝石（黄色）', value: 'jewelry-yellow'},
-                    {text: '宝石（青色）', value: 'jewelry-blue'},
-                    {text: '宝石（赤色）', value: 'jewelry-red'},
-                    {text: '宝石（緑色）', value: 'jewelry-green'},
-                    {text: '天使', value: 'angel'},
-                    {text: '勇者', value: 'friend1'},
-                    {text: 'レストラン', value: 'restaurant'},
-                    {text: 'カフェ', value: 'cafe'},
-                    {text: 'コンビニ', value: 'convenience'},
-                    {text: '病院', value: 'hospital'},
-                    {text: '学校', value: 'school'},
-                    {text: '博物館', value: 'museum'},
-                    {text: 'お城', value: 'castle'},
-                    {text: 'お城（敵）', value: 'dark-castle'},
-                    {text: '銀行', value: 'bank'},
-                    {text: '鉄道駅', value: 'railway'},
-                    {text: '駐車場', value: 'parking'},
-                    {text: '公園', value: 'park'},
-                    {text: '危険マーク', value: 'danger-yellow'},
-                    {text: '危険立て札', value: 'danger-red'}
-                    // {text: '図書館', value: 'library'},
-                    // {text: '郵便局', value: 'post_office'},
-                    // {text: 'バス停', value: 'bus'},
-                    // {text: '旗', value: 'flag'},
-                    // {text: '家', value: 'home'}
-                ]
+                hazardMapLayers: function () {
+                    if (!this.hazardMapLayerNames) {
+                        this.hazardMapLayerNames = geolonia.japan.Map.getHazardMapData();
+                    }
+                    const res = this.hazardMapLayerNames.map(layer => [layer, layer]) ?? [['洪水浸水想定区域(想定最大規模)', '洪水浸水想定最大規模(想定最大規模)']];
+                    return res;
+                },
+                nlniMapLayers: function () {
+                    if (!this.nlniLayerNames) {
+                        this.nlniLayerNames = geolonia.japan.Map.getNLNIData();
+                    }
+                    const res = this.nlniLayerNames.map(layer => [layer, layer]) ?? [['小学校区', '小学校区']];
+                    return res;
+                },
+                iconMenu: function () {
+                    if (!this.iconNames || !Array.isArray(this.iconNames) || this.iconNames.length === 0) {
+                        return [
+                            ['ピン', 'pin'],
+                            ['モンスター1', 'enemy1'],
+                            ['モンスター2', 'enemy2'],
+                            ['モンスター3', 'enemy3'],
+                            ['モンスター4', 'enemy4'],
+                            ['宝箱', 'treasure-chest'],
+                            ['宝石（黄色）', 'jewelry-yellow'],
+                            ['宝石（青色）', 'jewelry-blue'],
+                            ['宝石（赤色）', 'jewelry-red'],
+                            ['宝石（緑色）', 'jewelry-green'],
+                            ['天使', 'angel'],
+                            ['勇者', 'friend1'],
+                            ['レストラン', 'restaurant'],
+                            ['カフェ', 'cafe'],
+                            ['コンビニ', 'convenience'],
+                            ['病院', 'hospital'],
+                            ['学校', 'school'],
+                            ['博物館', 'museum'],
+                            ['お城', 'castle'],
+                            ['お城（敵）', 'dark-castle'],
+                            ['銀行', 'bank'],
+                            ['鉄道駅', 'railway'],
+                            ['駐車場', 'parking'],
+                            ['公園', 'park'],
+                            ['危険マーク', 'danger-yellow'],
+                            ['危険立て札', 'danger-red']
+                        ];
+                    }
+                    return this.iconNames.map(layer => [layer, layer]);
+                }
             }
         };
     }
@@ -423,13 +532,7 @@ class Scratch3GeoloniaBlocks {
     }
 
     getName() {
-        for (let i = 0; i < this.features.length; i++) {
-            if ('symbol' === this.features[i].layer.type && this.features[i].properties.name) {
-                return this.features[i].properties.name;
-            }
-        }
-
-        return '';
+        return (this.layerAttributes && this.layerAttributes.name) ? this.layerAttributes.name : '';
     }
 
     getZoom () {
@@ -441,6 +544,14 @@ class Scratch3GeoloniaBlocks {
             return JSON.stringify(this.data);
         }
         return this.data;
+    }
+
+    getLayerAttributes () {
+        if (!this.layerAttributes) {
+            console.error('レイヤー情報が設定されていません。');
+            return '';
+        }
+        return propertyToString(this.layerAttributes);
     }
 
     // setVariable (args) {
@@ -480,8 +591,10 @@ class Scratch3GeoloniaBlocks {
 
     displayMap (args) {
 
-        // すでに地図が生成されていれば何もしない
+        // すでに地図が生成されていれば緯度経度zoomを変更、変数を初期化、レイヤーを削除
         if (this.map && this.loaded) {
+            this._initState(args.LNG, args.LAT, args.ZOOM);
+            this.map.removeAllCustomLayers();
             this.map.setCenter([args.LNG, args.LAT]);
             this.map.setZoom(args.ZOOM);
             return Promise.resolve();
@@ -505,6 +618,8 @@ class Scratch3GeoloniaBlocks {
 
             this.map = new geolonia.japan.Map({
                 container: 'geolonia-map',
+                // style: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json',
+                style: 'https://basic-v1-background-only.pages.dev/style.json',
                 center: [args.LNG, args.LAT],
                 zoom: args.ZOOM,
                 pitch: 0
@@ -513,8 +628,6 @@ class Scratch3GeoloniaBlocks {
             this.map.once('load', () => {
                 this.map.on('moveend', (e) => {
                     this.center = this.map.getCenter();
-                    this.osmPoiLayers = this.map.getOsmPoiLayers();
-
                     openReverseGeocoder(Object.values(this.center)).then(res => {
                         this.addr = res;
                     });
@@ -555,20 +668,8 @@ class Scratch3GeoloniaBlocks {
         this.map.off('zoomend');
         this.map.remove();
         this.map = null;
+        this._initState();
         this.loaded = false;
-        this.addr = {
-            code: '',
-            prefecture: '',
-            city: ''
-        };
-        this.center = {lng: 0, lat: 0};
-        this.zoom = 10;
-        this.features = [];
-        this.data = '';
-        this.customMarkers.features = [];
-        this.osmPoiLayers = null;
-        this.addedLayers = [];
-        this.addCustomMarkerNames = [];
     }
 
     // レイヤーのアイコンを変更
@@ -579,23 +680,27 @@ class Scratch3GeoloniaBlocks {
         }
         const layerIds = this.map.hasLayer(args.LAYER);
         
-        // レイヤーがあるか判定
-        if ((!layerIds || layerIds.length === 0) && this.addCustomMarkerNames.includes(args.LAYER)) {
-            // カスタムマーカーのソースを更新
-            this.customMarkers.features = this.customMarkers.features.map(feature => {
-                if (feature.properties.name === args.LAYER) {
-                    feature.properties.icon = args.ICON;
-                }
-                return feature;
-            });
-            this.map.getSource(this.sourceName).setData(this.customMarkers);
-            return;
-        }
         if (layerIds.length > 0) {
             layerIds.forEach(layerId => {
                 this.map.changeLayerIcon(layerId, args.ICON, 'chizubouken-lab');
             });
         }
+    }
+
+    changeSymbolMarkerIcon (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+
+        // 指定された名前のマーカーを削除
+        this.customMarkers.features = this.customMarkers.features.map(feature => {
+            if (feature.properties.name === args.NAME && feature.properties.lngLat === `${args.LAT}, ${args.LON}`) {
+                feature.properties.icon = `chizubouken-lab:${args.ICON}`;
+            }
+            return feature;
+        });
+        this.map.getSource(this.sourceName).setData(this.customMarkers);
     }
 
     // クラス内にメソッドを追加
@@ -696,6 +801,38 @@ class Scratch3GeoloniaBlocks {
         this.map.removeOsmPoi(args.LAYER);
     }
 
+    showHazardMapLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.loadHazardMapData(args.LAYER);
+    }
+
+    removeHazardMapLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.removeHazardMapData(args.LAYER);
+    }
+
+    showNLNIMapLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.loadNLNIData(args.LAYER);
+    }
+
+    removeNLNIMapLayer (args) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        this.map.removeNLNIData(args.LAYER);
+    }
+
     changePitch (args) {
         if (!this.loaded) {
             console.error('まず地図を表示してください。');
@@ -720,12 +857,33 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
+        this.mapStyle = args.STYLE;
         this.map.setBaseMapStyle(args.STYLE);
     }
 
     setMaxZoom (args) {
         if (!this.loaded) {
             console.error('まず地図を表示してください。');
+            return;
+        }
+
+        // 数値かどうか判定
+        const maxZoom = Number(args.MAXZOOM);
+        if (isNaN(maxZoom)) {
+            // eslint-disable-next-line no-alert
+            alert('最大ズームには数字を入力してください。');
+            return;
+        }
+        // 最大ズームレベルを超えてないか判定
+        if (maxZoom > this.maxZoom) {
+            // eslint-disable-next-line no-alert
+            alert(`指定できる最大zoomは${this.maxZoom}以下です。`);
+            return;
+        }
+        // minzoomより小さくないか判定
+        if (maxZoom < this.map.getMinZoom()) {
+            // eslint-disable-next-line no-alert
+            alert('最大ズームは現在の最小ズームレベルより小さくすることはできません。');
             return;
         }
 
@@ -737,8 +895,43 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
+        // 数値かどうか判定
+        const minZoom = Number(args.MINZOOM);
+        if (isNaN(minZoom)) {
+            // eslint-disable-next-line no-alert
+            alert('最小ズームには数字を入力してください。');
+            return;
+        }
+        // 最小ズームレベルを超えてないか判定
+        if (minZoom < this.minZoom) {
+            // eslint-disable-next-line no-alert
+            alert(`指定できる最小zoomは${this.minZoom}以上です。`);
+            return;
+        }
+        // minzoomより小さくないか判定
+        if (minZoom > this.map.getMaxZoom()) {
+            // eslint-disable-next-line no-alert
+            alert('最小ズームは現在の最大ズームレベルより大きくすることはできません。');
+            return;
+        }
 
         this.map.setMinZoom(Number(args.MINZOOM));
+    }
+
+    setLayerAttribute (args, util) {
+        if (!this.loaded) {
+            console.error('まず地図を表示してください。');
+            return;
+        }
+        const bounds = util.target.getBounds();
+        const stage = document.getElementById('geolonia');
+
+        const bbox = getSpriteBBox(bounds, stage);
+
+        // レイヤーの情報を取得
+        const features = this.map.getFeaturesProperties(bbox, {firstOnly: true});
+
+        this.layerAttributes = features[0].properties;
     }
 
     addSymbolMarker (args) {
