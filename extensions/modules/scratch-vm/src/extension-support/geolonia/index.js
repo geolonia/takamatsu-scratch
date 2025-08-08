@@ -29,6 +29,8 @@ class Scratch3GeoloniaBlocks {
         this.zoom = zoom;
         this.maxZoom = 20;
         this.minZoom = 8;
+        // this.mapStyle = 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json';
+        this.mapStyle = 'https://basic-v1-background-only.pages.dev/style.json';
         this.features = [];
         this.data = '';
         this.customMarkers = {
@@ -93,8 +95,8 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         STYLE: {
                             type: ArgumentType.STRING,
-                            menu: 'baseMapStyles', // ドロップダウンメニューを指定
-                            defaultValue: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json'
+                            menu: 'baseMapStyles',
+                            defaultValue: 'https://basic-v1-background-only.pages.dev/style.json'
                         }
                     }
                 },
@@ -445,7 +447,7 @@ class Scratch3GeoloniaBlocks {
             ],
             menus: {
                 baseMapStyles: [
-                    {text: '標準', value: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json'},
+                    // {text: '標準', value: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json'},
                     {text: 'geolonia basic', value: 'https://basic-v1-background-only.pages.dev/style.json'},
                     {text: '衛星写真', value: 'https://smartcity-satellite.styles.geoloniamaps.com/style.json'},
                     {text: 'ゲーム風', value: 'https://chizubouken-lab.pages.dev/style.json'}
@@ -616,7 +618,8 @@ class Scratch3GeoloniaBlocks {
 
             this.map = new geolonia.japan.Map({
                 container: 'geolonia-map',
-                style: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json',
+                // style: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json',
+                style: 'https://basic-v1-background-only.pages.dev/style.json',
                 center: [args.LNG, args.LAT],
                 zoom: args.ZOOM,
                 pitch: 0
@@ -854,6 +857,7 @@ class Scratch3GeoloniaBlocks {
             console.error('まず地図を表示してください。');
             return;
         }
+        this.mapStyle = args.STYLE;
         this.map.setBaseMapStyle(args.STYLE);
     }
 
