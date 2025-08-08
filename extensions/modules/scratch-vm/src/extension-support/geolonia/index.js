@@ -27,6 +27,8 @@ class Scratch3GeoloniaBlocks {
         };
         this.center = {lng: lng, lat: lat};
         this.zoom = zoom;
+        this.maxZoom = 20;
+        this.minZoom = 8;
         this.features = [];
         this.data = '';
         this.customMarkers = {
@@ -369,7 +371,7 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         MAXZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 18
+                            defaultValue: this.maxZoom
                         }
                     }
                 },
@@ -380,7 +382,7 @@ class Scratch3GeoloniaBlocks {
                     arguments: {
                         MINZOOM: {
                             type: ArgumentType.NUMBER,
-                            defaultValue: 4
+                            defaultValue: this.minZoom
                         }
                     }
                 },
@@ -861,12 +863,51 @@ class Scratch3GeoloniaBlocks {
             return;
         }
 
+        // 数値かどうか判定
+        const maxZoom = Number(args.MAXZOOM);
+        if (isNaN(maxZoom)) {
+            // eslint-disable-next-line no-alert
+            alert('最大ズームには数字を入力してください。');
+            return;
+        }
+        // 最大ズームレベルを超えてないか判定
+        if (maxZoom > this.maxZoom) {
+            // eslint-disable-next-line no-alert
+            alert(`指定できる最大zoomは${this.maxZoom}以下です。`);
+            return;
+        }
+        // minzoomより小さくないか判定
+        if (maxZoom < this.map.getMinZoom()) {
+            // eslint-disable-next-line no-alert
+            alert('最大ズームは現在の最小ズームレベルより小さくすることはできません。');
+            return;
+        }
+
         this.map.setMaxZoom(Number(args.MAXZOOM));
     }
 
     setMinZoom (args) {
         if (!this.loaded) {
             console.error('まず地図を表示してください。');
+            return;
+        }
+        // 数値かどうか判定
+        const minZoom = Number(args.MINZOOM);
+        if (isNaN(minZoom)) {
+            // eslint-disable-next-line no-alert
+            alert('最小ズームには数字を入力してください。');
+            return;
+        }
+        // 最小ズームレベルを超えてないか判定
+        if (minZoom < this.minZoom) {
+            // eslint-disable-next-line no-alert
+            alert(`指定できる最小zoomは${this.minZoom}以上です。`);
+            return;
+        }
+        // minzoomより小さくないか判定
+        if (minZoom > this.map.getMaxZoom()) {
+            // eslint-disable-next-line no-alert
+            alert('最小ズームは現在の最大ズームレベルより大きくすることはできません。');
             return;
         }
 
