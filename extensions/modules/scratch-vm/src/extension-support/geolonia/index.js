@@ -619,7 +619,7 @@ class Scratch3GeoloniaBlocks {
             this.map = new geolonia.japan.Map({
                 container: 'geolonia-map',
                 // style: 'https://geolonia.github.io/mapfandb-styles/mapfan_nologo.json',
-                style: ,
+                style: 'https://basic-v1-background-only.pages.dev/style.json',
                 center: [args.LNG, args.LAT],
                 zoom: args.ZOOM,
                 pitch: 0
